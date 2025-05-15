@@ -17,5 +17,5 @@ $width = $width ?? '2.5rem';
     </div>
     
     <!-- Logo text -->
-    <span class="ml-2 text-xl font-bold {{ isset($textClass) ? $textClass : 'text-white' }}">Invensure</span>
+    <span class="ml-2 text-xl font-bold {{ isset($textClass) ? $textClass : 'text-gray-900' }}">Invensure</span>
 </div> 

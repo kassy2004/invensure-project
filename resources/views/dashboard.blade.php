@@ -1,16 +1,65 @@
 <x-app-layout>
 @include('layouts.sidebar')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    {{ __("Hi! Welcome to Dashboard") }}
+    <div class="py-8 w-full">
+        <div class="w-full px-4">
+            <div class=" overflow-hidden">
+                <div class="p-6 ">
                     @if (auth()->check() && auth()->user()->role === 'admin')
-  <h4 class="text-gray-400 mb-6">Admin Dashboard</h4>
-@else
-               <h4 class="text-gray-400 mb-6">Customer Dashboard</h4>
- @endif
+                    <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+
+                    <div x-data="{ tab: 'dashboardOverview' }">
+                        <div class="inline-flex mt-5 py-1 px-1 rounded-md space-x-2 bg-gray-200">
+
+                            <span @click="tab = 'dashboardOverview'" :class="tab === 'dashboardOverview' ? 'bg-gray-50' : 'bg-gray-200'" class="px-4 py-2 rounded-md cursor-pointer text-xs text-gray-900">Overview</span>
+                            <span @click="tab = 'analytics'" :class="tab === 'analytics' ? 'bg-gray-50' : 'bg-gray-200'" class="px-4 py-2 rounded-md cursor-pointer text-xs text-gray-900">Analytics</span>
+                            <span @click="tab = 'reports'" :class="tab === 'reports' ? 'bg-gray-50' : 'bg-gray-200'" class="px-4 py-2 rounded-md cursor-pointer text-xs text-gray-900">Reports</span>
+                            <span @click="tab = 'notifications'" :class="tab === 'notifications' ? 'bg-gray-50' : 'bg-gray-200'" class="px-4 py-2 rounded-md cursor-pointer text-xs text-gray-900">Notifications</span>
+                        </div>
+                        <div class="flex gap-6 mb-5 mt-5 w-full">
+                            <template x-if="tab === 'dashboardOverview'"  >
+                                @include('components.dashboard.overview')
+                            </template>
+                            <template x-if="tab === 'analytics'">
+                                @include('components.dashboard.analytics')
+                            </template>
+                            <template x-if="tab === 'reports'">
+                                @include('components.dashboard.reports')
+                            </template>
+                            <template x-if="tab === 'notifications'">
+                                @include('components.dashboard.notifications')
+                            </template>
+                            </div>
+                    </div>
+                    
+                   
+                  
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    @endif
+                    
+                    
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    @if (auth()->check() && auth()->user()->role === 'customer')
+                        <h4 class="text-gray-700 font-semibold mb-6">Customer Dashboard</h4>
+                    @endif
                 </div>
             </div>
         </div>

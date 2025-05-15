@@ -1,31 +1,17 @@
-<div class="navbar bg-base-100 shadow-sm">
+<div class="navbar bg-white shadow-sm">
   <div class="flex-1">
-    <a class="btn btn-ghost text-xl">daisyUI</a>
+    <x-invensure-logo class="ml-10" />
+    
+    
   </div>
   <div class="flex-none">
-    <div class="dropdown dropdown-end">
-      <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
-        <div class="w-10 rounded-full">
-          <img
-            alt="Tailwind CSS Navbar component"
-            src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-        </div>
-      </div>
-      <ul
-        tabindex="0"
-        class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-        <li>
-          <a class="justify-between">
-            Profile
-            <span class="badge">New</span>
-          </a>
-        </li>
-        <li><a>Settings</a></li>
-        <form method="POST" action="{{ route('logout') }}">
-          @csrf
-              <li> <button type="submit">Logout</button></li>
-        </form>
-      </ul>
+    <div class="border border-gray-200 py-2 px-3 rounded-md text-gray-600 flex items-center gap-2 cursor-pointer">
+      <x-lucide-log-out class="h-4 w-4 shrink-0" />
+      <form method="POST" action="{{ route('logout') }}">
+        @csrf
+            <button type="submit" class="text-sm">Sign Out</button>
+      </form>
+
     </div>
   </div>
 </div>

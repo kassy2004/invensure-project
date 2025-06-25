@@ -9,13 +9,13 @@
         :class="{ 'w-64': document.getElementById('sidebar-toggle').checked }">
         <div class="flex items-center justify-between px-5 py-4">
             @if (auth()->check() && auth()->user()->role === 'inventory_manager')
-            <span class="text-lg font-bold hidden group-[.w-64]:inline text-gray-700 ">Inventory Manager</span>
+                <span class="text-lg font-bold hidden group-[.w-64]:inline text-gray-700 ">Inventory Manager</span>
             @elseif(auth()->check() && auth()->user()->role === 'admin')
-            <span class="text-lg font-bold hidden group-[.w-64]:inline text-gray-700 ">Admin</span>
+                <span class="text-lg font-bold hidden group-[.w-64]:inline text-gray-700 ">Admin</span>
             @elseif(auth()->check() && auth()->user()->role === 'customer')
-            <span class="text-lg font-bold hidden group-[.w-64]:inline text-gray-700 ">Customer</span>
+                <span class="text-lg font-bold hidden group-[.w-64]:inline text-gray-700 ">Customer</span>
             @elseif(auth()->check() && auth()->user()->role === 'logistics_coordinator')
-            <span class="text-lg font-bold hidden group-[.w-64]:inline text-gray-700 ">Logistics Coordinator</span>
+                <span class="text-lg font-bold hidden group-[.w-64]:inline text-gray-700 ">Logistics Coordinator</span>
             @endif
             <label for="sidebar-toggle" class="cursor-pointer text-grey">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24"
@@ -79,28 +79,30 @@
 
                     <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700 font-semibold">Dashboard</a>
                 </li>
-                
+
+                <li
                     class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
      {{ Request::is('user') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
 
                     <x-lucide-star class="h-5 w-5 shrink-0 text-gray-700" />
                     <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">Service Ratings</a>
                 </li>
-               
+
+                <li
                     class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
      {{ Request::is('user') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
 
                     <x-lucide-package-check class="h-5 w-5 shrink-0 text-gray-700" />
                     <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">Proof of Delivery</a>
                 </li>
-                <li 
+                <li
                     class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
      {{ Request::is('user') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
 
                     <x-lucide-clipboard-list class="h-5 w-5 shrink-0 text-gray-700" />
                     <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">Receipt & Invoices</a>
                 </li>
-                <li 
+                <li
                     class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
    {{ Request::is('user') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
 
@@ -109,123 +111,106 @@
                 </li>
             @endif
 
+            {{-- Inventory Manager --}}
 
             @if (auth()->check() && auth()->user()->role === 'inventory_manager')
                 <li class="flex items-center mt-4">
                     <span class="ml-3 hidden group-[.w-64]:inline text-gray-700 text-sm">Main</span>
                 </li>
+
                 <li onclick="window.location='{{ url('/dashboard') }}'"
                     class="flex items-center px-5 py-3 hover:bg-gray-200 cursor-pointer
  {{ Request::is('dashboard') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
                     <x-lucide-layout-dashboard class="h-5 w-5 shrink-0 text-gray-700" />
 
-                    <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700 font-semibold">Dashboard</a>
+                    <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">Dashboard</a>
                 </li>
-                <li 
+
+
+                <li onclick="window.location='{{ url('/item-master') }}'"
                     class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
- {{ Request::is('user') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
+ {{ Request::is('item-master') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
 
-                    <x-lucide-box class="h-5 w-5 shrink-0 text-gray-700" />
-                    <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">Stock Management</a>
+                    <x-lucide-archive class="h-5 w-5 shrink-0 text-gray-700" />
+                    <a class="ml-3 hidden group-[.w-64]:inline text-gray-700">Item Master</a>
                 </li>
-                <li 
-                    class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
- {{ Request::is('user') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
+              
 
-                    <x-lucide-arrow-up-down class="h-5 w-5 shrink-0 text-gray-700" />
-                    <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">Stock Movement</a>
-                </li>
-                <li 
-                    class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
- {{ Request::is('user') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
-
-                    <x-lucide-tag class="h-5 w-5 shrink-0 text-gray-700" />
-                    <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">Categories</a>
-                </li>
-
-
+                {{-- Warehouse --}}
                 <li class="flex items-center">
-                    <span class="ml-3 hidden group-[.w-64]:inline text-gray-700 text-sm">Inventory Tools</span>
+                    <span class="ml-3 hidden group-[.w-64]:inline text-gray-700 text-sm">Warehouse</span>
                 </li>
-                <li 
-                    class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer 
-{{ Request::is('user') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
-
-                    <x-lucide-alert-triangle class="h-5 w-5 shrink-0 text-gray-700" />
-                    <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">Alerts</a>
-                </li>
-                <li 
+                {{-- PCSI Warehouse --}}
+                <li onclick="window.location='{{ url('/warehouse/pcsi') }}'"
                     class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
-{{ Request::is('user') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
+{{ Request::is('warehouse/pcsi') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
 
-                    <x-lucide-logs class="h-5 w-5 shrink-0 text-gray-700" />
-                    <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">Audit Logs</a>
+                    <x-lucide-warehouse class="h-5 w-5 shrink-0 text-gray-700" />
+                    <a  class="ml-3 hidden group-[.w-64]:inline text-gray-700">PCSI</a>
                 </li>
-                <li 
+                {{-- 3JFPC Warehouse --}}
+                <li onclick="window.location='{{ url('/warehouse/jfpc') }}'"
                     class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
-{{ Request::is('user') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
+{{ Request::is('warehouse/jfpc') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
 
-                    <x-lucide-clipboard-pen class="h-5 w-5 shrink-0 text-gray-700" />
-                    <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">Reports</a>
+                    <x-lucide-warehouse class="h-5 w-5 shrink-0 text-gray-700" />
+                    <a class="ml-3 hidden group-[.w-64]:inline text-gray-700">3JFPC</a>
                 </li>
-                <li 
-                    class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
-{{ Request::is('user') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
-
-                    <x-lucide-shopping-cart class="h-5 w-5 shrink-0 text-gray-700" />
-                    <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">Purchase Orders</a>
-                </li>
+               
             @endif
             @if (auth()->check() && auth()->user()->role === 'logistics_coordinator')
-            <li onclick="window.location='{{ url('/dashboard') }}'"
-                class="flex items-center px-5 py-3 hover:bg-gray-200 cursor-pointer
+                <li onclick="window.location='{{ url('/dashboard') }}'"
+                    class="flex items-center px-5 py-3 hover:bg-gray-200 cursor-pointer
 {{ Request::is('dashboard') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
-                <x-lucide-layout-dashboard class="h-5 w-5 shrink-0 text-gray-700" />
+                    <x-lucide-layout-dashboard class="h-5 w-5 shrink-0 text-gray-700" />
 
-                <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700 font-semibold">Dashboard</a>
-            </li>
-            <li 
-                class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
+                    <a href=""
+                        class="ml-3 hidden group-[.w-64]:inline text-gray-700 font-semibold">Dashboard</a>
+                </li>
+                <li
+                    class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
    {{ Request::is('sales') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
 
-                <x-lucide-clipboard-check class="h-5 w-5 shrink-0 text-gray-700" />
-                <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">POD Automation</a>
-            </li>
+                    <x-lucide-clipboard-check class="h-5 w-5 shrink-0 text-gray-700" />
+                    <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">POD Automation</a>
+                </li>
 
-            <li 
-                class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
+                <li
+                    class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
      {{ Request::is('inventory') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
-                <x-lucide-map-pin class="h-5 w-5 shrink-0 text-gray-700" />
-                <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">GPS Verification</a>
-            </li>
+                    <x-lucide-map-pin class="h-5 w-5 shrink-0 text-gray-700" />
+                    <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">GPS Verification</a>
+                </li>
 
 
 
-            <li 
-                class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
+                <li
+                    class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
   {{ Request::is('delivery') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
 
-                <x-lucide-pen-tool class="h-5 w-5 shrink-0 text-gray-700" /> {{-- icon --}}{{-- bladeicon --}}
-                <span class="ml-3 hidden group-[.w-64]:inline text-gray-700">Digital Signatures</span>
-            </li>
+                    <x-lucide-pen-tool class="h-5 w-5 shrink-0 text-gray-700" />
+                    {{-- icon --}}{{-- bladeicon --}}
+                    <span class="ml-3 hidden group-[.w-64]:inline text-gray-700">Digital Signatures</span>
+                </li>
 
 
-            <li 
-                class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
+                <li
+                    class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
    {{ Request::is('user') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
 
-                <x-lucide-file-check class="h-5 w-5 shrink-0 text-gray-700" />
-                <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">POD IDs & Audit Trails</a>
-            </li>
+                    <x-lucide-file-check class="h-5 w-5 shrink-0 text-gray-700" />
+                    <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">POD IDs & Audit
+                        Trails</a>
+                </li>
 
-            <li 
-                class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
+                <li
+                    class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
    {{ Request::is('user') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
 
-                <x-lucide-truck class="h-5 w-5 shrink-0 text-gray-700" />
-                <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">Delivery Operations</a>
-            </li>
-        @endif
+                    <x-lucide-truck class="h-5 w-5 shrink-0 text-gray-700" />
+                    <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">Delivery Operations</a>
+                </li>
+            @endif
         </ul>
 
     </div>

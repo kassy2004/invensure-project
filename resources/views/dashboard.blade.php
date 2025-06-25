@@ -58,6 +58,9 @@
                     @if (auth()->check() && auth()->user()->role === 'customer')
                         <h1 class="text-2xl font-bold text-gray-900">Customer Dashboard</h1>
                     @endif
+                    @if (auth()->check() && auth()->user()->role === 'inventory_manager')
+                        <h1 class="text-2xl font-bold text-gray-900">Inventory Manager Dashboard</h1>
+                    @endif
                 </div>
             </div>
         </div>

@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\ItemMasterController;
+use App\Http\Controllers\JFPCController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -39,3 +42,14 @@ Route::get('/inventory', function () {
 })->middleware(['auth', 'verified'])->name('inventory');
 
 Route::post('/add-user', [UserController::class, 'create'])->middleware(['auth', 'verified'])->name('add-user');
+
+
+
+Route::get('/warehouse/pcsi', [InventoryController::class, 'index'])->middleware(['auth', 'verified'])->name('warehouse/pcsi');
+Route::get('/item-master', [ItemMasterController::class, 'index'])->middleware(['auth', 'verified'])->name('item-master');
+
+Route::post('/items/{id}/update', [ItemMasterController::class, 'update'])->name('items.update');
+Route::post('/warehouse/pcsi/add', [InventoryController::class, 'add'])->name('warehouse.pcsi.add');
+
+Route::get('/warehouse/jfpc', [JFPCController::class, 'index'])->middleware(['auth', 'verified'])->name('warehouse/jfpc');
+Route::post('/warehouse/jfpc/add', [JFPCController::class, 'add'])->name('warehouse.jfpc.add');

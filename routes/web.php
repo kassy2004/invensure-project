@@ -53,3 +53,4 @@ Route::post('/warehouse/pcsi/add', [InventoryController::class, 'add'])->name('w
 
 Route::get('/warehouse/jfpc', [JFPCController::class, 'index'])->middleware(['auth', 'verified'])->name('warehouse/jfpc');
 Route::post('/warehouse/jfpc/add', [JFPCController::class, 'add'])->name('warehouse.jfpc.add');
+Route::post('/item-master/add', [ItemMasterController::class, 'add'])->name('item-master.add');

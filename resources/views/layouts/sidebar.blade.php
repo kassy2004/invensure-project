@@ -134,7 +134,7 @@
                     <x-lucide-archive class="h-5 w-5 shrink-0 text-gray-700" />
                     <a class="ml-3 hidden group-[.w-64]:inline text-gray-700">Item Master</a>
                 </li>
-              
+
 
                 {{-- Warehouse --}}
                 <li class="flex items-center">
@@ -146,7 +146,7 @@
 {{ Request::is('warehouse/pcsi') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
 
                     <x-lucide-warehouse class="h-5 w-5 shrink-0 text-gray-700" />
-                    <a  class="ml-3 hidden group-[.w-64]:inline text-gray-700">PCSI</a>
+                    <a class="ml-3 hidden group-[.w-64]:inline text-gray-700">PCSI</a>
                 </li>
                 {{-- 3JFPC Warehouse --}}
                 <li onclick="window.location='{{ url('/warehouse/jfpc') }}'"
@@ -156,7 +156,6 @@
                     <x-lucide-warehouse class="h-5 w-5 shrink-0 text-gray-700" />
                     <a class="ml-3 hidden group-[.w-64]:inline text-gray-700">3JFPC</a>
                 </li>
-               
             @endif
             @if (auth()->check() && auth()->user()->role === 'logistics_coordinator')
                 <li onclick="window.location='{{ url('/dashboard') }}'"
@@ -164,8 +163,7 @@
 {{ Request::is('dashboard') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
                     <x-lucide-layout-dashboard class="h-5 w-5 shrink-0 text-gray-700" />
 
-                    <a href=""
-                        class="ml-3 hidden group-[.w-64]:inline text-gray-700 font-semibold">Dashboard</a>
+                    <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700 font-semibold">Dashboard</a>
                 </li>
                 <li
                     class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
@@ -228,10 +226,22 @@
                     sidebar.classList.remove('w-16');
                     sidebar.classList.remove('justify-center');
 
+
                 } else {
                     sidebar.classList.remove('w-64');
                     sidebar.classList.add('w-16');
+
                 }
+                setTimeout(() => {
+                    if (window.myChart) {
+                        window.myChart.resize();
+                    }
+                    if (window.myChart2) {
+                        window.myChart2.resize();
+                    }
+                }, 310);
+
+
             });
         });
     </script>

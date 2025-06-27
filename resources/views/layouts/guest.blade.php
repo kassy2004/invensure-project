@@ -35,11 +35,10 @@
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 auth-bg">
             <div class="mt-6">
                 <a href="/">
-                    <x-invensure-logo textClass="gradient-text" />
                 </a>
             </div>
 
-            <div class="w-full sm:max-w-md mt-6 px-8 py-6 bg-white shadow-xl overflow-hidden sm:rounded-xl border border-gray-100">
+            <div class="w-full sm:max-w-md mt-6 px-8 py-6 bg-white  overflow-hidden sm:rounded-xl border border-gray-300">
                 {{ $slot }}
             </div>
             

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>Invensure</title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
     <!-- Fonts -->
@@ -28,6 +28,7 @@
 </head>
 <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 <script type="module" src="https://unpkg.com/cally"></script>
+
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100">
         @include('layouts.navigation')
@@ -40,6 +41,7 @@
         </main>
     </div>
 </body>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     function userForm() {
         return {
@@ -90,7 +92,69 @@
             alertBox.style.opacity = '0';
             setTimeout(() => alertBox.remove(), 500); // remove after fade-out
         }
-    }, 5000); 
+    }, 5000);
+
+
+    const ctx = document.getElementById('myChart');
+
+    window.myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Item A', 'Item B', 'Item C', 'Item D', 'Item E', 'Item F'],
+            datasets: [{
+                label: 'Transaction Count',
+                data: [32, 28, 24, 20, 17, 10],
+                backgroundColor: 'rgb(253 186 116)', // Tailwind blue-500 with opacity
+                borderColor: 'rgb(249 115 22)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+           
+
+        },
+
+    });
+
+    const ctxDeadStock = document.getElementById('deadStockChart');
+
+    window.myChart2 = new Chart(ctxDeadStock, {
+        type: 'bar',
+        data: {
+            labels: ['Item A', 'Item B', 'Item C', 'Item D', 'Item E'],
+            datasets: [{
+                label: 'Inactive Days',
+                data: [30, 90, 60, 60, 90],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.7)', // 30 days
+                    'rgba(75, 192, 192, 0.7)', // 90 days
+                    'rgba(255, 206, 86, 0.7)', // 60 days
+                    'rgba(255, 206, 86, 0.7)', // 60 days
+                    'rgba(75, 192, 192, 0.7)' // 90 days
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            
+            responsive: true,
+            maintainAspectRatio: false,
+            
+
+        }
+    });
+
+    
 </script>
 
 </html>

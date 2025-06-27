@@ -1,6 +1,10 @@
 <x-guest-layout>
     <div class="mb-6 text-center">
-        <h1 class="text-2xl font-bold gradient-text">Welcome Back</h1>
+        <div class="text-center flex justify-center mb-2">
+            <x-logo textClass="gradient-text" />
+
+        </div>
+        <h1 class="text-2xl font-bold text-orange-500">Welcome Back</h1>
         <p class="text-sm text-gray-600 mt-2">Sign in to access your Invensure dashboard</p>
     </div>
 
@@ -13,7 +17,7 @@
         <!-- Email Address -->
         <div>
             <x-input-label for="email" :value="__('Email')" class="text-gray-700" />
-            <x-text-input id="email" class="block mt-1 w-full border-gray-300 rounded-md focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-20" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+            <x-text-input id="email" class="block mt-1 w-full border-gray-300 rounded-md focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-20" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" placeholder="name@example.com"/>
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
@@ -24,6 +28,7 @@
             <x-text-input id="password" class="block mt-1 w-full border-gray-300 rounded-md focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-20"
                             type="password"
                             name="password"
+                            placeholder="•••••••"
                             required autocomplete="current-password" />
 
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
@@ -44,7 +49,7 @@
                 </a>
             @endif
 
-            <x-primary-button class="w-full sm:w-auto justify-center bg-gradient-to-r from-brand-gold via-brand-orange to-brand-crimson hover:from-brand-orange hover:to-brand-crimson order-1 sm:order-2">
+            <x-primary-button class="w-full sm:w-auto justify-center bg-orange-500 order-1 sm:order-2">
                 {{ __('Log in') }}
             </x-primary-button>
         </div>

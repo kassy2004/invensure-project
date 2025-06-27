@@ -88,7 +88,7 @@
                                             <legend class="fieldset-legend text-zinc-500">Item</legend>
                                             <input type="text" name="item" id="item"
                                                 class="border border-gray-300 focus:ring-0 px-3 py-2 rounded-md text-gray-800 focus:outline-none  focus:text-orange-600 focus:border-orange-500 w-full"
-                                             required readonly  placeholder="auto-generated" />
+                                                required readonly placeholder="auto-generated" />
 
                                         </fieldset>
                                         <fieldset class="fieldset">
@@ -371,9 +371,9 @@
 
 
 
-                        
+
                         <div id="myGrid" class="ag-theme-alpine bg-zinc-300"></div>
-                       
+
                     </div>
                 </div>
             </div>
@@ -405,13 +405,13 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         const columnDefs = [{
-            headerName: "Line No.",
-                        field: "id",
-                        pinned: 'left'},
+                headerName: "Line No.",
+                field: "id",
+                pinned: 'left'
+            },
             {
-            headerName: "Basic Info",
-                children: [
-                    {
+                headerName: "Basic Info",
+                children: [{
                         headerName: "Item",
                         field: "item",
                         editable: true
@@ -534,11 +534,11 @@
         gridOptions.api.addEventListener('firstDataRendered', function() {
             const allColumnIds = [];
             gridOptions.columnApi.getAllColumns().forEach(col => {
-        allColumnIds.push(col.getColId());
-    });
-    gridOptions.columnApi.autoSizeColumns(allColumnIds);
-             
-            
+                allColumnIds.push(col.getColId());
+            });
+            gridOptions.columnApi.autoSizeColumns(allColumnIds);
+
+
         });
 
         // Function to handle row updates

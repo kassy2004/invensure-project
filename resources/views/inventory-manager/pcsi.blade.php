@@ -187,47 +187,43 @@
                                 class="px-4 py-2 rounded-md cursor-pointer text-xs text-gray-900">Status </span>
                         </div>
                         <div class="mt-5 w-full">
-                            <div x-show="tab === 'subtotal'" x-transition
-                                class="flex flex-col gap-6 w-full ">
+                            <div x-show="tab === 'subtotal'" x-transition class="flex flex-col gap-6 w-full ">
                                 @include('inventory-manager.dashboard.subtotal')
                             </div>
 
-                            <div x-show="tab === 'status'" x-transition
-                                class="flex flex-col gap-6 w-full ">
+                            <div x-show="tab === 'status'" x-transition class="flex flex-col gap-6 w-full ">
                                 @include('inventory-manager.dashboard.status')
                             </div>
 
                         </div>
                     </div>
 
-                    <div class=" p-10 bg-zinc-50  h-auto mt-10 rounded-lg border border-zinc-300">
+
+                    <div x-data="{ tab: 'incoming' }">
+                        <div class="inline-flex mt-5 py-1 px-1 rounded-md space-x-2 bg-gray-200">
+                            <span @click="tab = 'incoming'" :class="tab === 'incoming' ? 'bg-gray-50' : 'bg-gray-200'"
+                                class="px-4 py-2 rounded-md cursor-pointer text-xs text-gray-900">Incoming</span>
+                            <span @click="tab = 'outgoing'" :class="tab === 'outgoing' ? 'bg-gray-50' : 'bg-gray-200'"
+                                class="px-4 py-2 rounded-md cursor-pointer text-xs text-gray-900">Outgoing </span>
+                        </div>
+                        <div class="mt-5 w-full">
+                            <div x-show="tab === 'incoming'" x-transition class="flex flex-col gap-6 w-full ">
+                                @include('inventory-manager.dashboard.incoming')
+                            </div>
+
+                            <div x-show="tab === 'outgoing'" x-transition class="flex flex-col gap-6 w-full ">
+                                @include('inventory-manager.dashboard.outgoing')
+                            </div>
+
+                        </div>
+                    </div>
+                    
+                    {{-- <div class=" p-10 bg-zinc-50  h-auto mt-10 rounded-lg border border-zinc-300">
                         <div class=" mb-5 flex gap-5 items-center">
                             <h1 class="text-lg font-semibold text-zinc-900">
-                                Finished Goods Inventory (Pinnacle Cold Storage Solutions)
+                                Incoming
                             </h1>
-                            <details class="dropdown ">
-                                <summary
-                                    class="btn h-10 rounded-lg bg-transparent text-zinc-500 font-semibold border-zinc-300 shadow-none hover:border-zinc-400 transition duration-200 ease-in-out text-xs">
-                                    2025
-                                    <x-lucide-chevron-down class="h-4 w-4" />
 
-                                </summary>
-                                <ul
-                                    class="dropdown-content flex flex-col px-2 border border-zinc-300 bg-gray-100 rounded-box z-10 w-24  overflow-y-auto max-h-64 overflow-x-auto whitespace-nowrap pb-2">
-                                    <li
-                                        class="text-xs text-zinc-500 uppercase font-semibold px-1 flex justify-between mt-3 cursor-pointer hover:bg-zinc-300 py-1 rounded-md">
-                                        2024</li>
-                                    <li
-                                        class="text-xs text-zinc-500 uppercase font-semibold px-1 flex justify-between mt-3 cursor-pointer hover:bg-zinc-300 py-1 rounded-md">
-                                        2023</li>
-                                    <li
-                                        class="text-xs text-zinc-500 uppercase font-semibold px-1 flex justify-between mt-3 cursor-pointer hover:bg-zinc-300 py-1 rounded-md">
-                                        2022</li>
-                                    <li
-                                        class="text-xs text-zinc-500 uppercase font-semibold px-1 flex justify-between mt-3 cursor-pointer hover:bg-zinc-300 py-1 rounded-md">
-                                        2021</li>
-                                </ul>
-                            </details>
 
                         </div>
 
@@ -239,9 +235,7 @@
                                     placeholder="Search" />
 
                             </label>
-                            {{-- <input type="text" id="quickFilterInput"
-                            placeholder="Search by ID, borrower, or equipment..."
-                            class="h-10 rounded-lg bg-transparent  text-gray-300 border border-zinc-300  w-2/8"> --}}
+                           
                             <div
                                 class=" h-10 px-3 flex rounded-lg text-zinc-900 border border-zinc-300 items-center justify-center text-center hover:border-zinc-400 transition duration-200 ease-in-out cursor-pointer">
                                 <x-lucide-filter class="h-4 w-4" />
@@ -404,7 +398,7 @@
 
 
                         <div id="myGrid" class="ag-theme-alpine bg-zinc-300"></div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>
@@ -494,194 +488,5 @@
             }
         }
     });
-    let gridOptions;
-
-    function toggleColumn(columnKey, checkbox) {
-        if (!gridOptions || !gridOptions.api || !gridOptions.columnApi) return;
-        gridOptions.columnApi.setColumnVisible(columnKey, checkbox.checked);
-    }
-
-    function toggleSection(checkbox, fieldList) {
-        if (!gridOptions || !gridOptions.api || !gridOptions.columnApi) return;
-        fieldList.forEach(field => {
-            gridOptions.columnApi.setColumnVisible(field, checkbox.checked);
-            // Also update the individual checkboxes if they exist
-            const input = document.querySelector(`input[type="checkbox"][onchange*="'${field}'"]`);
-            if (input) input.checked = checkbox.checked;
-        });
-    }
-    document.getElementById('search-box').addEventListener('input', function() {
-        gridOptions.api.setQuickFilter(this.value);
-    });
-
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const columnDefs = [{
-                headerName: "Basic Info",
-                children: [{
-                        headerName: "Line No.",
-                        field: "id",
-                        width: 90
-                    },
-                    {
-                        headerName: "Data Entry",
-                        field: "data_entry"
-                    },
-                    {
-                        headerName: "Item Group",
-                        field: "item_group"
-                    }
-                ]
-            },
-            {
-                headerName: "Product Details",
-                children: [{
-                        headerName: "Variant",
-                        field: "variant"
-                    },
-                    {
-                        headerName: "Kilogram/Tray",
-                        field: "kilogram/tray"
-                    },
-                    {
-                        headerName: "Class",
-                        field: "class"
-                    },
-                    {
-                        headerName: "SKU",
-                        field: "sku"
-                    },
-                    {
-                        headerName: "FG",
-                        field: "fg"
-                    }
-                ]
-            },
-            {
-                headerName: "Packaging",
-                children: [{
-                        headerName: "Primary",
-                        field: "primary_packaging"
-                    },
-                    {
-                        headerName: "Secondary",
-                        field: "secondary_packaging"
-                    }
-                ]
-            },
-            {
-                headerName: "Inventory",
-                children: [{
-                        headerName: "Head/Pack",
-                        field: "inventory_head"
-                    },
-                    {
-                        headerName: "Kilogram",
-                        field: "inventory_kilo"
-                    },
-
-                ]
-            },
-            {
-                headerName: "Balance",
-                children: [{
-                        headerName: "Head/Pack",
-                        field: "balance_head",
-                        width: 200,
-                    },
-                    {
-                        headerName: "Kilogram",
-                        field: "balance_kilo"
-                    }
-                ]
-            },
-            {
-                headerName: "Movement",
-                children: [{
-                        headerName: "Received by",
-                        field: "received_by"
-                    },
-                    {
-                        headerName: "Qty Issued (Head/Pack)",
-                        field: "qty_head"
-                    },
-                    {
-                        headerName: "Qty Issued (Kilogram)",
-                        field: "qty_kilo"
-                    },
-
-                ]
-            },
-            {
-                headerName: "Dates",
-                children: [{
-                        headerName: "Prod Date",
-                        field: "prod_date"
-                    },
-                    {
-                        headerName: "Left",
-                        field: "left"
-                    },
-                    {
-                        headerName: "Exp Date",
-                        field: "exp_date"
-                    },
-                    {
-                        headerName: "Created At",
-                        field: "date"
-                    }
-                ]
-            },
-            {
-                headerName: "Status",
-                children: [{
-                        headerName: "Status",
-                        field: "status"
-                    },
-                    {
-                        headerName: "Storage #",
-                        field: "storage_num"
-                    }
-                ]
-            }
-        ];
-        const rowData = JSON.parse('{!! $inventoryJson !!}');
-
-        gridOptions = {
-            columnDefs: columnDefs,
-            rowData: rowData,
-            domLayout: 'autoHeight',
-            defaultColDef: {
-                resizable: true,
-                flex: 1,
-                sortable: true,
-                filter: true
-            },
-            onGridReady: function(params) {
-                gridOptions.api = params.api;
-                gridOptions.columnApi = params.columnApi;
-                // Set initial visibility based on checkboxes
-                document.querySelectorAll('input[type="checkbox"][onchange^="toggleColumn"]').forEach(
-                    cb => {
-                        const colKey = cb.getAttribute('onchange').match(/'([^']+)'/)[1];
-                        gridOptions.columnApi.setColumnVisible(colKey, cb.checked);
-                    });
-            },
-            pagination: true,
-            paginationPageSize: 10,
-
-        };
-
-
-        const gridDiv = document.getElementById('myGrid');
-        console.log('Grid Div:', gridDiv);
-
-        const grid = new agGrid.Grid(gridDiv, gridOptions);
-        gridOptions.api.addEventListener('firstDataRendered', function() {
-            gridOptions.columnApi.autoSizeColumn('data_entry');
-        });
-
-
-
-    });
+    
 </script>

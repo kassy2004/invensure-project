@@ -13,13 +13,14 @@
         'purple' => ['base' => 280, 'spread' => 300],
         'green' => ['base' => 120, 'spread' => 200],
         'red' => ['base' => 0, 'spread' => 200],
-        'orange' => ['base' => 30, 'spread' => 200],
+        'orange' => ['base' => 0, 'spread' => 24],
     ];
 
     $sizeMap = [
         'sm' => 'w-48 h-64',
         'md' => 'w-64 h-80',
         'lg' => 'w-80 h-96',
+        'xl' => 'w-[600px] h-96',
     ];
 
     $sizeClass = $customSize ? '' : ($sizeMap[$size] ?? $sizeMap['md']);
@@ -98,6 +99,7 @@
         style="
             --base: {{ $base }};
             --spread: {{ $spread }};
+            --hue: {{$base}};
             --radius: 14;
             --border: 3;
             --backdrop: hsl(0 0% 60% / 0.12);

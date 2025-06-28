@@ -131,7 +131,7 @@
                         </p> --}}
                         <div class="flex space-y-4 sm:space-y-0 sm:space-x-4 justify-center mt-12">
                             <a href="{{ Route::has('register') ? route('register') : '#' }}"
-                                class="bg-orange-500 hover:bg-orange-400 transition duration-500 ease-in-out flex gap-2 items-center text-white px-6 py-3 justify-center rounded-xl">
+                                class="bg-orange-500 hover:bg-orange-400 hover:border-orange-400 transition duration-500 ease-in-out flex gap-2 items-center text-white px-6 py-3 justify-center rounded-xl">
 
                                 <span>Get Started</span>
                                 {{-- <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20"
@@ -184,7 +184,7 @@
 
 
         <!-- Features Section -->
-        <section id="features" class="py-20 bg-gradient-to-b from-white to-yellow-50">
+        <section id="features" class="py-20 bg-white">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
                     <h2 class="text-3xl md:text-4xl font-bold mb-4">
@@ -220,7 +220,7 @@
 
                     <!-- Feature 2: Logistics Coordination -->
                     <div
-                    class="card bg-transparent border border-gray-300 rounded-xl transition-all duration-300 hover:-translate-y-1">
+                        class="card bg-transparent border border-gray-300 rounded-xl transition-all duration-300 hover:-translate-y-1">
                         <div class="card-body">
                             <div
                                 class="flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-brand-orange bg-opacity-20">
@@ -242,7 +242,7 @@
 
                     <!-- Feature 3: Quality Assurance -->
                     <div
-                    class="card bg-transparent border border-gray-300 rounded-xl transition-all duration-300 hover:-translate-y-1">
+                        class="card bg-transparent border border-gray-300 rounded-xl transition-all duration-300 hover:-translate-y-1">
                         <div class="card-body">
                             <div
                                 class="flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-brand-crimson bg-opacity-20">
@@ -262,7 +262,7 @@
 
                     <!-- Feature 4: Real-time Analytics -->
                     <div
-                    class="card bg-transparent border border-gray-300 rounded-xl transition-all duration-300 hover:-translate-y-1">
+                        class="card bg-transparent border border-gray-300 rounded-xl transition-all duration-300 hover:-translate-y-1">
                         <div class="card-body">
                             <div
                                 class="flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-brand-gold bg-opacity-20">
@@ -282,7 +282,7 @@
 
                     <!-- Feature 5: Role-Based Access -->
                     <div
-                    class="card bg-transparent border border-gray-300 rounded-xl transition-all duration-300 hover:-translate-y-1">
+                        class="card bg-transparent border border-gray-300 rounded-xl transition-all duration-300 hover:-translate-y-1">
                         <div class="card-body">
                             <div
                                 class="flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-brand-orange bg-opacity-20">
@@ -302,7 +302,7 @@
 
                     <!-- Feature 6: Secure Platform -->
                     <div
-                    class="card bg-transparent border border-gray-300 rounded-xl transition-all duration-300 hover:-translate-y-1">
+                        class="card bg-transparent border border-gray-300 rounded-xl transition-all duration-300 hover:-translate-y-1">
                         <div class="card-body">
                             <div
                                 class="flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-brand-crimson bg-opacity-20">
@@ -324,8 +324,8 @@
         </section>
 
         <!-- Call to Action Section -->
-        <section id="cta" class="relative py-20 cta-bg">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-center">
+        <section id="cta" class="relative py-20 bg-white">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-center items-center">
                 {{-- <div
                     class="max-w-3xl mx-auto bg-gradient-to-r from-brand-gold via-brand-orange to-brand-crimson p-1 rounded-xl shadow-xl">
                     <div class="bg-white dark:bg-gray-900 rounded-lg p-8 md:p-12 text-center">
@@ -342,38 +342,56 @@
                         </a>
                     </div>
                 </div> --}}
-                <x-glow-card glow-color="orange" size="lg" class="text-white">
-                    <p class="text-lg">Welcome to Spotlight Glow in Laravel ✨</p>
+                <x-glow-card glow-color="orange" size="xl" class="text-white">
+                    <div class=" p-8 md:p-12 text-center">
+                        <h2 class="text-3xl md:text-4xl font-semibold mb-4">
+                            <span class="text-zinc-800">Ready to Transform Your Supply Chain?</span>
+                        </h2>
+                        <p class="text-lg text-zinc-600 mb-8">
+                            Join Sunny & Scramble and hundreds of other businesses that rely on Invensure to streamline
+                            their supply chain management.
+                        </p>
+                        <a href="{{ Route::has('register') ? route('register') : '#' }}"
+                            class="btn btn-lg bg-orange-500 border-orange-500 hover:border-orange-400 text-white px-8 md:px-12 shadow-none hover:bg-orange-400 transition duration-300 ease-in-out rounded-xl">
+                            Get Started Today
+                        </a>
+                    </div>
                 </x-glow-card>
             </div>
         </section>
 
-   
+
 
         <!-- Footer -->
-        <footer class="bg-neutral text-neutral-content">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <footer class="relative hero-bg text-neutral-content">
+            <div aria-hidden="true"
+                class="bg-gradient-to-t from-transparent to-white absolute inset-0 z-0 from-[30%]"></div>
+
+            <div class="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <hr class="border-zinc-300">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-12  z-50">
+
+
                     <div>
-                        <x-invensure-logo textClass="text-neutral-content" />
-                        <p class="mt-4">
+                        <x-invensure-logo />
+                        <p class="mt-4 text-zinc-700">
                             Streamlining supply chain management for Sunny & Scramble's perishable goods business.
                         </p>
                     </div>
 
                     <div>
-                        <h3 class="text-lg font-bold mb-4">Quick Links</h3>
-                        <ul class="space-y-2">
-                            <li><a href="#hero" class="hover:text-primary transition">Home</a></li>
-                            <li><a href="#features" class="hover:text-primary transition">Features</a></li>
-                            <li><a href="#about" class="hover:text-primary transition">About</a></li>
-                            <li><a href="#contact" class="hover:text-primary transition">Contact</a></li>
+                        <h3 class="text-lg font-bold mb-4 text-zinc-800">Quick Links</h3>
+                        <ul class="space-y-2 text-zinc-700">
+                            <li><a href="#hero" class="hover:text-orange-500 transition">Home</a></li>
+                            <li><a href="#features" class="hover:text-orange-500 transition">Features</a></li>
+                            <li><a href="#about" class="hover:text-orange-500 transition">About</a></li>
+                            <li><a href="#contact" class="hover:text-orange-500 transition">Contact</a></li>
                         </ul>
                     </div>
 
                     <div>
-                        <h3 class="text-lg font-bold mb-4">Legal</h3>
-                        <ul class="space-y-2">
+                        <h3 class="text-lg font-bold mb-4 text-zinc-800">Legal</h3>
+                        <ul class="space-y-2 text-zinc-700">
                             <li><a href="#" class="hover:text-primary transition">Terms of Service</a></li>
                             <li><a href="#" class="hover:text-primary transition">Privacy Policy</a></li>
                             <li><a href="#" class="hover:text-primary transition">Cookie Policy</a></li>
@@ -381,8 +399,8 @@
                     </div>
 
                     <div>
-                        <h3 class="text-lg font-bold mb-4">Connect</h3>
-                        <div class="flex space-x-4 mb-4">
+                        <h3 class="text-lg font-bold mb-4 text-zinc-800">Connect</h3>
+                        <div class="flex space-x-4 mb-4 text-zinc-700">
                             <a href="#" class="hover:text-primary transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor"
                                     viewBox="0 0 24 24">
@@ -412,15 +430,15 @@
                                 </svg>
                             </a>
                         </div>
-                        <p>
+                        <p class="text-zinc-700">
                             Email: <a href="mailto:contact@invensure.com"
-                                class="hover:text-primary transition">contact@invensure.com</a>
+                                class="hover:text-orange-500 transition">contact@invensure.com</a>
                         </p>
-                        <p>Phone: +1 (555) 123-4567</p>
+                        <p class="text-zinc-700">Phone: +1 (555) 123-4567</p>
                     </div>
                 </div>
 
-                <div class="mt-12 pt-8 border-t border-neutral-content border-opacity-10 text-center">
+                <div class="mt-12 pt-8 border-t border-zinc-300  text-center text-zinc-700">
                     <p>&copy; {{ date('Y') }} Invensure. All rights reserved.</p>
                 </div>
             </div>

@@ -68,7 +68,7 @@
                             <div class="flex items-center space-x-4">
                                 @auth
                                     <a href="{{ url('/dashboard') }}"
-                                        class="btn btn-sm bg-white text-primary hover:bg-white hover:text-primary border-none">Dashboard</a>
+                                        class="btn btn-sm bg-transparent text-orange-500 hover:bg-orange-500 hover:text-white shadow-none border border-orange-500 rounded-lg transition duration-300 ease-in-out">Dashboard</a>
                                 @else
                                     <a href="{{ route('login') }}"
                                         class="btn btn-md shadow-none rounded-lg border border-gray-300 bg-transparent text-zinc-900 font-bold hover:bg-zinc-200 transition duration-300 ease-in-out ">Login</a>

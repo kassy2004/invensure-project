@@ -200,6 +200,10 @@
                         field: "data_entry"
                     },
                     {
+                        headerName: "Item Code",
+                        field: "item_code"
+                    },
+                    {
                         headerName: "Item Group",
                         field: "item_group"
                     }

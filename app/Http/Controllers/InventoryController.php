@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -35,15 +36,22 @@ class InventoryController extends Controller
                 $expDate = Carbon::parse($item->exp_date);
                 $prodDate = Carbon::parse($item->prod_date);
 
-                // Calculate months left
-                $formatted = $expDate->format('Y-m-d');
-                $formattedProdDate = $prodDate->format('Y-m-d');
 
                 // Calculate days left
                 $daysLeft = $today->diffInDays($expDate, false);
 
-                $status = $daysLeft <= 20 ? 'EXPIRE SOON' : 'FG AVAILABLE';
+                // $status = $daysLeft <= 20 ? 'EXPIRE SOON' : 'FG AVAILABLE';
 
+                $status = "";
+                Log::info("🧾 Item ID: {$item->id} | Days Left: {$daysLeft}");
+
+                if ($daysLeft <= 0) {
+                    $status = 'EXPIRED';
+                } elseif ($daysLeft <= 20) {
+                    $status = 'EXPIRE SOON';
+                } else {
+                    $status = 'FG AVAILABLE';
+                }
                 // Update row
                 $success = DB::table('pcsi_incoming')
                     ->where('id', $item->id)
@@ -52,15 +60,61 @@ class InventoryController extends Controller
                         'status' => $status,
                     ]);
 
-                // Update the record
-                // DB::table('pcsi_incoming')
-                // ->where('id', $item->id)
-                // ->update(['prod_date' => $formattedProdDate]);
+
+
 
             } catch (\Exception $e) {
                 Log::warning("Failed to parse exp_date for ID {$item->id}: {$item->exp_date} - {$e->getMessage()}");
             }
         }
+        $soonToExpireItems = DB::table('pcsi_incoming')
+            ->whereDate('exp_date', '>', $today)
+            ->whereDate('exp_date', '<=', $today->copy()->addDays(20))
+            ->get();
+        foreach ($soonToExpireItems as $item) {
+            // Avoid duplicate notifications (optional, based on your design)
+            $existing = DB::table('notifications')
+                ->where('message', 'like', "%Item: {$item->id}. {$item->item_code}%")
+                // ->whereNull('read_at')
+                ->exists();
+
+            if (!$existing) {
+                DB::table('notifications')->insert([
+                    'title' => 'Item Expiry Warning',
+                    'message' => "Item: {$item->id}. {$item->item_code} (SKU: {$item->sku}) will expire on {$item->exp_date}.",
+                    'type' => 'warning',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
+
+
+        $expiredItems = DB::table('pcsi_incoming')
+            ->where('status', 'EXPIRED')
+            ->get();
+
+        foreach ($expiredItems as $item) {
+            // Avoid duplicate notifications (optional, based on your design)
+            $existing = DB::table('notifications')
+                ->where('title', 'Item Expired')
+                ->where('message', 'like', "%Item: {$item->id}. {$item->item_code}%")
+                // ->whereNull('read_at')
+                ->exists();
+
+            if (!$existing) {
+                DB::table('notifications')->insert([
+                    'title' => 'Item Expired',
+                    'message' => "Item: {$item->id}. {$item->item_code} (SKU: {$item->sku}) has expired",
+                    'type' => 'error',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
+
+        $notifications = DB::table('notifications')->get();
+        // dd($notifications);
 
         $expiring = DB::table('pcsi_incoming')
             ->where('status', 'EXPIRE SOON')
@@ -77,7 +131,7 @@ class InventoryController extends Controller
             ->get();
 
 
-        return view('inventory-manager.pcsi', compact('inventoryJson', 'inventory_head', 'inventory_kilo', 'qty_head', 'qty_kilo', 'balance_head', 'balance_kilo', 'expiring', 'available', 'expiringItem', 'availableItem', 'item_master'));
+        return view('inventory-manager.pcsi', compact('inventoryJson', 'inventory_head', 'inventory_kilo', 'qty_head', 'qty_kilo', 'balance_head', 'balance_kilo', 'expiring', 'available', 'expiringItem', 'availableItem', 'item_master', 'notifications'));
     }
 
     public function add(Request $request)
@@ -107,7 +161,7 @@ class InventoryController extends Controller
 
 
         try {
-           
+
 
             $expDate = $prodDate->copy()->addMonths($expirationStage);
             $formattedExpDate = $expDate->format('Y-m-d');

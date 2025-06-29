@@ -6,6 +6,7 @@ use App\Http\Controllers\JFPCController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 
 Route::get('/', function () {
     return view('welcome');
@@ -22,7 +23,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 
 Route::get('/user', function () {
@@ -54,3 +55,17 @@ Route::post('/warehouse/pcsi/add', [InventoryController::class, 'add'])->name('w
 Route::get('/warehouse/jfpc', [JFPCController::class, 'index'])->middleware(['auth', 'verified'])->name('warehouse/jfpc');
 Route::post('/warehouse/jfpc/add', [JFPCController::class, 'add'])->name('warehouse.jfpc.add');
 Route::post('/item-master/add', [ItemMasterController::class, 'add'])->name('item-master.add');
+Route::post('/notifications/read-all', function () {
+    DB::table('notifications')->whereNull('read_at')->update([
+        'read_at' => now()
+    ]);
+    return response()->json(['success' => true]);
+});
+
+
+Route::post('/notifications/marked', function () {
+    DB::table('notifications')->whereNull('marked_as_read')->update([
+        'marked_as_read' => 'marked_as_read'
+    ]);
+    return response()->json(['success' => true]);
+});

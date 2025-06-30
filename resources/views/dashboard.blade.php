@@ -73,38 +73,17 @@
                                     <div class="flex flex-col w-full gap-3">
                                         <div class="flex justify-between items-center w-full">
                                             <div class="flex flex-col">
-                                                <p class="text-gray-700 font-semibold text-sm">Total Available Stock</p>
+                                                <p class="text-gray-700 font-semibold text-sm">Total Products</p>
                                             </div>
-                                            <div class="dropdown dropdown-end">
-                                                <div tabindex="0" role="button"
-                                                    class="p-0 btn h-0 bg-transparent m-0 shadow-none border-none">
-                                                    <x-lucide-eye
-                                                        class="h-5 w-5 shrink-0 text-gray-500 cursor-pointer hover:text-gray-800 transition duration-200 ease-in-out" />
-                                                </div>
 
-
-                                                <ul tabindex="0"
-                                                    class="dropdown-content flex flex-col px-2 border border-zinc-300 bg-gray-100 rounded-box z-10 w-98  overflow-y-auto max-h-64 overflow-x-auto whitespace-nowrap pb-2">
-                                                    {{-- @foreach ($availableItem as $item)
-                                               
-                                                        <li
-                                                            class=" text-xs text-zinc-500 uppercase font-semibold px-1 flex justify-between mt-3 cursor-pointer hover:bg-zinc-300 py-1 rounded-md">
-                                                            <span>No. {{ $item->id }}</span>
-                                                            <span
-                                                                class="truncate block max-w-[200px] text-ellipsis overflow-hidden whitespace-nowrap">{{ $item->data_entry }}</span>
-                                                            <span>{{ $item->left }} days left</span>
-
-                                                        </li>
-                                                    @endforeach --}}
-
-                                                </ul>
-                                            </div>
+                                            <x-lucide-package
+                                                class="h-5 w-5 shrink-0 text-gray-500 cursor-pointer hover:text-gray-800 transition duration-200 ease-in-out" />
                                         </div>
                                         <div>
                                             <p class="text-3xl font-bold text-gray-800">
                                                 {{-- {{ number_format($available) ?? '24,500' }}</p> --}}
                                                 {{-- <span class="text-xs text-gray-500">+20.1% from last month</span> --}}
-                                                23,500
+                                               {{$totalProducts}}
                                         </div>
                                     </div>
                                 </div>
@@ -117,32 +96,12 @@
                                     <div class="flex flex-col w-full gap-3">
                                         <div class="flex justify-between items-center w-full">
                                             <div class="flex flex-col">
-                                                <p class="text-gray-700 font-semibold text-sm">Total Expiring Soon</p>
+                                                <p class="text-gray-700 font-semibold text-sm">Low Stock Items</p>
                                             </div>
 
-                                            <div class="dropdown dropdown-end">
-                                                <div tabindex="0" role="button"
-                                                    class="p-0 btn h-0 bg-transparent m-0 shadow-none border-none">
-                                                    <x-lucide-eye
-                                                        class="h-5 w-5 shrink-0 text-gray-500 cursor-pointer hover:text-gray-800 transition duration-200 ease-in-out" />
-                                                </div>
 
-
-                                                <ul tabindex="0"
-                                                    class="dropdown-content flex flex-col px-2 border border-zinc-300 bg-gray-100 rounded-box z-10 w-98  overflow-y-auto max-h-64 overflow-x-auto whitespace-nowrap pb-2">
-                                                    {{-- @foreach ($expiringItem as $item)
-                                                        <li
-                                                            class=" text-xs text-zinc-500 uppercase font-semibold px-1 flex justify-between mt-3 cursor-pointer hover:bg-zinc-300 py-1 rounded-md">
-                                                            <span>No. {{ $item->id }}</span>
-                                                            <span
-                                                                class="truncate block max-w-[200px] text-ellipsis overflow-hidden whitespace-nowrap">{{ $item->data_entry }}</span>
-                                                            <span>{{ $item->left }} days left</span>
-
-                                                        </li>
-                                                    @endforeach --}}
-
-                                                </ul>
-                                            </div>
+                                            <x-lucide-alert-circle
+                                                class="h-5 w-5 shrink-0 text-gray-500 cursor-pointer hover:text-gray-800 transition duration-200 ease-in-out" />
 
                                         </div>
                                         <div>
@@ -153,30 +112,71 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="bg-zinc-50 rounded-lg p-6 border-2 border-gray-200 w-full ">
+                                <div class="flex items-center">
 
+                                    <div class="flex flex-col w-full gap-3">
+                                        <div class="flex justify-between items-center w-full">
+                                            <div class="flex flex-col">
+                                                <p class="text-gray-700 font-semibold text-sm">Pending Orders</p>
+                                            </div>
+                                            <x-lucide-clock
+                                                class="h-5 w-5 shrink-0 text-gray-500 cursor-pointer hover:text-gray-800 transition duration-200 ease-in-out" />
+                                        </div>
+                                        <div>
+                                            <p class="text-3xl font-bold text-gray-800">
+                                                {{-- {{ number_format($expiring) ?? '24,500' }}</p> --}}
+                                                {{ $pendingCount }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Total rejects and return --}}
+                            <div class="bg-zinc-50 rounded-lg p-6 border-2 border-gray-200 w-full ">
+                                <div class="flex items-center">
+
+                                    <div class="flex flex-col w-full gap-3">
+                                        <div class="flex justify-between items-center w-full">
+                                            <div class="flex flex-col">
+                                                <p class="text-gray-700 font-semibold text-sm">Rejects and Return</p>
+                                            </div>
+                                            <x-lucide-rotate-ccw
+                                                class="h-5 w-5 shrink-0 text-gray-500 cursor-pointer hover:text-gray-800 transition duration-200 ease-in-out" />
+                                        </div>
+                                        <div>
+                                            <p class="text-3xl font-bold text-gray-800">
+                                                {{-- {{ number_format($expiring) ?? '24,500' }}</p> --}}
+                                                23,500
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                         </div>
 
                         <div class="flex justify-between w-full gap-6">
-                            <div class="flex flex-col gap-6 mt-5 p-6 bg-zinc-50 rounded-xl border border-gray-200 w-full lg:w-1/2">
+                            <div
+                                class="flex flex-col gap-6 mt-5 p-6 bg-zinc-50 rounded-xl border border-gray-200 w-full ">
                                 <div>
                                     <h1 class="text-zinc-800 font-semibold">Top Moving Items</h1>
                                     <p class="text-zinc-600 text-sm">Most Frequently In & Out</p>
                                 </div>
-                            
-                                <div class="w-full h-80">
+
+                                <div class="w-11/12 mx-auto">
                                     <canvas id="myChart" class="w-full h-full"></canvas>
                                 </div>
                             </div>
 
                             <div
-                                class="flex flex-col gap-6 flex-wrap lg:flex-nowrap mt-5 p-6 bg-zinc-50 rounded-xl border border-gray-200 w-full">
+                                class= "flex flex-col gap-6 flex-wrap lg:flex-nowrap mt-5 p-6 bg-zinc-50 rounded-xl border border-gray-200 w-full ">
                                 <div>
-                                    <h1 class="text-zinc-800 font-semibold">Dead Stock Report</h1>
-                                    <p class="text-zinc-600 text-sm">Items with No Movement</p>
+                                    <h1 class="text-zinc-800 font-semibold">Stock by Categories</h1>
+                                    <p class="text-zinc-600 text-sm">Live status of your inventory across all categories
+                                    </p>
                                 </div>
 
-                                <div class=" w-11/12 mx-auto">
+                                <div class="w-11/12 mx-auto">
                                     <canvas id="deadStockChart" class="w-full"></canvas>
                                 </div>
                             </div>
@@ -189,3 +189,67 @@
     </div>
 
 </x-app-layout>
+<script>
+    const ctx = document.getElementById('myChart');
+
+    const labels = @json($topItems->pluck('description'));
+    const data = @json($topItems->pluck('total_moved'));
+    window.myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Total moved',
+                data: data,
+                backgroundColor: 'rgb(253 186 116)', // Tailwind blue-500 with opacity
+                borderColor: 'rgb(249 115 22)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+
+
+        },
+
+    });
+
+
+    const ctxDeadStock = document.getElementById('deadStockChart');
+    const categoriesLabels = @json($stockSummary->pluck('item_group'));
+    const categoriesData = @json($stockSummary->pluck('total_quantity'));
+    window.myChart2 = new Chart(ctxDeadStock, {
+        type: 'bar',
+        data: {
+            labels: categoriesLabels,
+            datasets: [{
+                label: 'Stock',
+                data: categoriesData,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.7)', // 30 days
+                    'rgba(75, 192, 192, 0.7)', // 90 days
+                    'rgba(255, 206, 86, 0.7)', // 60 days
+                    'rgba(255, 206, 86, 0.7)', // 60 days
+                    'rgba(75, 192, 192, 0.7)' // 90 days
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+
+            responsive: true,
+            maintainAspectRatio: false,
+
+
+        }
+    });
+</script>

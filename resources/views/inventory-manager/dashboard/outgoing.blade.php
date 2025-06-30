@@ -11,8 +11,7 @@
 
         <label class="input bg-transparent border border-zinc-300 rounded-lg">
             <x-lucide-search class="h-4 w-4 text-gray-400 " />
-            <input id="search-box" type="search" class="grow text-zinc-600"
-                placeholder="Search" />
+            <input id="outgoing-search-box" type="search" class="grow text-zinc-600" placeholder="Search" />
 
         </label>
         {{-- <input type="text" id="quickFilterInput"
@@ -179,27 +178,118 @@
 
 
 
-    <div id="outgoingGrid" class="ag-theme-alpine" style="height: 400px; width: 100%;"></div>
+    <div id="outgoingGrid" class="ag-theme-alpine"></div>
 </div>
 
 
-{{-- <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const outgoingGridOptions = {
-            columnDefs: [
-                { headerName: "Item", field: "item" },
-                { headerName: "Qty", field: "quantity" }
-                // etc.
-            ],
-            rowData: [], // or your fetched data
-            defaultColDef: {
-                flex: 1,
-                minWidth: 100,
-                resizable: true,
-            }
-        };
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
 
-        new agGrid.Grid(document.getElementById('outgoingGrid'), outgoingGridOptions);
-        window.outgoingGridOptions = outgoingGridOptions;
+        document.getElementById('outgoing-search-box').addEventListener('input', function() {
+            outgoingGridOptions.api.setQuickFilter(this.value);
+        });
+        const outgoingColumnDefs = [{
+                headerName: "Line No.",
+                field: "id",
+                pinned: 'left'
+            },
+            {
+                headerName: "Transaction Date",
+                field: "transaction_date"
+            },
+            {
+                headerName: "Customer",
+                field: "customer"
+            },
+            {
+                headerName: "CM Code",
+                field: "cm_code"
+            },
+            {
+                headerName: "Item Code",
+                field: "item_code"
+            },
+            {
+                headerName: "Description",
+                field: "description"
+            },
+            {
+                headerName: "SKU Description",
+                field: "sku_description"
+            },
+            {
+                headerName: "Primary Packaging",
+                field: "primary_packaging"
+            },
+            {
+                headerName: "Secondary Packaging",
+                field: "secondary_packaging"
+            },
+            {
+                headerName: "CM Category",
+                field: "cm_category"
+            },
+            {
+                headerName: "Product Category",
+                field: "product_category"
+            },
+            {
+                headerName: "Variant",
+                field: "variant"
+            },
+            {
+                headerName: "Production Date",
+                field: "production"
+            },
+            {
+                headerName: "Quantity",
+                field: "quantity"
+            },
+            {
+                headerName: "Kilogram",
+                field: "kilogram"
+            },
+            {
+                headerName: "Remarks",
+                field: "remarks"
+            },
+            {
+                headerName: "Created At",
+                field: "created_at"
+            },
+        ];
+
+        const outogingRowData = JSON.parse('{!! $outogingJson !!}');
+        const outgoingGridOptions = {
+            columnDefs: outgoingColumnDefs,
+            rowData: outogingRowData,
+            domLayout: 'autoHeight',
+            defaultColDef: {
+                resizable: true,
+                sortable: true,
+                filter: true
+            },
+
+            pagination: true,
+            paginationPageSize: 10,
+
+
+        };
+        const outgoingGridDiv = document.getElementById('outgoingGrid');
+        console.log('Outgoing Grid Div:', outgoingGridDiv);
+
+        const outgoingGrid = new agGrid.Grid(outgoingGridDiv, outgoingGridOptions);
+
+        outgoingGridOptions.api.addEventListener('firstDataRendered', function() {
+
+            outgoingGridOptions.columnApi.getAllColumns().forEach(col => {
+                const colId = col.getColId();
+                const width = outgoingGridOptions.columnApi.getColumnState().find(c => c
+                    .colId === colId).width;
+                console.log(`Column ${colId}: ${width}px`);
+            });
+        });
+
+
     });
-</script> --}}
+</script>

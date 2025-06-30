@@ -13,12 +13,16 @@ class InventoryController extends Controller
     public function index()
     {
         $inventory = DB::table('pcsi_incoming')->get();
+
+
+        $outoging = DB::table('pcsi_outgoing')->get();
         $item_master = DB::table('item_master')->get();
 
         // Debug: Log the count of items
         Log::info('Item master count: ' . $item_master->count());
         // dd($item_master);
         $inventoryJson = $inventory->toJson();
+        $outogingJson = $outoging->toJson();
 
         $inventory_head = DB::table('pcsi_incoming')->sum('inventory_head');
         $inventory_kilo = DB::table('pcsi_incoming')->sum('inventory_kilo');
@@ -131,7 +135,7 @@ class InventoryController extends Controller
             ->get();
 
 
-        return view('inventory-manager.pcsi', compact('inventoryJson', 'inventory_head', 'inventory_kilo', 'qty_head', 'qty_kilo', 'balance_head', 'balance_kilo', 'expiring', 'available', 'expiringItem', 'availableItem', 'item_master', 'notifications'));
+        return view('inventory-manager.pcsi', compact('inventoryJson', 'inventory_head', 'inventory_kilo', 'qty_head', 'qty_kilo', 'balance_head', 'balance_kilo', 'expiring', 'available', 'expiringItem', 'availableItem', 'item_master', 'notifications', 'outoging', 'outogingJson', 'inventory'));
     }
 
     public function add(Request $request)
@@ -196,5 +200,59 @@ class InventoryController extends Controller
             Log::error('Error adding item to PCSI: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Error adding item: ' . $e->getMessage());
         }
+    }
+    public function ship(Request $request)
+    {
+        try {
+
+
+            $validated = $request->validate([
+                'item_id' => 'required|numeric',
+                'customer' => 'nullable|string|max:255',
+                'cm_code' => 'nullable|string|max:255',
+                'production_date' => 'required|date',
+                'transaction_date' => 'required|date',
+                'description' => 'string|max:255',
+                'cm_category' => 'string|max:255',
+                'quantity' => 'required|numeric',
+                'kilogram' => 'required|numeric',
+                'remarks' => 'nullable|string|max:255',
+
+
+            ]);
+
+            $incoming = DB::table('pcsi_incoming')
+                ->select('item_code', 'sku', 'primary_packaging', 'secondary_packaging', 'variant', 'item_group')
+                ->where('id', $validated['item_id'])
+                ->first();
+            if (!$incoming) {
+                return back()->withErrors(['item_id' => 'Selected item not found.']);
+            }
+
+            DB::table('pcsi_outgoing')->insert([
+                'transaction_date' => $validated['transaction_date'],
+                'customer' => $validated['customer'],
+                'cm_code' => $validated['cm_code'],
+                'item_code' => $incoming->item_code,
+                'description' => $validated['description'],
+                'sku_description' => $incoming->sku,
+                'primary_packaging' => $incoming->primary_packaging,
+                'secondary_packaging' => $incoming->secondary_packaging,
+                'cm_category' => $validated['cm_category'],
+                'product_category' => $incoming->item_group,
+                'variant' => $incoming->variant,
+                'production' => $validated['production_date'],
+                'quantity' => $validated['quantity'],
+                'kilogram' => $validated['kilogram'],
+                'remarks' => $validated['remarks'],
+
+            ]);
+           
+                return redirect()->back()->with('success', 'Item successfully shipped.');
+            
+        }catch(\Exception $e){
+            return redirect()->back()->withErrors(['error' => 'Something went wrong: ' . $e->getMessage()]);
+        }
+
     }
 }

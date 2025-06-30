@@ -1,12 +1,202 @@
 <div class=" p-10 bg-zinc-50  h-auto rounded-lg border border-zinc-300">
-    <div class=" mb-5 flex gap-5 items-center">
+    <div class=" mb-5 flex gap-5 items-center justify-between">
         <h1 class="text-lg font-semibold text-zinc-900">
             Incoming
         </h1>
-
-
+        <button onclick="my_modal_6.showModal()"
+            class="bg-orange-500 px-4 py-2 flex items-center gap-3 rounded-md text-gray-50 text-sm hover:bg-orange-400 transition duration-200 ease-in-out">
+            <x-lucide-truck class="h-4 w-4" />
+            Ship Item</button>
     </div>
+    <dialog id="my_modal_6" class="modal  modal-bottom sm:modal-middle ">
+        <div class="modal-box bg-zinc-50 border border-zinc-300 h-128">
+            <form method="dialog">
+                <button
+                    class="btn btn-sm btn-circle shadow-none btn-ghost hover:bg-zinc-200 hover:border-zinc-200 absolute right-2 top-2 text-zinc-800 ">✕</button>
+            </form>
+            <h3 class="text-lg font-bold text-zinc-900">Ship an item</h3>
 
+            <form method="POST" action="{{ route('warehouse.pcsi.ship') }}">
+                @csrf
+
+                <div class="mb-4">
+                    <hr class="my-5">
+                    <div>
+                        <legend class="fieldset-legend text-orange-400">Item Details</legend>
+                        <div x-data="{ search: '', selected: '', open: false }" class="relative z-[9999]">
+                            <fieldset class="fieldset">
+                                <legend class="fieldset-legend text-zinc-600">Search Item</legend>
+
+
+                            </fieldset>
+                            <input type="text" x-model="search" @focus="open = true" @click.away="open = false"
+                                placeholder="Search item..."
+                                class="w-full border border-zinc-300 rounded-md px-3 py-2 text-sm text-zinc-800" />
+
+                            <div x-show="open"
+                                class="absolute z-[9999] mt-1 w-full bg-white border border-zinc-300 rounded-md max-h-48 overflow-y-auto">
+                                @foreach ($inventory as $item)
+                                    <div x-show="{{ json_encode($item->item_code) }}.toLowerCase().includes(search.toLowerCase())"
+                                        @click="selected = '{{ $item->id }}'; search = '{{ $item->item_code }} ({{ $item->qty_head }})'; open = false"
+                                        class="px-3 py-2 cursor-pointer hover:bg-zinc-100 text-sm text-zinc-700 flex flex-col">
+                                        <span>{{ $item->item_code }}</span>
+                                        <span class="text-gray-500 text-xs">{{ $item->data_entry }} ({{ $item->qty_head }})</span>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <input type="hidden" name="item_id" :value="selected" required />
+                        </div>
+
+                        <div class="flex justify-between gap-4">
+
+                            <div class="flex flex-col w-full">
+                                <fieldset class="fieldset">
+                                    <legend class="fieldset-legend text-zinc-600">Transaction Date</legend>
+                                </fieldset>
+                                <button type="button" popovertarget="cally-popover2"
+                                    class="input input-border bg-zinc-50 border border-zinc-300 text-zinc-600 w-full cursor-pointer"
+                                    id="cally2" style="anchor-name:--cally2">
+                                    <x-lucide-calendar class="h-4 w-4" />
+                                </button>
+                                <div popover id="cally-popover2" class="dropdown bg-zinc-200 rounded-box shadow-lg"
+                                    style="position-anchor:--cally2">
+                                    <calendar-date class="cally  text-zinc-900 "
+                                        onchange="
+                        const selectedDate = this.value || this.getAttribute('value');
+                        document.getElementById('transaction_date').value = selectedDate;
+                        document.getElementById('cally2').innerText = selectedDate;
+                        
+                    ">
+                                        <svg aria-label="Previous" class="fill-current size-4 text-zinc-900 "
+                                            slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <path d="M15.75 19.5 8.25 12l7.5-7.5"></path>
+                                        </svg>
+                                        <svg aria-label="Next" class="fill-current size-4  text-zinc-900 "
+                                            slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+                                        </svg>
+                                        <calendar-month></calendar-month>
+                                    </calendar-date>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col w-full">
+                                <fieldset class="fieldset">
+                                    <legend class="fieldset-legend text-zinc-600">Production Date</legend>
+                                </fieldset>
+                                <button type="button" popovertarget="cally-popover3"
+                                    class="input input-border bg-zinc-50 border border-zinc-300 text-zinc-600 w-full cursor-pointer"
+                                    id="cally3" style="anchor-name:--cally3">
+                                    <x-lucide-calendar class="h-4 w-4" />
+                                </button>
+                                <div popover id="cally-popover3" class="dropdown bg-zinc-200 rounded-box shadow-lg"
+                                    style="position-anchor:--cally3">
+                                    <calendar-date class="cally  text-zinc-900 "
+                                        onchange="
+                        const selectedDate = this.value || this.getAttribute('value');
+                        document.getElementById('production_date').value = selectedDate;
+                        document.getElementById('cally3').innerText = selectedDate;
+                        
+                    ">
+                                        <svg aria-label="Previous" class="fill-current size-4 text-zinc-900 "
+                                            slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <path d="M15.75 19.5 8.25 12l7.5-7.5"></path>
+                                        </svg>
+                                        <svg aria-label="Next" class="fill-current size-4  text-zinc-900 "
+                                            slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+                                        </svg>
+                                        <calendar-month></calendar-month>
+                                    </calendar-date>
+                                </div>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="production_date" name="production_date">
+                        <input type="hidden" id="transaction_date" name="transaction_date">
+                        <fieldset class="fieldset">
+                            <legend class="fieldset-legend text-zinc-600">Customer</legend>
+                            <input type="text" name="customer"
+                                class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
+                                placeholder="Customer" />
+
+                        </fieldset>
+                        <fieldset class="fieldset">
+                            <legend class="fieldset-legend text-zinc-600">CM Code</legend>
+                            <input type="text" name="cm_code"
+                                class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
+                                placeholder="CMXXXXX" />
+
+                        </fieldset>
+                        <fieldset class="fieldset">
+                            <legend class="fieldset-legend text-zinc-600">CM Category</legend>
+                            <input type="text" name="cm_category"
+                                class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
+                                placeholder="Wholesale" />
+
+                        </fieldset>
+                        <fieldset class="fieldset">
+                            <legend class="fieldset-legend text-zinc-600">Description</legend>
+                            <input type="text" name="description"
+                                class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
+                                placeholder="Description" required />
+
+                        </fieldset>
+
+                    </div>
+                    <hr class="my-5">
+                    <div>
+                        <legend class="fieldset-legend text-orange-400">Issuance</legend>
+                        <div class="flex justify-between gap-4">
+
+                            <fieldset class="fieldset">
+                                <legend class="fieldset-legend text-zinc-600">Quantity</legend>
+                                <input type="text" name="quantity"
+                                    class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
+                                    placeholder="0" required />
+
+                            </fieldset>
+                            <fieldset class="fieldset">
+                                <legend class="fieldset-legend text-zinc-600">Kilogram</legend>
+                                <input type="text" name="kilogram"
+                                    class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
+                                    placeholder="0.00" required />
+
+                            </fieldset>
+                        </div>
+
+                    </div>
+
+                    <hr class="my-5">
+
+
+                    <fieldset class="fieldset">
+                        <legend class="fieldset-legend text-zinc-600">Remarks</legend>
+                        <input type="text" name="remarks"
+                            class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
+                            placeholder="optional" />
+                        <p class="label text-gray-500">Optional</p>
+
+                    </fieldset>
+
+                </div>
+
+                <hr class="my-5">
+                <div class="flex justify-end gap-5">
+
+                    <button type="button" onclick="document.getElementById('my_modal_6').close()"
+                        class="flex justify-end mt-2 px-4 py-2 text-sm bg-transparent text-zinc-500 hover:bg-zinc-200 rounded-md transition duration-200 ease-in-out ">Cancel</button>
+
+                    <button type="submit"
+                        class="flex justify-end mt-2 px-4 py-2 text-sm bg-orange-500 text-white rounded-md hover:bg-orange-400 transition duration-200 ease-in-out">Submit
+                        Shipment</button>
+                </div>
+
+            </form>
+
+        </div>
+    </dialog>
     <div class="flex gap-2 mb-5">
 
         <label class="input bg-transparent border border-zinc-300 rounded-lg">
@@ -34,9 +224,11 @@
                     <!-- Basic Info -->
                     <li class="text-xs text-zinc-500 uppercase font-semibold px-1 flex justify-between mt-3">
                         Basic Info
-                        <input type="checkbox" onchange="toggleSection(this, ['id','data_entry','item_group'])" checked>
+                        <input type="checkbox" onchange="toggleSection(this, ['id','data_entry','item_group'])"
+                            checked>
                     </li>
-                    <li><label class="text-zinc-900"><input type="checkbox" onchange="toggleColumn('id', this) "checked>
+                    <li><label class="text-zinc-900"><input type="checkbox"
+                                onchange="toggleColumn('id', this) "checked>
                             Line</label></li>
                     <li><label class="text-zinc-900"><input type="checkbox"
                                 onchange="toggleColumn('data_entry', this) "checked> Data
@@ -59,12 +251,16 @@
                             Kilogram/Tray</label>
                     </li>
                     <li><label class="text-zinc-900"><input type="checkbox" onchange="toggleColumn('class', this) "
-                                checked> Class</label></li>
+                                checked>
+                            Class</label></li>
                     <li><label class="text-zinc-900"><input type="checkbox" onchange="toggleColumn('sku', this) "
-                                checked> SKU Description</label>
+                                checked>
+                            SKU Description</label>
                     </li>
                     <li><label class="text-zinc-900"><input type="checkbox" onchange="toggleColumn('fg', this) "
-                                checked> FG Description</label></li>
+                                checked>
+                            FG
+                            Description</label></li>
 
                     <hr class="my-2">
                     <!-- Packaging -->
@@ -145,7 +341,8 @@
                     <!-- Status -->
                     <li class="text-xs text-zinc-500 uppercase font-semibold px-1 flex justify-between">
                         Status <input type="checkbox" onchange="toggleSection(this, ['status','storage_num'])"
-                            checked></li>
+                            checked>
+                    </li>
                     <li><label class="text-zinc-900"><input type="checkbox"
                                 onchange="toggleColumn('status', this) "checked>Status</label>
                     </li>

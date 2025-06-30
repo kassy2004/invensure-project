@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ItemMasterController;
 use App\Http\Controllers\JFPCController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReturnItemController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
@@ -12,9 +14,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 
 Route::middleware('auth')->group(function () {
@@ -69,3 +72,9 @@ Route::post('/notifications/marked', function () {
     ]);
     return response()->json(['success' => true]);
 });
+
+
+Route::post('/warehouse/pcsi/ship', [InventoryController::class, 'ship'])->name('warehouse.pcsi.ship');
+
+
+Route::get('/return-item', [ReturnItemController::class, 'index'])->name('return-item');

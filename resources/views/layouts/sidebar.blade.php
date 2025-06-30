@@ -123,8 +123,10 @@
  {{ Request::is('dashboard') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
                     <x-lucide-layout-dashboard class="h-5 w-5 shrink-0 text-gray-700" />
 
-                    <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">Dashboard</a>
+                    <a class="ml-3 hidden group-[.w-64]:inline text-gray-700">Dashboard</a>
                 </li>
+
+
 
 
                 <li onclick="window.location='{{ url('/item-master') }}'"
@@ -134,6 +136,13 @@
                     <x-lucide-archive class="h-5 w-5 shrink-0 text-gray-700" />
                     <a class="ml-3 hidden group-[.w-64]:inline text-gray-700">Item Master</a>
                 </li>
+                <li onclick="window.location='{{ url('/return-item') }}'"
+                class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
+{{ Request::is('return-item') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
+
+                <x-lucide-rotate-ccw class="h-5 w-5 shrink-0 text-gray-700" />
+                <a class="ml-3 hidden group-[.w-64]:inline text-gray-700">Return Item</a>
+            </li>
 
 
                 {{-- Warehouse --}}

@@ -201,10 +201,12 @@
 
                     <div x-data="{ tab: 'incoming' }">
                         <div class="inline-flex mt-5 py-1 px-1 rounded-md space-x-2 bg-gray-200">
+
                             <span @click="tab = 'incoming'" :class="tab === 'incoming' ? 'bg-gray-50' : 'bg-gray-200'"
                                 class="px-4 py-2 rounded-md cursor-pointer text-xs text-gray-900">Incoming</span>
                             <span @click="tab = 'outgoing'" :class="tab === 'outgoing' ? 'bg-gray-50' : 'bg-gray-200'"
                                 class="px-4 py-2 rounded-md cursor-pointer text-xs text-gray-900">Outgoing </span>
+                            
                         </div>
                         <div class="mt-5 w-full">
                             <div x-show="tab === 'incoming'" x-transition class="flex flex-col gap-6 w-full ">
@@ -217,188 +219,7 @@
 
                         </div>
                     </div>
-                    
-                    {{-- <div class=" p-10 bg-zinc-50  h-auto mt-10 rounded-lg border border-zinc-300">
-                        <div class=" mb-5 flex gap-5 items-center">
-                            <h1 class="text-lg font-semibold text-zinc-900">
-                                Incoming
-                            </h1>
-
-
-                        </div>
-
-                        <div class="flex gap-2 mb-5">
-
-                            <label class="input bg-transparent border border-zinc-300 rounded-lg">
-                                <x-lucide-search class="h-4 w-4 text-gray-400 " />
-                                <input id="search-box" type="search" class="grow text-zinc-600"
-                                    placeholder="Search" />
-
-                            </label>
-                           
-                            <div
-                                class=" h-10 px-3 flex rounded-lg text-zinc-900 border border-zinc-300 items-center justify-center text-center hover:border-zinc-400 transition duration-200 ease-in-out cursor-pointer">
-                                <x-lucide-filter class="h-4 w-4" />
-                            </div>
-                            <div>
-                                <details class="dropdown ">
-                                    <summary
-                                        class="btn h-10 rounded-lg bg-transparent text-zinc-800 font-normal border-zinc-300 shadow-none hover:border-zinc-400 transition duration-200 ease-in-out">
-                                        <x-lucide-columns-3 class="h-4 w-4" />
-                                        View
-                                    </summary>
-                                    <ul
-                                        class="dropdown-content flex flex-col gap-2 px-3 border border-zinc-300 bg-gray-100 rounded-box z-10 w-64 p-2 overflow-y-auto max-h-64 overflow-x-auto whitespace-nowrap mt-2">
-
-                                        <!-- Basic Info -->
-                                        <li
-                                            class="text-xs text-zinc-500 uppercase font-semibold px-1 flex justify-between mt-3">
-                                            Basic Info
-                                            <input type="checkbox"
-                                                onchange="toggleSection(this, ['id','data_entry','item_group'])"
-                                                checked>
-                                        </li>
-                                        <li><label class="text-zinc-900"><input type="checkbox"
-                                                    onchange="toggleColumn('id', this)" checked> Line</label></li>
-                                        <li><label class="text-zinc-900"><input type="checkbox"
-                                                    onchange="toggleColumn('data_entry', this)" checked> Data
-                                                Entry</label>
-                                        </li>
-                                        <li><label class="text-zinc-900"><input type="checkbox"
-                                                    onchange="toggleColumn('item_group', this)" checked> Item
-                                                Group</label>
-                                        </li>
-                                        <hr class="my-2">
-                                        <!-- Product Details -->
-                                        <li
-                                            class="text-xs text-zinc-500 uppercase font-semibold px-1 flex justify-between">
-                                            Product Details
-                                            <input type="checkbox"
-                                                onchange="toggleSection(this, ['sku','fg','kilogram/tray','variant','class'])">
-                                        </li>
-                                        <li><label class="text-zinc-900"><input type="checkbox"
-                                                    onchange="toggleColumn('variant', this)"> Variant</label></li>
-                                        <li><label class="text-zinc-900"><input type="checkbox"
-                                                    onchange="toggleColumn('kilogram/tray', this)">
-                                                Kilogram/Tray</label>
-                                        </li>
-                                        <li><label class="text-zinc-900"><input type="checkbox"
-                                                    onchange="toggleColumn('class', this)"> Class</label></li>
-                                        <li><label class="text-zinc-900"><input type="checkbox"
-                                                    onchange="toggleColumn('sku', this)"> SKU Description</label>
-                                        </li>
-                                        <li><label class="text-zinc-900"><input type="checkbox"
-                                                    onchange="toggleColumn('fg', this)"> FG Description</label></li>
-
-                                        <hr class="my-2">
-                                        <!-- Packaging -->
-
-                                        <li
-                                            class="text-xs text-zinc-500 uppercase font-semibold px-1 flex justify-between">
-                                            Packaging <input type="checkbox"
-                                                onchange="toggleSection(this, ['primary_packaging','secondary_packaging'])">
-                                        </li>
-                                        <li><label class="text-zinc-900"><input type="checkbox"
-                                                    onchange="toggleColumn('primary_packaging', this)"> Primary
-                                                Packaging</label></li>
-                                        <li><label class="text-zinc-900"><input type="checkbox"
-                                                    onchange="toggleColumn('secondary_packaging', this)"> Secondary
-                                                Packaging</label></li>
-                                        <hr class="my-2">
-
-                                        <!-- Inventory -->
-                                        <li
-                                            class="text-xs text-zinc-500 uppercase font-semibold px-1 flex justify-between">
-                                            Inventory <input type="checkbox"
-                                                onchange="toggleSection(this, ['inventory_head','inventory_kilo'])"
-                                                checked>
-                                        </li>
-                                        <li><label class="text-zinc-900"><input type="checkbox"
-                                                    onchange="toggleColumn('inventory_head', this)" checked>
-                                                Head/Pack</label></li>
-                                        <li><label class="text-zinc-900"><input type="checkbox"
-                                                    onchange="toggleColumn('inventory_kilo', this)" checked>
-                                                Kilogram</label></li>
-
-                                        <hr class="my-2">
-
-                                        <li
-                                            class="text-xs text-zinc-500 uppercase font-semibold px-1 flex justify-between">
-                                            Balance <input type="checkbox"
-                                                onchange="toggleSection(this, ['balance_head','balance_kilo'])"
-                                                checked>
-                                        </li>
-
-                                        <li><label class="text-zinc-900"><input type="checkbox"
-                                                    onchange="toggleColumn('balance_head', this)" checked>
-                                                Head/Pack</label></li>
-                                        <li><label class="text-zinc-900"><input type="checkbox"
-                                                    onchange="toggleColumn('balance_kilo', this)"
-                                                    checked>Kilogram</label>
-                                        </li>
-                                        <hr class="my-2">
-
-
-                                        <!-- Movement -->
-                                        <li
-                                            class="text-xs text-zinc-500 uppercase font-semibold px-1 flex justify-between">
-                                            Movement <input type="checkbox"
-                                                onchange="toggleSection(this, ['received_by','qty_head','qty_kilo'])"
-                                                checked>
-                                        </li>
-                                        <li><label class="text-zinc-900"><input type="checkbox"
-                                                    onchange="toggleColumn('received_by', this)"> Received by</label>
-                                        </li>
-                                        <li><label class="text-zinc-900"><input type="checkbox"
-                                                    onchange="toggleColumn('qty_head', this)"> Qty Issued
-                                                (Head/Pack)</label></li>
-                                        <li><label class="text-zinc-900"><input type="checkbox"
-                                                    onchange="toggleColumn('qty_kilo', this)"> Qty Issued
-                                                (Kilogram)</label></li>
-                                        <hr class="my-2">
-
-                                        <!-- Dates -->
-                                        <li
-                                            class="text-xs text-zinc-500 uppercase font-semibold px-1 flex justify-between">
-                                            Dates <input type="checkbox"
-                                                onchange="toggleSection(this, ['prod_date','left','exp_date','date'])"
-                                                checked></li>
-                                        <li><label class="text-zinc-900"><input type="checkbox"
-                                                    onchange="toggleColumn('prod_date', this)" checked>
-                                                Prod_Date</label>
-                                        </li>
-                                        <li><label class="text-zinc-900"><input type="checkbox"
-                                                    onchange="toggleColumn('left', this)"> Left</label></li>
-                                        <li><label class="text-zinc-900"><input type="checkbox"
-                                                    onchange="toggleColumn('exp_date', this)" checked> Exp_Date</label>
-                                        </li>
-                                        <li><label class="text-zinc-900"><input type="checkbox"
-                                                    onchange="toggleColumn('date', this)"> Created At</label>
-                                        </li>
-                                        <hr class="my-2">
-                                        <!-- Status -->
-                                        <li
-                                            class="text-xs text-zinc-500 uppercase font-semibold px-1 flex justify-between">
-                                            Status <input type="checkbox"
-                                                onchange="toggleSection(this, ['status','storage_num'])" checked></li>
-                                        <li><label class="text-zinc-900"><input type="checkbox"
-                                                    onchange="toggleColumn('status', this)" checked> Status</label>
-                                        </li>
-                                        <li><label class="text-zinc-900"><input type="checkbox"
-                                                    onchange="toggleColumn('storage_num', this)"> Storage #</label>
-                                        </li>
-                                    </ul>
-
-                                </details>
-                            </div>
-
-                        </div>
-
-
-
-
-                        <div id="myGrid" class="ag-theme-alpine bg-zinc-300"></div>
-                    </div> --}}
+                  
                 </div>
             </div>
         </div>

@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ItemMasterController;
 use App\Http\Controllers\JFPCController;
+use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReturnItemController;
 use App\Http\Controllers\UserController;
@@ -78,3 +79,6 @@ Route::post('/warehouse/pcsi/ship', [InventoryController::class, 'ship'])->name(
 
 
 Route::get('/return-item', [ReturnItemController::class, 'index'])->name('return-item');
+
+
+Route::get('/orders', [OrdersController::class, 'index'])->name('orders');

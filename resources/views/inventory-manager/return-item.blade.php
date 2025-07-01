@@ -11,19 +11,6 @@
                         <h1 class="text-2xl font-bold text-zinc-900">Rejects and Returns</h1>
 
                     </div>
-                    <div class="flex gap-2">
-                        <button onclick="onExport()"
-                            class="px-4 py-2 flex items-center gap-3 rounded-md text-zinc-900 text-sm border border-zinc-300 hover:border-zinc-400 transition duration-200 ease-in-out"><x-lucide-download
-                                class="h-4 w-4" />Export</button>
-                        <button onclick="my_modal_5.showModal()"
-                            class="bg-orange-500 px-4 py-2 flex items-center gap-3 rounded-md text-gray-50 text-sm hover:bg-orange-400 transition duration-200 ease-in-out">
-                            <x-lucide-plus class="h-4 w-4" />
-                            Add Item</button>
-
-                    </div>
-
-
-
                 </div>
                 @if (session('success'))
                     <div id="alert" role="alert" class="alert alert-success mt-5">

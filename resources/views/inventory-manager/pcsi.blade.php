@@ -70,12 +70,13 @@
 
 
 
-                        <form method="POST" action="{{ route('warehouse.pcsi.add') }}" id="addItemForm">
+                        <form method="POST" action="{{ route('warehouse.pcsi.add') }}" x-data="{ loading: false }"
+                        @submit.prevent="loading = true; $nextTick(() => $el.submit())" id="addItemForm">
                             @csrf
                             <div class="flex flex-col gap-5">
 
                                 <div class="flex gap-5 justify-between">
-                                    <div class="flex flex-col w-full">
+                                    {{-- <div class="flex flex-col w-full">
                                         <fieldset class="fieldset">
                                             <legend class="fieldset-legend text-zinc-600">Data Entry</legend>
                                         </fieldset>
@@ -83,11 +84,34 @@
                                             class="border border-zinc-300 bg-white text-zinc-800 rounded-md px-3 py-2 h-auto focus:outline-none focus:ring-2 focus:ring-blue-500 focus:text-blue-600 w-full">
                                             <option value="">Select an item...</option>
                                         </select>
+                                    </div> --}}
+                                    <div x-data="{ open: false, search: '', selected: null }" class="relative w-full">
+                                        <fieldset class="fieldset">
+                                            <legend class="fieldset-legend text-zinc-600">Data Entry</legend>
+                                        </fieldset>
+                                        <input type="text" x-model="search" @focus="open = true"
+                                            @click.away="open = false" placeholder="Search item..."
+                                            class="w-full border border-zinc-300 rounded-md px-3 py-2 text-zinc-800" />
+
+                                        <div x-show="open"
+                                            class="absolute z-[9999] mt-1 w-full bg-white border border-zinc-300 rounded-md max-h-48 overflow-y-auto">
+                                            @foreach ($item_master as $item)
+                                                <div x-show="{{ json_encode($item->item) }}.toLowerCase().includes(search.toLowerCase())"
+                                                    @click="selected = '{{ $item->id }}'; search = '{{ $item->item }}'; open = false"
+                                                    class="px-3 py-2 cursor-pointer hover:bg-zinc-100 text-sm text-zinc-700 flex flex-col">
+                                                    <span>{{ $item->item }}</span>
+                                                    <span class="text-gray-500 text-xs">{{ $item->new_mrp_code }}</span>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        <input type="hidden" name="item_master_id" :value="selected" required />
+
                                     </div>
+
 
                                     <!-- Hidden inputs to store additional item data -->
 
-                                    <div class="flex flex-col w-2/3">
+                                    <div class="flex flex-col w-full">
                                         <fieldset class="fieldset">
                                             <legend class="fieldset-legend text-zinc-600">Prod. Date</legend>
                                         </fieldset>
@@ -150,17 +174,8 @@
                                         </fieldset>
                                     </div>
                                 </div>
-                                <input type="hidden" name="item_group" id="item_group">
-                                <input type="hidden" name="idnum" id="idnum">
-                                <input type="hidden" name="variant" id="variant">
-                                <input type="hidden" name="kilogram_tray" id="kilogram_tray">
-                                <input type="hidden" name="class" id="class">
-                                <input type="hidden" name="sku" id="sku">
-                                <input type="hidden" name="fg" id="fg">
-                                <input type="hidden" name="primary_packaging" id="primary_packaging">
-                                <input type="hidden" name="secondary_packaging" id="secondary_packaging">
+                         
                                 <input type="hidden" name="prod_date" id="prod_date">
-                                <input type="hidden" name="item_code" id="item_code">
                             </div>
                             <hr class="my-5">
                             <div class="flex justify-end gap-5">
@@ -168,8 +183,13 @@
                                 <button type="button" onclick="document.getElementById('my_modal_5').close()"
                                     class="flex justify-end mt-2 px-4 py-2 text-sm bg-transparent text-zinc-500 hover:bg-zinc-200 rounded-md transition duration-200 ease-in-out ">Cancel</button>
 
-                                <button type="submit"
-                                    class="flex justify-end mt-2 px-4 py-2 text-sm bg-orange-500 text-white rounded-md hover:bg-orange-400 transition duration-200 ease-in-out">Add</button>
+                                <button type="submit" :disabled="loading"
+                                    class="flex justify-end mt-2 px-4 py-2 text-sm bg-orange-500 text-white rounded-md hover:bg-orange-400 transition duration-200 ease-in-out gap-2 items-center">
+                                    <template x-if="loading">
+                                        <x-lucide-loader class="h-4 w-4 animate-spin" />
+                                    </template>
+                                    <span x-text="loading ? 'Adding…' : 'Add'"></span>
+                                </button>
                             </div>
 
                         </form>
@@ -206,7 +226,7 @@
                                 class="px-4 py-2 rounded-md cursor-pointer text-xs text-gray-900">Incoming</span>
                             <span @click="tab = 'outgoing'" :class="tab === 'outgoing' ? 'bg-gray-50' : 'bg-gray-200'"
                                 class="px-4 py-2 rounded-md cursor-pointer text-xs text-gray-900">Outgoing </span>
-                            
+
                         </div>
                         <div class="mt-5 w-full">
                             <div x-show="tab === 'incoming'" x-transition class="flex flex-col gap-6 w-full ">
@@ -219,7 +239,7 @@
 
                         </div>
                     </div>
-                  
+
                 </div>
             </div>
         </div>
@@ -228,86 +248,85 @@
 
 <script>
     // Convert PHP data to JavaScript options
-    var itemOptions = JSON.parse('{!! $item_master->toJson() !!}').map(function(item) {
-        console.log(itemOptions);
-        return {
-            idnum: item.id,
-            id: item.item,
-            title: item.item + ' - ' + (item.item_group || '') + ' - ' + (item.variant || ''),
-            item_group: item.item_group,
-            item_code: item.new_mrp_code,
-            variant: item.variant,
-            kilogram_tray: item.kilogram_tray,
-            class: item.class,
-            sku: item.sku,
-            fg: item.fg,
-            primary_packaging: item.primary_packaging,
-            secondary_packaging: item.secondary_packaging
-        };
-    });
+    // var itemOptions = JSON.parse('{!! $item_master->toJson() !!}').map(function(item) {
+    //     console.log(itemOptions);
+    //     return {
+    //         idnum: item.id,
+    //         id: item.item,
+    //         title: item.item + ' - ' + (item.item_group || '') + ' - ' + (item.variant || ''),
+    //         item_group: item.item_group,
+    //         item_code: item.new_mrp_code,
+    //         variant: item.variant,
+    //         kilogram_tray: item.kilogram_tray,
+    //         class: item.class,
+    //         sku: item.sku,
+    //         fg: item.fg,
+    //         primary_packaging: item.primary_packaging,
+    //         secondary_packaging: item.secondary_packaging
+    //     };
+    // });
 
-    new TomSelect('#data_entry', {
-        maxItems: 1,
-        maxOptions: 100,
-        valueField: 'id',
-        labelField: 'title',
-        searchField: ['title', 'item_group', 'variant', 'sku'],
-        sortField: 'title',
-        options: itemOptions,
-        create: false,
-        placeholder: "Search item...",
-        render: {
-            option: function(data, escape) {
-                return '<div class="option h-12">' +
-                    '<div class="font-medium">' + escape(data.title) + '</div>' +
-                    '<div class="text-sm text-gray-500">' +
-                    (data.item_group ? 'Group: ' + escape(data.item_group) + ' | ' : '') +
-                    (data.variant ? 'Variant: ' + escape(data.variant) : '') +
-                    '</div>' +
-                    '</div>';
-            }
-        },
-        onInitialize: function() {
-            console.log('TomSelect initialized with', this.options.length, 'options');
-        },
-        onChange: function(value) {
-            if (value) {
-                // Find the selected item data
-                var selectedItem = itemOptions.find(function(item) {
-                    return item.id === value;
-                });
+    // new TomSelect('#data_entry', {
+    //     maxItems: 1,
+    //     maxOptions: 100,
+    //     valueField: 'id',
+    //     labelField: 'title',
+    //     searchField: ['title', 'item_group', 'variant', 'sku'],
+    //     sortField: 'title',
+    //     options: itemOptions,
+    //     create: false,
+    //     placeholder: "Search item...",
+    //     render: {
+    //         option: function(data, escape) {
+    //             return '<div class="option h-12">' +
+    //                 '<div class="font-medium">' + escape(data.title) + '</div>' +
+    //                 '<div class="text-sm text-gray-500">' +
+    //                 (data.item_group ? 'Group: ' + escape(data.item_group) + ' | ' : '') +
+    //                 (data.variant ? 'Variant: ' + escape(data.variant) : '') +
+    //                 '</div>' +
+    //                 '</div>';
+    //         }
+    //     },
+    //     onInitialize: function() {
+    //         console.log('TomSelect initialized with', this.options.length, 'options');
+    //     },
+    //     onChange: function(value) {
+    //         if (value) {
+    //             // Find the selected item data
+    //             var selectedItem = itemOptions.find(function(item) {
+    //                 return item.id === value;
+    //             });
 
-                if (selectedItem) {
-                    // Populate hidden fields with selected item data
-                    document.getElementById('idnum').value = selectedItem.idnum || '';
+    //             if (selectedItem) {
+    //                 // Populate hidden fields with selected item data
+    //                 document.getElementById('idnum').value = selectedItem.idnum || '';
 
-                    document.getElementById('item_group').value = selectedItem.item_group || '';
-                    document.getElementById('item_code').value = selectedItem.item_code || '';
-                    document.getElementById('variant').value = selectedItem.variant || '';
-                    document.getElementById('kilogram_tray').value = selectedItem.kilogram_tray || '';
-                    document.getElementById('class').value = selectedItem.class || '';
-                    document.getElementById('sku').value = selectedItem.sku || '';
-                    document.getElementById('fg').value = selectedItem.fg || '';
-                    document.getElementById('primary_packaging').value = selectedItem.primary_packaging ||
-                        '';
-                    document.getElementById('secondary_packaging').value = selectedItem
-                        .secondary_packaging || '';
+    //                 document.getElementById('item_group').value = selectedItem.item_group || '';
+    //                 document.getElementById('item_code').value = selectedItem.item_code || '';
+    //                 document.getElementById('variant').value = selectedItem.variant || '';
+    //                 document.getElementById('kilogram_tray').value = selectedItem.kilogram_tray || '';
+    //                 document.getElementById('class').value = selectedItem.class || '';
+    //                 document.getElementById('sku').value = selectedItem.sku || '';
+    //                 document.getElementById('fg').value = selectedItem.fg || '';
+    //                 document.getElementById('primary_packaging').value = selectedItem.primary_packaging ||
+    //                     '';
+    //                 document.getElementById('secondary_packaging').value = selectedItem
+    //                     .secondary_packaging || '';
 
-                    console.log('Selected item:', selectedItem);
-                }
-            } else {
-                // Clear hidden fields if no item is selected
-                document.getElementById('item_group').value = '';
-                document.getElementById('idnum').value = '';
-                document.getElementById('variant').value = '';
-                document.getElementById('kilogram_tray').value = '';
-                document.getElementById('class').value = '';
-                document.getElementById('sku').value = '';
-                document.getElementById('fg').value = '';
-                document.getElementById('primary_packaging').value = '';
-                document.getElementById('secondary_packaging').value = '';
-            }
-        }
-    });
-    
+    //                 console.log('Selected item:', selectedItem);
+    //             }
+    //         } else {
+    //             // Clear hidden fields if no item is selected
+    //             document.getElementById('item_group').value = '';
+    //             document.getElementById('idnum').value = '';
+    //             document.getElementById('variant').value = '';
+    //             document.getElementById('kilogram_tray').value = '';
+    //             document.getElementById('class').value = '';
+    //             document.getElementById('sku').value = '';
+    //             document.getElementById('fg').value = '';
+    //             document.getElementById('primary_packaging').value = '';
+    //             document.getElementById('secondary_packaging').value = '';
+    //         }
+    //     }
+    // });
 </script>

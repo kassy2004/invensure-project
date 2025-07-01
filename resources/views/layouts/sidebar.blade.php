@@ -4,7 +4,7 @@
 
     <!-- Sidebar -->
     <div id="sidebar"
-        class="bg-white text-grey min-h-screen transition-all duration-300
+        class="bg-white text-grey min-h-screen transition-all duration-300 border-r border-zinc-300
               w-16 overflow-hidden group"
         :class="{ 'w-64': document.getElementById('sidebar-toggle').checked }">
         <div class="flex items-center justify-between px-5 py-4">
@@ -24,7 +24,7 @@
                 </svg>
             </label>
         </div>
-        <hr class="border-gray-300">
+        <hr class="border-gray-200 w-[80%] mx-auto">
         <ul class="space-y-2 py-2">
 
 
@@ -109,6 +109,13 @@
                     <x-lucide-trending-up class="h-5 w-5 shrink-0 text-gray-700" />
                     <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">Satisfaction Metrics</a>
                 </li>
+                <li onclick="window.location='{{ url('/orders') }}'"
+                class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
+{{ Request::is('orders') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
+
+                <x-lucide-package-2 class="h-5 w-5 shrink-0 text-gray-700" />
+                <a class="ml-3 hidden group-[.w-64]:inline text-gray-700">Orders</a>
+            </li>
             @endif
 
             {{-- Inventory Manager --}}

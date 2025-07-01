@@ -501,7 +501,7 @@
                     },
                     {
                         headerName: "Created At",
-                        field: "date"
+                        field: "created_at"
                     }
                 ]
             },

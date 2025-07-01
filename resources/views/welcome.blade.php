@@ -121,8 +121,9 @@
                             <span class="">Streamline Your Supply Chain</span>
                         </h1> --}}
                         <p class="mx-auto mt-8 max-w-2xl text-balance text-lg text-zinc-800">
-                            Highly customizable components for building modern websites and applications that look and
-                            feel the way you mean it.
+                            A comprehensive supply chain management platform tailored specifically for Sunny &
+                            Scramble's perishable chicken goods business. Manage inventory, track shipments, and ensure
+                            quality in one secure platform.
                         </p>
                         {{-- <p class="text-lg md:text-xl text-gray-700 mb-8">
                             A comprehensive supply chain management platform tailored specifically for Sunny &

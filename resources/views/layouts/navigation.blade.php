@@ -1,4 +1,4 @@
-<div class="navbar bg-white shadow-sm">
+<div class="navbar bg-white border-b border-zinc-300">
     <div class="flex-1">
         <x-invensure-logo class="ml-10" />
 

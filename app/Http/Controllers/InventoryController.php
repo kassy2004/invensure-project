@@ -141,25 +141,19 @@ class InventoryController extends Controller
     public function add(Request $request)
     {
         $validated = $request->validate([
-            'data_entry' => 'required|string|max:255',
-            'item_group' => 'required|string|max:255',
-            'item_code' => 'required|string|max:255',
-            'variant' => 'nullable|string|max:255',
-            'kilogram_tray' => 'nullable|numeric',
-            'class' => 'nullable|string|max:255',
-            'sku' => 'nullable|string|max:255',
-            'fg' => 'nullable|string|max:255',
-            'primary_packaging' => 'nullable|string|max:255',
-            'secondary_packaging' => 'nullable|string|max:255',
+            'item_master_id' => 'required|numeric',
             'prod_date' => 'required|date',
             'inventory_head' => 'nullable|numeric',
             'inventory_kilo' => 'nullable|numeric',
-            'idnum' => 'required|numeric',
         ]);
+
+        $itemMaster = DB::table('item_master')
+        ->select('item', 'new_mrp_code', 'item_group', 'variant', 'kilogram_tray', 'class', 'sku', 'fg', 'primary_packaging', 'secondary_packaging')
+        ->first();
 
         $prodDate = Carbon::parse($request->input('prod_date'));
         $expirationStage = (int) DB::table('item_master')
-            ->where('id', $request->input('idnum'))
+            ->where('id', $request->input('item_master_id'))
             ->value('expiration_stage');
         $today = Carbon::today();
 
@@ -173,16 +167,16 @@ class InventoryController extends Controller
 
 
             $result = DB::table('pcsi_incoming')->insert([
-                'data_entry' => $validated['data_entry'],
-                'item_group' => $validated['item_group'],
-                'item_code' => $validated['item_code'],
-                'variant' => $validated['variant'] ?? null,
-                'kilogram_tray' => $validated['kilogram_tray'] ?? null,
-                'class' => $validated['class'] ?? null,
-                'sku' => $validated['sku'] ?? null,
-                'fg' => $validated['fg'] ?? null,
-                'primary_packaging' => $validated['primary_packaging'] ?? null,
-                'secondary_packaging' => $validated['secondary_packaging'] ?? null,
+                'data_entry' => $itemMaster->item,
+                'item_group' => $itemMaster->item_group,
+                'item_code' => $itemMaster->new_mrp_code,
+                'variant' => $itemMaster->variant ?? null,
+                'kilogram_tray' => $itemMaster->kilogram_tray,
+                'class' => $itemMaster->class,
+                'sku' => $itemMaster->sku ?? null,
+                'fg' => $itemMaster->fg ?? null,
+                'primary_packaging' => $itemMaster->primary_packaging ?? null,
+                'secondary_packaging' => $itemMaster->secondary_packaging ?? null ,
                 'prod_date' => $validated['prod_date'],
                 'exp_date' => $formattedExpDate,
                 'left' => $daysLeft,

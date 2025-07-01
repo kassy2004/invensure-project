@@ -69,7 +69,7 @@ class DashboardController extends Controller
             return view('dashboard', compact('topItems', 'stockSummary', 'pendingCount', 'totalProducts'));
         } else {
             // For other roles, return the view with an empty topItems
-            return view('dashboard', ['topItems' => collect([])]);
+            return view('dashboard', ['topItems' => collect([]), 'stockSummary' => collect([]), 'pendingCount' => collect([]), 'totalProducts' => collect([])] );
         }
     }
 }

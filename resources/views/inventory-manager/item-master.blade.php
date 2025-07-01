@@ -77,12 +77,13 @@
 
 
 
-                        <form method="POST" action="{{ route('item-master.add') }}" id="addItemForm">
+                        <form method="POST" action="{{ route('item-master.add') }}" x-data="{ loading: false }"
+                            @submit="loading = true" id="addItemForm">
                             @csrf
                             <div class="flex flex-col gap-5 mt-5">
 
                                 <div class="flex flex-col justify-between">
-                                    <legend class="fieldset-legend text-zinc-600 mb-2">Item Details</legend>
+                                    <legend class="fieldset-legend text-orange-500 mb-2">Item Details</legend>
                                     <div class="flex flex-col gap-2">
                                         <fieldset class="fieldset">
                                             <legend class="fieldset-legend text-zinc-500">Item</legend>
@@ -134,7 +135,7 @@
 
                                 <hr>
                                 <div>
-                                    <legend class="fieldset-legend text-zinc-600 mb-2">Categorization</legend>
+                                    <legend class="fieldset-legend text-orange-500 mb-2">Categorization</legend>
                                     <div class="flex gap-5">
                                         <fieldset class="fieldset">
                                             <legend class="fieldset-legend text-zinc-500">Category 1</legend>
@@ -168,7 +169,7 @@
 
                                 <hr>
                                 <div>
-                                    <legend class="fieldset-legend text-zinc-600 mb-2">Packaging Information</legend>
+                                    <legend class="fieldset-legend text-orange-500 mb-2">Packaging Information</legend>
                                     <div class="flex gap-5">
                                         <fieldset class="fieldset">
                                             <legend class="fieldset-legend text-zinc-500">Primary Packaging</legend>
@@ -199,7 +200,8 @@
 
                                 <hr>
                                 <div>
-                                    <legend class="fieldset-legend text-zinc-600 mb-2">Expiration & Shelf Life</legend>
+                                    <legend class="fieldset-legend text-orange-500 mb-2">Expiration & Shelf Life
+                                    </legend>
                                     <fieldset class="fieldset">
                                         <legend class="fieldset-legend text-zinc-500">Expiration Stage</legend>
                                         <input type="text" name="expiration_stage"
@@ -213,7 +215,7 @@
 
                                 <hr>
                                 <div>
-                                    <legend class="fieldset-legend text-zinc-600 mb-2">Descriptions</legend>
+                                    <legend class="fieldset-legend text-orange-500 mb-2">Descriptions</legend>
                                     <fieldset class="fieldset">
                                         <legend class="fieldset-legend text-zinc-500">SKU Description</legend>
                                         <input type="text" name="sku"
@@ -239,8 +241,13 @@
                                 <button type="button" onclick="document.getElementById('my_modal_5').close()"
                                     class="flex justify-end mt-2 px-4 py-2 text-sm bg-transparent text-zinc-500 hover:bg-zinc-200 rounded-md transition duration-200 ease-in-out ">Cancel</button>
 
-                                <button type="submit"
-                                    class="flex justify-end mt-2 px-4 py-2 text-sm bg-orange-500 text-white rounded-md hover:bg-orange-400 transition duration-200 ease-in-out">Add</button>
+                                <button type="submit" :disabled="loading"
+                                    class="flex justify-end mt-2 px-4 py-2 text-sm bg-orange-500 text-white rounded-md hover:bg-orange-400 transition duration-200 ease-in-out items-center gap-2">
+                                    <template x-if="loading">
+                                        <x-lucide-loader class="h-4 w-4 animate-spin" />
+                                    </template>
+                                    <span x-text="loading ? 'Adding…' : 'Add'"></span>
+                                </button>
                             </div>
 
                         </form>

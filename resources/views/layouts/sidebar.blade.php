@@ -181,20 +181,22 @@
 
                     <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700 font-semibold">Dashboard</a>
                 </li>
-                <li
+                <li onclick="window.location='{{ url('/operations') }}'"
+                class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
+{{ Request::is('operations') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
+
+                <x-lucide-truck class="h-5 w-5 shrink-0 text-gray-700" />
+                <a class="ml-3 hidden group-[.w-64]:inline text-gray-700">Delivery Operations</a>
+            </li>
+                <li onclick="window.location='{{ url('/pod') }}'"
                     class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
-   {{ Request::is('sales') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
+   {{ Request::is('pod') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
 
                     <x-lucide-clipboard-check class="h-5 w-5 shrink-0 text-gray-700" />
-                    <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">POD Automation</a>
+                    <span class="ml-3 hidden group-[.w-64]:inline text-gray-700">POD Automation</span>
                 </li>
 
-                <li
-                    class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
-     {{ Request::is('inventory') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
-                    <x-lucide-map-pin class="h-5 w-5 shrink-0 text-gray-700" />
-                    <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">GPS Verification</a>
-                </li>
+            
 
 
 
@@ -208,22 +210,9 @@
                 </li>
 
 
-                <li
-                    class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
-   {{ Request::is('user') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
+             
 
-                    <x-lucide-file-check class="h-5 w-5 shrink-0 text-gray-700" />
-                    <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">POD IDs & Audit
-                        Trails</a>
-                </li>
-
-                <li
-                    class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
-   {{ Request::is('user') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
-
-                    <x-lucide-truck class="h-5 w-5 shrink-0 text-gray-700" />
-                    <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">Delivery Operations</a>
-                </li>
+             
             @endif
         </ul>
 

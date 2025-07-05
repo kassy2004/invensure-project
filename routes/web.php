@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DeliveryOperationsController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ItemMasterController;
 use App\Http\Controllers\JFPCController;
 use App\Http\Controllers\OrdersController;
+use App\Http\Controllers\PODController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReturnItemController;
 use App\Http\Controllers\UserController;
@@ -82,3 +84,9 @@ Route::get('/return-item', [ReturnItemController::class, 'index'])->name('return
 
 
 Route::get('/orders', [OrdersController::class, 'index'])->name('orders');
+Route::get('/pod', [PODController::class, 'index'])->name('pod');
+Route::get('/operations', [DeliveryOperationsController::class, 'index'])->name('operations');
+Route::post('/delivery/load', [DeliveryOperationsController::class, 'load'])->name('delivery.load');
+
+
+Route::get('/truck-loading-data', [DeliveryOperationsController::class, 'showTruckLoading']);

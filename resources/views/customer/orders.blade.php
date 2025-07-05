@@ -49,71 +49,79 @@
 
 
 
-                <div class="flex flex-col gap-6 mb-5 mt-5 w-full">
-                    <div class=" p-5 bg-zinc-50  h-auto rounded-lg border border-zinc-300 w-1/2 mx-auto">
-                        <div class="flex justify-between">
+                <div class="flex flex-col gap-6 mb-5 mt-5 w-full ">
+                    @foreach ($order as $orders)
+                        <div class=" p-5 bg-zinc-50  h-auto rounded-lg border border-zinc-300 w-1/2 mx-auto">
+                            <div class="flex justify-between items-center">
 
-                            <div class="flex flex-col">
-
-                                <div class="flex gap-2 items-center">
-                                    <x-lucide-package class="h-5 w-5 text-zinc-700" />
-                                    <span class="text-zinc-900 text-lg font-semibold">Order 1</span>
-                                </div>
-                                <span class="text-zinc-500">Ordered on 12/28/2024 • Delivered on 12/30/2024 at 2:30:00
-                                    PM</span>
-                            </div>
-
-                            <div class="flex flex-col justify-end items-end">
-                                <div
-                                    class="flex text-xs bg-orange-500 rounded-full p-1 gap-1 text-white items-center px-2">
-                                    <x-lucide-truck class="h-3 w-3" />
-                                    <span>Delivered</span>
-                                </div>
-                                <span class="text-lg text-orange-500 font-bold">₱ 9,500</span>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col gap-4 mt-5">
-                            <div class="flex justify-between border rounded-lg p-3 border-zinc-300 items-center">
                                 <div class="flex flex-col">
-                                    <span class="text-sm text-zinc-700">GROUND CHICKEN SKIN ON - 1KG</span>
-                                    <span class="text-xs text-zinc-600">100 - 100.0kg</span>
-                                </div>
-                                <div class="text-zinc-500 text-sm">
-                                    <span class="cursor-pointer hover:text-red-500">Return</span>
+
+                                    <div class="flex gap-2 items-center">
+                                        <x-lucide-package class="h-5 w-5 text-zinc-700" />
+                                        <span class="text-zinc-900 text-lg font-semibold">Order {{ $orders->id }} -
+                                            Order {{ $orders->id + $orders->order_count - 1 }}</span>
+                                    </div>
+                                    <span class="text-zinc-500">Ordered on {{ $orders->transaction_date }}
+                                        {{-- • Delivered on 12/30/2024 at 2:30:00 PM --}}
+                                    </span>
                                 </div>
 
+                                <div class="flex flex-col justify-end items-end">
+                                    @php
+                                        $statusColor = match ($orders->status) {
+                                            'delivered' => 'bg-orange-500',
+                                            'pending' => 'bg-gray-500',
+                                            'in transit' => 'bg-blue-500',
+                                            default => 'bg-blue-500', // fallback just in case
+                                        };
+                                    @endphp
+                                    <div
+                                        class="flex text-xs  rounded-full p-1 gap-1 items-center px-2
+                                       {{ $statusColor }} text-white">
+                                        <x-lucide-truck class="h-3 w-3" />
+                                        {{ ucwords(str_replace('_', ' ', $orders->status)) }}
+                                    </div>
+                                    {{-- <span class="text-lg text-orange-500 font-bold">₱ 9,500</span> --}}
+                                </div>
                             </div>
-                            <div class="flex justify-between border rounded-lg p-3 border-zinc-300 items-center">
-                                <div class="flex flex-col">
-                                    <span class="text-sm text-zinc-700">GROUND CHICKEN SKIN ON - 1KG</span>
-                                    <span class="text-xs text-zinc-600">100 - 100.0kg</span>
-                                </div>
-                                <div class="text-zinc-500 text-sm">
-                                    <span class="cursor-pointer hover:text-red-500">Return</span>
-                                </div>
+
+                            <div class="flex flex-col gap-4 mt-5 mb-5 overflow-y-auto max-h-52 pr-1">
+
+                                @foreach ($orders->products as $index => $product)
+                                    <div
+                                        class="flex justify-between border rounded-lg p-3 border-zinc-300 items-center">
+                                        <div class="flex flex-col">
+                                            <span class="text-sm text-zinc-700">{{ $index + 1 }}.
+                                                {{ $product->description }}</span>
+                                            <span class="text-xs text-zinc-600">{{ $product->quantity }} -
+                                                {{ $product->kilogram }}kg</span>
+                                        </div>
+                                        <div class="text-zinc-500 text-sm">
+                                            @if ($orders->delivered_on != null)
+                                                <span class="cursor-pointer hover:text-red-500">Return</span>
+                                            @endif
+                                        </div>
+
+                                    </div>
+                                @endforeach
 
                             </div>
+
                             <hr>
-                            {{-- <div class="flex gap-2 p-2 bg-zinc-100 rounded-md">
-                                <x-lucide-clock-8 class="h-4 w-4 text-zinc-700" />
-                                <span class="text-xs text-red-500">Return period expired - <span
-                                        class="text-xs text-zinc-700">Returns must be requested within 12 hours of
-                                        delivery</span></span>
-                            </div> --}}
-                            <div class="flex items-start">
-                                <div
-                                    class="text-zinc-700 cursor-pointer flex gap-2 text-sm items-center border border-zinc-300 rounded-lg py-2 px-4 w-auto">
-                                    <x-lucide-message-square class="h-4 w-4" />
-                                    <span>Give Feedback</span>
+                            @if ($orders->delivered_on != null)
+                                <div class="flex items-start">
+                                    <div
+                                        class="text-zinc-700 cursor-pointer flex gap-2 text-sm items-center border border-zinc-300 rounded-lg py-2 px-4 w-auto mt-5">
+                                        <x-lucide-message-square class="h-4 w-4" />
+                                        <span>Give Feedback</span>
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
+
+
 
                         </div>
-
-
-
-                    </div>
+                    @endforeach
 
                     <div class=" p-5 bg-zinc-50  h-auto rounded-lg border border-zinc-300 w-1/2 mx-auto">
                         <div class="flex justify-between">

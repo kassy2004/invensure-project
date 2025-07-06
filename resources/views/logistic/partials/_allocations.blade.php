@@ -126,13 +126,20 @@
                 </div>
             </dialog>
 
-            @if($item->status === 'pending')
-            
-            <button onclick="assignModal{{ $item->id }}.showModal()"
-                class="flex gap-2 px-4 py-2 bg-orange-500 text-white items-center text-sm border cursor-pointer hover:bg-orange-400 transition rounded-md">
-                <x-lucide-truck class="h-4 w-4 " />
-                <span>Assign Truck</span>
-            </button>
+
+            @if ($item->status === 'pending')
+                <button onclick="signModal{{ $item->id }}.showModal()"
+                    class="flex gap-2 px-4 py-2 border-orange-500 text-orange-500 items-center text-sm border cursor-pointer hover:bg-orange-100  transition rounded-md">
+                    <x-lucide-pen-tool class="h-4 w-4 " />
+                    <span>Sign POD</span>
+                </button>
+            @elseif ($item->status === 'signed')
+                <button onclick="assignModal{{ $item->id }}.showModal()"
+                    class="flex gap-2 px-4 py-2 bg-orange-500 text-white items-center text-sm border cursor-pointer hover:bg-orange-400 transition rounded-md">
+                    <x-lucide-truck class="h-4 w-4 " />
+                    <span>Assign Truck</span>
+                </button>
+            @else
             @endif
             <dialog id="assignModal{{ $item->id }}" class="modal modal-bottom sm:modal-middle">
                 <div class="modal-box bg-zinc-50 border border-zinc-300 w-11/12 max-w-xl max-h-[70vh] overflow-visible">
@@ -172,6 +179,7 @@
                                     @endforeach
                                 </div>
                                 <input type="hidden" name="truck_id" :value="selected" required />
+                                <input type="hidden" name="warehouse" value="{{ $item->warehouse }}" />
                                 <input type="hidden" name="allocation_id" value="{{ $item->allocation_id }}"
                                     required />
 
@@ -191,7 +199,168 @@
 
                 </div>
             </dialog>
+
+            <dialog id="signModal{{ $item->id }}" class="modal modal-bottom sm:modal-middle">
+                <div class="modal-box bg-zinc-50 border border-zinc-300 w-11/12 max-w-xl max-h-[70vh] overflow-visible">
+                    <form method="dialog">
+                        <button
+                            class="btn btn-sm btn-circle shadow-none btn-ghost hover:bg-zinc-200 hover:border-zinc-200 absolute right-2 top-2 text-zinc-800">✕</button>
+                    </form>
+                    <h1 class="text-lg font-bold text-zinc-900">
+                        {{ $item->allocation_id }} - Signature
+                    </h1>
+                    <h3 class="text-sm font-bold text-zinc-500 mb-4">Use your finger or stylus to sign in the area below</h3>
+
+                    <div>
+                        <canvas id="signatures-{{ $item->id }}"
+                            class="w-full h-64 border border-gray-300 bg-white rounded-lg"></canvas>
+                    </div>
+                    <div class="flex justify-between mt-3">
+                        <button id="clears-{{ $item->id }}"
+                            class="px-6 py-2 text-zinc-700 flex gap-3 text-sm border rounded-md items-center hover:bg-gray-100 transition duration-300">
+                            <x-lucide-undo-2 class="h-4 w-4 " />
+                            <span>Clear</span>
+
+                        </button>
+                        <button id="saves-{{ $item->id }}"
+                            class="px-6 py-2  text-white bg-orange-500 flex gap-3 text-sm border rounded-md items-center hover:bg-orange-400 transition duration-300">
+                            <x-lucide-check class="h-4 w-4 " />
+                            <span>Submit Signature</span>
+
+                        </button>
+                    </div>
+                    <img id="signature-images-{{ $item->id }}" class="mt-4 hidden border rounded"
+                        alt="Signature Preview">
+                    {{-- <input type="hidden" name="allocation_id" value="{{ $item->allocation_id }}"> --}}
+
+                </div>
+            </dialog>
         </div>
 
     </div>
 @endforeach
+<script>
+    // Store signature pads for each allocation
+    const signaturePads = {};
+
+    // Function to initialize signature pad for a specific allocation
+    function initializeSignaturePad(allocationId) {
+        const canvas = document.getElementById(`signatures-${allocationId}`);
+        if (!canvas) return;
+
+        // Create new signature pad instance
+        signaturePads[allocationId] = new SignaturePad(canvas);
+
+        // Resize canvas
+        resizeCanvas(canvas, signaturePads[allocationId]);
+
+        // Add event listeners for this specific allocation
+        const clearBtn = document.getElementById(`clears-${allocationId}`);
+        const saveBtn = document.getElementById(`saves-${allocationId}`);
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                signaturePads[allocationId].clear();
+            });
+        }
+        if (saveBtn) {
+            saveBtn.addEventListener('click', () => {
+                if (signaturePads[allocationId].isEmpty()) {
+                    alert("Please provide a signature.");
+                    return;
+                }
+
+                const dataURL = signaturePads[allocationId].toDataURL(); // base64 PNG
+
+                fetch('/save-signature', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({
+                            image: dataURL,
+                            allocation_id: allocationId
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Signature saved!');
+                            // Optionally show image preview:
+                            const signModal = document.getElementById(`signModal${allocationId}`);
+                            if (signModal && typeof signModal.close === 'function') {
+                                signModal.close();
+                                location.reload();
+                            }
+                        } else {
+                            alert('Failed to save signature.');
+                        }
+                    });
+            });
+        }
+        // if (saveBtn) {
+        //     saveBtn.addEventListener('click', () => {
+        //         if (signaturePads[allocationId].isEmpty()) {
+        //             alert("Please provide a signature.");
+        //             return;
+        //         }
+        //         const dataURL = signaturePads[allocationId].toDataURL();
+        //         const img = document.getElementById(`signature-images-${allocationId}`);
+        //         if (img) {
+        //             img.src = dataURL;
+        //             img.classList.remove('hidden');
+        //         }
+        //     });
+        // }
+    }
+
+    function resizeCanvas(canvas, signaturePad) {
+        const ratio = window.devicePixelRatio || 1;
+        const styles = getComputedStyle(canvas);
+        const width = parseInt(styles.width);
+        const height = parseInt(styles.height);
+
+        canvas.width = width * ratio;
+        canvas.height = height * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+
+        // Important: clear previous drawing
+        signaturePad.clear();
+    }
+
+    // Initialize signature pads for all allocations when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('[id^="signatures-"]').forEach(element => {
+            const allocationId = element.id.replace('signatures-', '');
+            initializeSignaturePad(allocationId);
+        });
+    });
+    const observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+            mutation.addedNodes.forEach(node => {
+                if (node.nodeType === 1) { // Element node
+                    const canvases = node.querySelectorAll?.('[id^="signatures-"]') || [];
+                    canvases.forEach(canvas => {
+                        const allocationId = canvas.id.replace('signatures-', '');
+                        initializeSignaturePad(allocationId);
+                    });
+                }
+            });
+        });
+    });
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+    // Handle window resize for all signature pads
+    window.addEventListener('resize', () => {
+        Object.keys(signaturePads).forEach(allocationId => {
+            const canvas = document.getElementById(`signatures-${allocationId}`);
+            if (canvas && signaturePads[allocationId]) {
+                resizeCanvas(canvas, signaturePads[allocationId]);
+            }
+        });
+    });
+</script>

@@ -9,6 +9,7 @@ use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\PODController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReturnItemController;
+use App\Http\Controllers\SignaturesController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
@@ -90,3 +91,8 @@ Route::post('/delivery/load', [DeliveryOperationsController::class, 'load'])->na
 
 
 Route::get('/truck-loading-data', [DeliveryOperationsController::class, 'showTruckLoading']);
+Route::get('/truck-loading-data', [DeliveryOperationsController::class, 'showTruckLoading']);
+Route::get('/signatures', [SignaturesController::class, 'index']);
+Route::post('/signatures/submit', [SignaturesController::class, 'submit'])->name('signatures.submit');
+
+Route::post('/save-signature', [DeliveryOperationsController::class, 'storeSignature']);

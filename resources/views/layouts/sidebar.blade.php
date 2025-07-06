@@ -72,7 +72,7 @@
             @endif
 
             @if (auth()->check() && auth()->user()->role === 'customer')
-                <li onclick="window.location='{{ url('/dashboard') }}'"
+                {{-- <li onclick="window.location='{{ url('/dashboard') }}'"
                     class="flex items-center px-5 py-3 hover:bg-gray-200 cursor-pointer
    {{ Request::is('dashboard') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
                     <x-lucide-layout-dashboard class="h-5 w-5 shrink-0 text-gray-700" />
@@ -108,13 +108,13 @@
 
                     <x-lucide-trending-up class="h-5 w-5 shrink-0 text-gray-700" />
                     <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700">Satisfaction Metrics</a>
-                </li>
+                </li> --}}
                 <li onclick="window.location='{{ url('/orders') }}'"
                 class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
 {{ Request::is('orders') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
 
                 <x-lucide-package-2 class="h-5 w-5 shrink-0 text-gray-700" />
-                <a class="ml-3 hidden group-[.w-64]:inline text-gray-700">Orders</a>
+                <div class="ml-3 hidden group-[.w-64]:inline text-gray-700">Orders</div>
             </li>
             @endif
 
@@ -174,19 +174,19 @@
                 </li>
             @endif
             @if (auth()->check() && auth()->user()->role === 'logistics_coordinator')
-                <li onclick="window.location='{{ url('/dashboard') }}'"
+                {{-- <li onclick="window.location='{{ url('/dashboard') }}'"
                     class="flex items-center px-5 py-3 hover:bg-gray-200 cursor-pointer
 {{ Request::is('dashboard') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
                     <x-lucide-layout-dashboard class="h-5 w-5 shrink-0 text-gray-700" />
 
                     <a href="" class="ml-3 hidden group-[.w-64]:inline text-gray-700 font-semibold">Dashboard</a>
-                </li>
+                </li> --}}
                 <li onclick="window.location='{{ url('/operations') }}'"
                 class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
 {{ Request::is('operations') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
 
                 <x-lucide-truck class="h-5 w-5 shrink-0 text-gray-700" />
-                <a class="ml-3 hidden group-[.w-64]:inline text-gray-700">Delivery Operations</a>
+                <a class="ml-3 hidden group-[.w-64]:inline text-gray-700">Delivery Ops.</a>
             </li>
                 <li onclick="window.location='{{ url('/pod') }}'"
                     class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
@@ -200,9 +200,9 @@
 
 
 
-                <li
+                <li onclick="window.location='{{ url('/signatures') }}'"
                     class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer
-  {{ Request::is('delivery') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
+  {{ Request::is('signatures') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
 
                     <x-lucide-pen-tool class="h-5 w-5 shrink-0 text-gray-700" />
                     {{-- icon --}}{{-- bladeicon --}}

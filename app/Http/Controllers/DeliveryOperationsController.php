@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 class DeliveryOperationsController extends Controller
 {
     public function index(Request $request)
@@ -81,6 +83,14 @@ class DeliveryOperationsController extends Controller
         $nextNumber = $latest
             ? intval(str_replace('ALLOC-', '', $latest)) + 1
             : 1;
+
+        $latestOrderId = DB::table('orders')
+            ->orderByDesc('order_id')
+            ->value('order_id');
+
+        $nextOrderNumber = $latestOrderId
+            ? intval($latestOrderId) + 1
+            : 1;
         $groupedOrders = collect($outgoingOrders)->groupBy(function ($item) {
             return $item->customer . '_' . date('Y-m-d', strtotime($item->transaction_date)) . '_pcsi';
         });
@@ -125,12 +135,14 @@ class DeliveryOperationsController extends Controller
 
                 if (!$ordersexists) {
                     DB::table('orders')->insert([
+                        'order_id' => str_pad($nextOrderNumber, 5, '0', STR_PAD_LEFT),
                         'customer_id' => $customer->id,
                         'product_id' => $order->id,
                         'warehouse' => 'pcsi',
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
+                    $nextOrderNumber++;
                 }
             }
         }
@@ -182,6 +194,7 @@ class DeliveryOperationsController extends Controller
             }
         }
         $allocations = DB::table('allocations')
+            ->where('status', '!=', 'in transit')
             ->get();
         // dd($allocations);
 
@@ -231,26 +244,7 @@ class DeliveryOperationsController extends Controller
             $allocation->truck = DB::table('truck')->get();
 
 
-            // $allocation->truck_loading = DB::table('truck_loading')
-            //     ->where('allocation_id', $allocation->allocation_id)
-            //     ->get();
-            // // foreach ($allocation->truck_loading as $loading) {
-            // //     $loading->truck_driver = DB::table('truck')
-            // //         ->where('id', $loading->truck_id)
-            // //         ->first();
-            // // }
-            // foreach ($allocation->truck_loading as $loading) {
-            //     $loading->truck_driver = DB::table('truck')
-            //         ->where('id', $loading->truck_id)
-            //         ->first();
-            // }
-            // if ($allocation->truck_loading) {
-            //     $allocation->truck_driver = DB::table('truck')
-            //         ->where('id', $allocation->truck_loading->truck_id)
-            //         ->first();
-            // } else {
-            //     $allocation->truck_driver = null;
-            // }
+
 
 
             $allocation->products = $combinedProducts;
@@ -264,9 +258,6 @@ class DeliveryOperationsController extends Controller
 
             $filteredAllocations[] = $allocation;
             $printedKeys[] = $key;
-
-
-
         }
 
         return $filteredAllocations;
@@ -275,6 +266,7 @@ class DeliveryOperationsController extends Controller
     public function load(Request $request)
     {
         $allocationId = $request->input('allocation_id');
+        $warehouse = $request->input('warehouse');
 
         $allocations = DB::table('allocations')->where('allocation_id', $allocationId)->get();
 
@@ -296,12 +288,13 @@ class DeliveryOperationsController extends Controller
 
             DB::table('orders')
                 ->where('product_id', $alloc->product_id)
+                ->where('warehouse', $warehouse)
                 ->update(['status' => 'in transit']);
 
             DB::table('allocations')
                 ->where('product_id', $alloc->product_id)
+                ->where('warehouse', $warehouse)
                 ->update(['status' => 'in transit']);
-
         }
         // dd($totalKg);
 
@@ -324,10 +317,90 @@ class DeliveryOperationsController extends Controller
         } else {
             return redirect()->back()->with('error', 'Failed to add truck loading.');
         }
-
-
     }
+    public function storeSignature(Request $request)
+    {
+        try {
+            $request->validate([
+                'image' => 'required|string',
+                'allocation_id' => 'required'
+            ]);
+            $allocation_id = DB::table('allocations')
+                ->where('id', $request->input('allocation_id'))
+                ->first();
 
 
+            $rawId = $allocation_id->allocation_id; // e.g., "ALLOC-0001"
+            $cleanId = str_replace('ALLOC-', '', $rawId); // "0001"
+            // Debug log: incoming request
+            Log::info('Incoming signature request', $request->all());
+
+            $imageData = $request->input('image');
+
+            // Parse base64 data
+            [$type, $imageData] = explode(';', $imageData);
+            [, $imageData] = explode(',', $imageData);
+            $imageData = base64_decode($imageData);
+
+            // Create directory if it doesn't exist
+            $directory = public_path('img/sign');
+            if (!File::exists($directory)) {
+                File::makeDirectory($directory, 0755, true);
+            }
+
+            $filename = 'signature_' . 'PL_' . $allocation_id->allocation_id . '.png';
+            $path = $directory . '/' . $filename;
+
+            File::put($path, $imageData);
+
+            // Generate pod_number
+            $lastId = DB::table('pod')->max('id') ?? 0;
+            $nextId = $lastId + 1;
+            $podNumber = str_pad($nextId, 5, '0', STR_PAD_LEFT);
+
+            DB::table('pod')->insert([
+                'pod_number' => $podNumber,
+                'order_id' => $cleanId,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+
+
+            DB::table('signature')->insert([
+                'pod_number' => $podNumber,
+                'signature' => 'img/sign/' . $filename,
+                'type' => 'planner',
+                'name' => auth()->user()->name,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+
+            DB::table('allocations')
+                ->where('allocation_id', $allocation_id->allocation_id)
+                ->update([
+                    'status' => 'signed',
+                    'updated_at' => now()
+                ]);
+
+            return response()->json([
+                'success' => true,
+                'filename' => 'img/sign/' . $filename,
+                'pod_number' => $podNumber
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error saving signature', [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                'trace' => $e->getTraceAsString(),
+                'request' => $request->all()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while saving the signature.'
+            ], 500);
+        }
+    }
 }
-

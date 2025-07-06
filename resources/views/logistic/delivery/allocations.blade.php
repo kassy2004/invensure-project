@@ -48,3 +48,41 @@
         }
     });
 </script>
+<script>
+    document.querySelectorAll("[id^='signature']").forEach(canvas => {
+        const id = canvas.id.replace("signature", "");
+        const signaturePad = new SignaturePad(canvas);
+
+        function resizeCanvas() {
+            const ratio = window.devicePixelRatio || 1;
+            const styles = getComputedStyle(canvas);
+            const width = parseInt(styles.width);
+            const height = parseInt(styles.height);
+
+            canvas.width = width * ratio;
+            canvas.height = height * ratio;
+            canvas.getContext("2d").scale(ratio, ratio);
+
+            signaturePad.clear();
+        }
+
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+
+        document.getElementById(`clear${id}`).addEventListener("click", () => {
+            signaturePad.clear();
+        });
+
+        document.getElementById(`save${id}`).addEventListener("click", () => {
+            if (signaturePad.isEmpty()) {
+                alert("Please provide a signature.");
+                return;
+            }
+            const dataURL = signaturePad.toDataURL();
+            const img = document.getElementById(`signature-image${id}`);
+            img.src = dataURL;
+            img.classList.remove("hidden");
+        });
+    });
+</script>
+

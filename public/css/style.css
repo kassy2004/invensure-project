@@ -2,3 +2,27 @@
 *{
     font-family: 'Inter', sans-serif;
 }
+
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  /* Track (background of scrollbar) */
+  ::-webkit-scrollbar-track {
+    background: #1d1c1c;
+  }
+  
+  /* Thumb (the moving part) */
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 6px;
+  }
+  
+  /* Thumb on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+  
+  

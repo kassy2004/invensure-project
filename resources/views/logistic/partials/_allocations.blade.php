@@ -229,8 +229,8 @@
 
                         </button>
                     </div>
-                    <img id="signature-images-{{ $item->id }}" class="mt-4 hidden border rounded"
-                        alt="Signature Preview">
+                    {{-- <img id="signature-images-{{ $item->id }}" class="mt-4 hidden border rounded"
+                        alt="Signature Preview"> --}}
                     {{-- <input type="hidden" name="allocation_id" value="{{ $item->allocation_id }}"> --}}
 
                 </div>

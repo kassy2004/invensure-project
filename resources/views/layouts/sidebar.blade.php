@@ -186,7 +186,7 @@
 {{ Request::is('operations') ? 'bg-gray-200' : 'hover:bg-gray-200' }}">
 
                 <x-lucide-truck class="h-5 w-5 shrink-0 text-gray-700" />
-                <a class="ml-3 hidden group-[.w-64]:inline text-gray-700">Delivery Ops.</a>
+                <span class="ml-3 hidden group-[.w-64]:inline text-gray-700">Delivery Ops.</span>
             </li>
                 <li onclick="window.location='{{ url('/pod') }}'"
                     class="flex items-center  px-5 py-3 hover:bg-gray-200 cursor-pointer

@@ -1,7 +1,7 @@
 <div x-data="userForm()" x-init="init" class="flex justify-between gap-5 w-full">
     <div class="bg-gray-50 rounded-lg p-6 border-2 border-gray-200 w-full">
         <h1 class="text-xl text-gray-800 font-semibold">User Information</h1>
-        <p class="text-sm text-gray-500">Add or edit user details</p>
+        <p class="text-sm text-gray-500">Enter the user’s information and role assignment</p>
         <form action="{{url('/add-user')}}" method="post">
             @csrf
         <div class="flex flex-col gap-3 mt-5">
@@ -38,9 +38,9 @@
             </div>
 
             <div class="flex justify-center w-full">
-                <button class="w-full flex gap-2 justify-center bg-gray-900 text-white py-2 px-4 rounded-md items-center">
+                <button class="w-full flex gap-2 justify-center bg-orange-500 text-white py-2 px-4 rounded-lg items-center">
                     <x-lucide-plus class="h-5 w-5"/>
-                  Save User
+                  Add User
                 </button>
               </div>
         </div>
@@ -83,10 +83,10 @@
             rolePermissions: {
                 customer: [
                     'View order history',
-                    'Track current orders',
                     'Submit new orders',
-                    'Update account information',
-                    'Access product catalog'
+                    'Request return',
+                    'Submit feedback',
+                    
                 ],
                 inventory_manager: [
                     'Manage product inventory',

@@ -54,19 +54,19 @@
                                 <h4 class="text-zinc-700">Enter information for the digital signature</h4>
                             </div>
 
-                            <div class="flex flex-col gap-4 mt-5 pr-2 overflow-y-auto max-h-128">
+                            <div class="flex flex-col gap-4 mt-5 pr-2 max-h-128">
                                 <fieldset class="fieldset">
                                     <legend class="fieldset-legend text-zinc-600">Type</legend>
                                     <div class="flex">
 
                                         <div class="flex gap-2 ml-5 items-center">
-                                            <input type="radio"  name="type" value="customer"
+                                            <input type="radio" name="type" value="customer"
                                                 class="radio radio-xs bg-red-100 border-orange-300 checked:bg-orange-200 checked:text-orange-600 checked:border-orange-600" />
                                             <span class="text-zinc-700">Customer</span>
 
                                         </div>
                                         <div class="flex gap-2 ml-5 items-center">
-                                            <input type="radio"  name="type" value="driver"
+                                            <input type="radio" name="type" value="driver"
                                                 class="radio radio-xs bg-red-100 border-orange-300 checked:bg-orange-200 checked:text-orange-600 checked:border-orange-600" />
                                             <span class="text-zinc-700">Driver</span>
 
@@ -81,13 +81,43 @@
 
                                 </fieldset>
 
-                                <fieldset class="fieldset">
+
+                                <div x-data="{ open: false, search: '', selected: null }" class="relative w-full">
+                                    <fieldset class="fieldset">
+                                        <legend class="fieldset-legend text-zinc-600">POD Number</legend>
+                                    </fieldset>
+                                    <input type="text" x-model="search" @focus="open = true"
+                                        @click.away="open = false" placeholder="Search or enter POD..."
+                                        class="w-full border border-zinc-300 rounded-md px-3 py-2 text-zinc-800" />
+
+                                    <div x-show="open"
+                                        class="absolute z-[9999] mt-1 w-full bg-white border border-zinc-300 rounded-md max-h-48 overflow-y-auto">
+                                        @forelse ($pod as $items)
+                                            <div x-show="`{{ $items->pod_number }}`.toLowerCase().includes(search.toLowerCase())"
+                                                @click="selected = '{{ $items->id }}'; search = '{{ $items->pod_number }}'; open = false"
+                                                class="px-3 py-2 cursor-pointer hover:bg-zinc-100 text-sm text-zinc-700 flex flex-col">
+                                                <span>{{ $items->pod_number }}</span>
+                                                {{-- <span class="text-gray-500 text-xs">{{ $trucks->driver_name }}</span>
+                                                <span class="text-gray-500 text-xs">Capacity:
+                                                    {{ $trucks->capacity_kg }}kg</span> --}}
+                                            </div>
+                                        @empty
+                                            <div class="px-3 py-2 text-sm text-zinc-500 select-none">
+                                                No PODs available
+                                            </div>
+                                        @endforelse
+                                    </div>
+                                    <input type="hidden" name="pod_number" :value="selected" required />
+
+
+                                </div>
+                                {{-- <fieldset class="fieldset">
                                     <legend class="fieldset-legend text-zinc-600">POD Number</legend>
                                     <input type="text" name="pod_number"
                                         class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
                                         placeholder="Enter POD Number" required />
 
-                                </fieldset>
+                                </fieldset> --}}
 
                                 <fieldset class="fieldset">
                                     <legend class="fieldset-legend text-zinc-600">Signatory Name</legend>
@@ -99,8 +129,8 @@
                             </div>
                         </div>
                         <div class="w-full border rounded-lg p-6 bg-zinc-50 border-zinc-300">
-                            <div>
-                                <h1 class="text-xl font-bold text-zinc-900">Signature Capture
+                            <div class="mb-5">
+                                <h1 class="text-xl font-bold text-zinc-900">Signature
                                 </h1>
                                 <h4 class="text-zinc-700">Use your finger or stylus to sign in the area below</h4>
                             </div>
@@ -123,7 +153,7 @@
                                 </button>
                             </div>
                             <img id="signature-image" class="mt-4 hidden border rounded" alt="Signature Preview">
-                            <input id="signature_path" type="hidden" name="signature_path"> 
+                            <input id="signature_path" type="hidden" name="signature_path">
                         </div>
                     </div>
                 </form>
@@ -167,6 +197,6 @@
         document.getElementById('signature_path').value = dataURL;
         // img.src = dataURL;
         // img.classList.remove('hidden');
-        
+
     });
 </script>

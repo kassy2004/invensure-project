@@ -135,16 +135,17 @@ class DeliveryOperationsController extends Controller
 
                 if (!$ordersexists) {
                     DB::table('orders')->insert([
-                        'order_id' => str_pad($nextOrderNumber, 5, '0', STR_PAD_LEFT),
+                        'order_id' => str_pad($nextOrderNumber, 4, '0', STR_PAD_LEFT),
                         'customer_id' => $customer->id,
                         'product_id' => $order->id,
                         'warehouse' => 'pcsi',
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
-                    $nextOrderNumber++;
+                   
                 }
             }
+            $nextOrderNumber++;
         }
 
         foreach ($groupedJfpcOrders as $key => $order) {
@@ -356,7 +357,7 @@ class DeliveryOperationsController extends Controller
             // Generate pod_number
             $lastId = DB::table('pod')->max('id') ?? 0;
             $nextId = $lastId + 1;
-            $podNumber = str_pad($nextId, 5, '0', STR_PAD_LEFT);
+            $podNumber = str_pad($nextId, 4, '0', STR_PAD_LEFT);
 
             DB::table('pod')->insert([
                 'pod_number' => $podNumber,

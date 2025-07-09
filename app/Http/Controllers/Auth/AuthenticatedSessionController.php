@@ -28,6 +28,21 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $user = Auth::user();
+
+
+        \OwenIt\Auditing\Models\Audit::create([
+            'user_type' => get_class($user),
+            'user_id' => $user->id,
+            'event' => 'logged_in',
+            'auditable_type' => get_class($user),
+            'auditable_id' => $user->id,
+            'old_values' => [],
+            'new_values' => ['status' => 'User logged in'],
+            'url' => url()->current(),
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->header('User-Agent'),
+        ]);
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
@@ -36,6 +51,21 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        $user = Auth::user();
+
+
+        \OwenIt\Auditing\Models\Audit::create([
+            'user_type' => get_class($user),
+            'user_id' => $user->id,
+            'event' => 'logged_out',
+            'auditable_type' => get_class($user),
+            'auditable_id' => $user->id,
+            'old_values' => [],
+            'new_values' => ['status' => 'User logged out'],
+            'url' => url()->current(),
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->header('User-Agent'),
+        ]);
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

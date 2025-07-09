@@ -20,23 +20,19 @@
                                 <span @click="tab = 'reports'"
                                     :class="tab === 'reports' ? 'bg-gray-50' : 'bg-gray-200'"
                                     class="px-4 py-2 rounded-md cursor-pointer text-xs text-gray-900">Reports</span>
-                                <span @click="tab = 'notifications'"
-                                    :class="tab === 'notifications' ? 'bg-gray-50' : 'bg-gray-200'"
-                                    class="px-4 py-2 rounded-md cursor-pointer text-xs text-gray-900">Notifications</span>
+                              
                             </div>
                             <div class="flex gap-6 mb-5 mt-5 w-full">
-                                <template x-if="tab === 'dashboardOverview'">
+                                <div x-show="tab === 'dashboardOverview'" class="w-full">
                                     @include('components.dashboard.overview')
-                                </template>
+                                </div>
                                 <template x-if="tab === 'analytics'">
                                     @include('components.dashboard.analytics')
                                 </template>
                                 <template x-if="tab === 'reports'">
                                     @include('components.dashboard.reports')
                                 </template>
-                                <template x-if="tab === 'notifications'">
-                                    @include('components.dashboard.notifications')
-                                </template>
+                            
                             </div>
                         </div>
                     @endif
@@ -252,4 +248,9 @@
 
         }
     });
+
+
+
+
+    
 </script>

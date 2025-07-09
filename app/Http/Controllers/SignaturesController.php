@@ -10,7 +10,11 @@ class SignaturesController extends Controller
 {
     public function index()
     {
-        return view('logistic.signatures');
+        $pod = DB::table('pod')
+        ->where('status', 'incomplete')
+        ->get();
+        // dd($pod);
+        return view('logistic.signatures', compact('pod'));
     }
 
     public function submit(Request $request)
@@ -101,10 +105,20 @@ class SignaturesController extends Controller
                 ]);
 
             DB::table('orders')
-                ->where('allocation_id', 'ALLOC-' . $orderId->order_id)
+                ->where('order_id', $orderId->order_id)
                 ->update([
                     'status' => 'delivered',
                     'updated_at' => now(),
+                ]);
+
+                DB::table('notifications')
+                ->insert([
+                    'user_id' => auth()->id(),
+                    'for' =>'logistics_coordinator',
+                    'title' => 'Order Delivered',
+                    'message' => 'Order # '. $orderId->order_id . ' has been delivered',
+                    'type' => 'info',
+                    'created_at' => now(),
                 ]);
         }
 

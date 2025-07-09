@@ -5,18 +5,19 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
+use Carbon\Carbon;
 class OrdersController extends Controller
 {
     public function index()
     {
 
         $orders = DB::table('orders')
-          
+
             ->get();
         $printedKeys = [];
         $filteredOrders = [];
 
+        $returnPodNumbers = DB::table('returns')->pluck('pod_number')->toArray();
 
         foreach ($orders as $order) {
             $customer = DB::table('customers')
@@ -60,10 +61,39 @@ class OrdersController extends Controller
             $order->products = $combinedProducts;
             $order->transaction_date = $transactionDate;
             $order->order_count = $combinedProducts->count();
+            $order->has_return = in_array($order->order_id, $returnPodNumbers);
+
+            $feedback = DB::table('feedback')
+                ->where('order_id', $order->order_id)
+                ->first();
+
+            $order->has_feedback = !is_null($feedback);
+            $order->feedback_data = $feedback;
+
+
+            $order->can_request_return = false;
+
+
+            if ($order->status === 'delivered' && $order->updated_at) {
+                $deliveredAt = Carbon::parse($order->updated_at);
+                $order->can_request_return = now()->diffInHours($deliveredAt) <= 12;
+            }
+
+            $return = DB::table('returns')
+            ->where('customer', $customer->business_name)
+            ->where('pod_number', $order->order_id)->first();
+            $order->return_data = $return;
+
+
+            // dd( $order->return_data);
             $filteredOrders[] = $order;
             $printedKeys[] = $key;
+
         }
 
-        return view('customer.orders', ['order' => $filteredOrders]);
+
+        return view('customer.orders', [
+            'order' => $filteredOrders,
+        ]);
     }
 }

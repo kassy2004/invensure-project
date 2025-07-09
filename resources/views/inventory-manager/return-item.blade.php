@@ -65,6 +65,117 @@
                         </div>
                         <div id="returnGrid" class="ag-theme-alpine bg-zinc-300"></div>
                     </div>
+                    <dialog id="approveModal" class="modal">
+                        <div class="modal-box bg-zinc-50">
+                            <h3 class="text-lg font-bold text-zinc-800">Approve Return Request</h3>
+                            <p class="text-zinc-600" id="approve-text">Are you sure you want to approve the return
+                                request?</p>
+
+                            <div class="text-sm mt-5 ">
+                                <div class="flex gap-2 ">
+                                    <span class="text-zinc-500">POD #: </span>
+                                    <span id="pod" class="text-zinc-700 font-semibold ">0001</span>
+                                </div>
+                                <div class="flex gap-2 ">
+                                    <span class="text-zinc-500">Customer: </span>
+                                    <span id="customer" class="text-zinc-700 font-semibold ">Jollibee</span>
+                                </div>
+                                <div class="flex gap-2 ">
+                                    <span class="text-zinc-500">Reason for return: </span>
+                                    <span id="reason" class="text-zinc-700 font-semibold ">Hematoma</span>
+                                </div>
+                                <div class="flex gap-2 ">
+                                    <span class="text-zinc-500">Detail Description: </span>
+                                    <span id="others" class="text-zinc-700 font-semibold ">nyenye</span>
+                                </div>
+                                <div class="flex gap-2 ">
+                                    <span class="text-zinc-500">Request Date: </span>
+                                    <span id="date" class="text-zinc-700 font-semibold ">Today</span>
+                                </div>
+                            </div>
+                            <div class="flex justify-end gap-3 mt-6">
+                                <form method="dialog">
+                                    <button type="submit"
+                                        class="py-2 px-4 text-sm rounded-lg bg-zinc-200 text-zinc-700 shadow-none border-none">Cancel</button>
+                                </form>
+
+                                <form method="POST" id="approveForm" x-data="{ loading: false }" @submit="loading = true">
+                                    @csrf
+                                    @method('PUT')
+                                    <button type="submit"
+                                        class="py-2 px-4 text-sm rounded-lg bg-green-500 text-white hover:bg-green-600 shadow-none border-none disabled:bg-green-500 disabled:text-white disabled:opacity-70"
+                                        :disabled="loading">
+                                        <span x-show="!loading">Yes, Approve</span>
+                                        <span x-show="loading" class="flex items-center gap-2">
+                                            <x-lucide-loader class="h-4 w-4 animate-spin" />
+                                            Approving...
+                                        </span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <form method="dialog" class="modal-backdrop">
+                            <button>close</button>
+                        </form>
+                    </dialog>
+
+
+                    <dialog id="rejectModal" class="modal">
+                        <div class="modal-box bg-zinc-50">
+                            <h3 class="text-lg font-bold text-zinc-800">Reject Return Request</h3>
+                            <p class="text-zinc-600" id="reject-text">Are you sure you want to reject the return
+                                request?</p>
+
+                            <div class="text-sm mt-5 ">
+                                <div class="flex gap-2 ">
+                                    <span class="text-zinc-500">POD #: </span>
+                                    <span id="pod" class="text-zinc-700 font-semibold ">0001</span>
+                                </div>
+                                <div class="flex gap-2 ">
+                                    <span class="text-zinc-500">Customer: </span>
+                                    <span id="customer" class="text-zinc-700 font-semibold ">Jollibee</span>
+                                </div>
+                                <div class="flex gap-2 ">
+                                    <span class="text-zinc-500">Reason for return: </span>
+                                    <span id="reason" class="text-zinc-700 font-semibold ">Hematoma</span>
+                                </div>
+                                <div class="flex gap-2 ">
+                                    <span class="text-zinc-500">Detail Description: </span>
+                                    <span id="others" class="text-zinc-700 font-semibold ">nyenye</span>
+                                </div>
+                                <div class="flex gap-2 ">
+                                    <span class="text-zinc-500">Request Date: </span>
+                                    <span id="date" class="text-zinc-700 font-semibold ">Today</span>
+                                </div>
+                            </div>
+                            <div class="flex justify-end gap-3 mt-6">
+                                <form method="dialog">
+                                    <button type="submit"
+                                        class="py-2 px-4 text-sm rounded-lg bg-zinc-200 text-zinc-700 shadow-none border-none">Cancel</button>
+                                </form>
+
+                                <form method="POST" id="rejectForm" x-data="{ loading: false }" @submit="loading = true">
+                                    @csrf
+                                    @method('PUT')
+                                    <button type="submit"
+                                        class="py-2 px-4 text-sm rounded-lg bg-red-500 text-white hover:bg-red-600 shadow-none border-none disabled:bg-red-500 disabled:text-white disabled:opacity-70"
+                                        :disabled="loading">
+                                        <span x-show="!loading">Reject</span>
+                                        <span x-show="loading" class="flex items-center gap-2">
+                                            <x-lucide-loader class="h-4 w-4 animate-spin" />
+                                            Rejecting...
+                                        </span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <form method="dialog" class="modal-backdrop">
+                            <button>close</button>
+                        </form>
+                    </dialog>
+
+                    <!-- Open the modal using ID.showModal() method -->
+
                 </div>
             </div>
         </div>
@@ -113,6 +224,10 @@
                 field: "reason_for_return",
             },
             {
+                headerName: "Description",
+                field: "others",
+            },
+            {
                 headerName: "Pod Number",
                 field: "pod_number",
             },
@@ -131,64 +246,39 @@
                 headerClass: 'ag-center-cols-header',
                 cellRenderer: params => {
                     const id = params.data.id;
+                    const pod_number = params.data.pod_number;
+                    const customer = params.data.customer;
+                    const reason_for_return = params.data.reason_for_return;
+                    const others = params.data.others;
+                    const created_at = params.data.created_at;
+                    const status = params.data.status;
+                    const actionButtons = status === 'pending' ? `
+            <button onclick="openApproveModal(${id}, '${pod_number}', '${customer}', '${reason_for_return}', '${others}', '${created_at}')" 
+                class="bg-emerald-500 p-2 rounded-lg hover:bg-emerald-400 transition duration-300 ease-in-out" title="Approve">
+                <x-lucide-stamp class="h-5 w-5 text-white"/>
+            </button>
+            <button onclick= "openRejectModal(${id}, '${pod_number}', '${customer}', '${reason_for_return}', '${others}', '${created_at}')" 
+                class="bg-red-500 p-2 rounded-lg hover:bg-red-400 transition duration-300 ease-in-out" title="Reject">
+                <x-lucide-ban class="h-5 w-5 text-white"/>
+            </button>
+        ` : '';
 
                     return `
-            <div class="flex gap-1 items-center h-full">
-                <button onclick="handleView(${id})" class="border border-gray-400 p-2 rounded-lg hover:bg-gray-300 transition duration-300 ease-in-out" title="View">
+            <div class="flex gap-1 items-center justify-center h-full">
+                <button onclick="handleView(${id})" 
+                    class="border border-gray-400 p-2 rounded-lg hover:bg-gray-300 transition duration-300 ease-in-out" title="View">
                     <x-lucide-file-text class="h-5 w-5 text-zinc-500"/>
                 </button>
-                <button onclick="handleView(${id})" class="bg-emerald-500 p-2 rounded-lg hover:bg-emerald-400 transition duration-300 ease-in-out" title="Approve">
-                    <x-lucide-stamp class="h-5 w-5 text-white"/>
-                </button>
-                <button onclick="handleView(${id})" class="bg-red-500 p-2 rounded-lg hover:bg-red-400 transition duration-300 ease-in-out" title="Reject">
-                    <x-lucide-ban class="h-5 w-5 text-white"/>
-                </button>
+                ${actionButtons}
             </div>
         `;
                 },
             },
 
         ];
-        const returnRowData = [{
-                id: 1,
-                customer: "Juan Dela Cruz",
-                prod_category: "Dressed Chicken",
-                production_date: "2025-06-25",
-                qty: 25,
-                kilogram: 18.5,
-                description: "Returned due to spoilage",
-                reason_for_return: "Spoiled",
-                pod_number: 100123,
-                warehouse: "PCSI",
-                created_at: "2025-06-28",
-            },
-            {
-                id: 2,
-                customer: "Maria Santos",
-                prod_category: "Fillets",
-                production_date: "2025-06-20",
-                qty: 15,
-                kilogram: 10.2,
-                description: "Returned for wrong item",
-                reason_for_return: "Wrong item delivered",
-                pod_number: 100124,
-                warehouse: "JFPC",
-                created_at: "2025-06-28",
-            },
-            {
-                id: 3,
-                customer: "Carlos Reyes",
-                prod_category: "Value Added",
-                production_date: "2025-06-15",
-                qty: 8,
-                kilogram: 6.0,
-                description: "Damaged packaging",
-                reason_for_return: "Packaging damage",
-                pod_number: 100125,
-                warehouse: "PCSI",
-                created_at: "2025-06-27",
-            }
-        ];
+
+        const returnRowData = @json($returns);
+
 
         returnGridOptions = {
             columnDefs: returnColumnDefs,
@@ -203,6 +293,20 @@
 
             pagination: true,
             paginationPageSize: 10,
+            getRowStyle: params => {
+               
+                if (params.data.status === 'approved') {
+                    return {
+                        backgroundColor: '#DCFCE7'
+                    }; // light green
+                }
+                if (params.data.status === 'rejected') {
+                    return {
+                        backgroundColor: '#FECACA'
+                    }; // light red
+                }
+                return null;
+            },
 
         };
 
@@ -223,4 +327,51 @@
 
 
     });
+
+
+    function openApproveModal(id, pod_number, customer, reason_for_return, others, created_at) {
+        const dateObj = new Date(created_at);
+        const formattedDate = dateObj.toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        });
+        document.getElementById('approve-text').textContent =
+            `Are you sure you want to approve the return request for:`;
+        document.getElementById('pod').textContent = `${pod_number}`;
+        document.getElementById('customer').textContent = `${customer}`;
+
+        document.getElementById('reason').textContent = `${reason_for_return}`;
+        document.getElementById('others').textContent = `${others}`;
+        document.getElementById('date').textContent = formattedDate;
+        const form = document.getElementById('approveForm');
+        form.action = `/approve-return/${id}`;
+        document.getElementById('approveModal').showModal();
+    }
+
+    function openRejectModal(id, pod_number, customer, reason_for_return, others, created_at) {
+        const dateObj = new Date(created_at);
+        const formattedDate = dateObj.toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        });
+        document.getElementById('reject-text').textContent =
+            `Are you sure you want to approve the return request for:`;
+        document.getElementById('pod').textContent = `${pod_number}`;
+        document.getElementById('customer').textContent = `${customer}`;
+
+        document.getElementById('reason').textContent = `${reason_for_return}`;
+        document.getElementById('others').textContent = `${others}`;
+        document.getElementById('date').textContent = formattedDate;
+        const form = document.getElementById('rejectForm');
+        form.action = `/reject-return/${id}`;
+        document.getElementById('rejectModal').showModal();
+    }
 </script>

@@ -98,10 +98,24 @@
                         </div>
 
                     </div>
+
+                    <!-- POD to export to PDF -->
                     <div class="w-[60%] border rounded-lg p-6 bg-zinc-50 border-zinc-300">
-                        <div>
-                            <h1 class="text-xl font-bold text-zinc-900">POD Preview</h1>
-                            <h4 class="text-zinc-700">Digital proof of delivery document</h4>
+                        <div class="flex justify-between">
+                            <div>
+
+                                <h1 class="text-xl font-bold text-zinc-900">POD Preview</h1>
+                                <h4 class="text-zinc-700">Digital proof of delivery document</h4>
+                            </div>
+                            <div>
+                                <a id="export_pdf" href="#"
+                                    data-route-template="{{ route('pod.pdf', ['id' => '__ID__']) }}"
+                                    {{-- href="{{ route('pod.pdf', ['id' => $pod->id]) }}" --}} target="_blank"
+                                    class="text-white bg-orange-500 px-4 py-2 rounded-md">
+                                    Export to PDF
+                                </a>
+                            </div>
+
                         </div>
                         <div id="pod-preview"
                             class="flex flex-col mt-5 border rounded-lg border-zinc-300 p-4 gap-4 max-h-128 overflow-y-auto">
@@ -173,7 +187,7 @@
                                             </div>
                                             <div class="text-xs flex gap-2">
                                                 <span class="text-zinc-700">Status:</span>
-                                                <span  class="text-zinc-500 rounded-full  px-2"
+                                                <span class="text-zinc-500 rounded-full  px-2"
                                                     id="pod-status">Completed</span>
                                             </div>
                                         </div>
@@ -262,7 +276,7 @@
                                         </div>
 
                                         <div class="text-zinc-700 text-sm flex flex-col">
-                                            <span class="font-semibold">Dispatched by:</span>
+                                            <span class="font-semibold">Driver:</span>
                                             <span id="dispatched-by">KIM HARLEY C. BONSOL</span>
                                         </div>
 
@@ -383,6 +397,10 @@
                 document.getElementById('dispatched-by').textContent = podData.driver_name;
                 document.getElementById('customer-name-sig').textContent = podData.customer_name;
 
+                
+                const podId = podData.pod_number;
+                updateExportPdfLink(podId);
+
                 // Enable complete button if POD is completed
                 if (!podData.driver_signature || !podData.customer_signature) {
                     completeButton.disabled = false;
@@ -390,6 +408,9 @@
                     completeButton.classList.add('bg-orange-500', 'text-white', 'border-orange-500');
                     document.getElementById('button-text').textContent = "Complete Signature";
                     document.getElementById('button-icon').innerHTML = `<x-lucide-pen-tool class="h-4 w-4" />`;
+                    completeButton.onclick = function() {
+                        window.location.href = "/signatures";
+                    };
 
                 } else {
                     completeButton.disabled = true;
@@ -397,11 +418,25 @@
                     completeButton.classList.add('text-zinc-500', 'border-zinc-300');
                     document.getElementById('button-text').textContent = "Completed";
                     document.getElementById('button-icon').innerHTML = `<x-lucide-check class="h-5 w-5" />`;
-
+                    completeButton.onclick = null;
                 }
 
                 // Update items table (you'll need to implement this based on your allocation data)
                 updateItemsTable(podData);
+            }
+
+            function updateExportPdfLink(podId) {
+                const routeTemplate = document.getElementById('export_pdf').dataset.routeTemplate;
+                const finalRoute = routeTemplate.replace('__ID__', podId);
+                const exportPdf = document.getElementById('export_pdf');
+                exportPdf.href = finalRoute;
+                exportPdf.textContent = 'Download PDF for ' + podId;
+            }
+
+            function resetExportPdfLink() {
+                const exportPdf = document.getElementById('export_pdf');
+                exportPdf.href = "#";
+                exportPdf.textContent = "Export to PDF";
             }
 
             // Function to update items table
@@ -454,6 +489,7 @@
                 completeButton.disabled = true;
                 completeButton.classList.remove('bg-green-500', 'text-white', 'border-green-500');
                 completeButton.classList.add('text-zinc-500', 'border-zinc-300');
+                resetExportPdfLink();
             }
 
             // Add event listeners to radio buttons

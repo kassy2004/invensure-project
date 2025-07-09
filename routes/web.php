@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeliveryOperationsController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ItemMasterController;
 use App\Http\Controllers\JFPCController;
@@ -33,9 +34,7 @@ Route::middleware('auth')->group(function () {
 require __DIR__ . '/auth.php';
 
 
-Route::get('/user', function () {
-    return view('user');
-})->middleware(['auth', 'verified'])->name('user');
+
 
 Route::get('/sales', function () {
     return view('sales');
@@ -96,3 +95,22 @@ Route::get('/signatures', [SignaturesController::class, 'index']);
 Route::post('/signatures/submit', [SignaturesController::class, 'submit'])->name('signatures.submit');
 
 Route::post('/save-signature', [DeliveryOperationsController::class, 'storeSignature']);
+
+
+Route::post('/feedback', [FeedbackController::class, 'store'])->middleware('auth');
+
+Route::post('/return-order', [ReturnItemController::class, 'submitRequest'])->middleware('auth');
+Route::put('/approve-return/{id}', [ReturnItemController::class, 'approveRequest'])->middleware('auth');
+Route::put('/reject-return/{id}', [ReturnItemController::class, 'rejectRequest'])->middleware('auth');
+// Route::get('/user', function () {
+//     return view('user');
+// })->middleware(['auth', 'verified'])->name('user');
+
+Route::get('/user', [UserController::class, 'index'])->middleware('auth');
+
+Route::get('/pod/{id}/pdf', [PODController::class, 'downloadPdf'])->name('pod.pdf');
+
+
+Route::get('/pod/preview/{id}', [PODController::class, 'previewPdf']);
+
+

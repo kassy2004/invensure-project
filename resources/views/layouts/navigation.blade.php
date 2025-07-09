@@ -28,20 +28,22 @@
                     </div>
                     <div class="overflow-y-auto space-y-3 h-68 pr-2" id="notifList">
                         @forelse($global_notifications as $notif)
-                            <div class="notif-item border-l-4 gap-4   pl-3 mb-4 flex justify-between h-16 items-center
+                            <div class="notif-item border-l-4 gap-4 mt-3  pl-3 mb-4 flex justify-between h-16 items-center
                             {{ $notif->marked_as_read === 'marked_as_read'
                                 ? 'border-gray-300 opacity-70'
                                 : ($notif->type === 'warning'
                                     ? 'border-yellow-400'
-                                    : ($notif->type === 'error'
-                                        ? 'border-red-500'
-                                        : ($notif->type === 'info'
-                                            ? 'border-blue-500'
-                                            : ''))) }}"
+                                    : ($notif->type === 'success'
+                                        ? 'border-green-500'
+                                        : ($notif->type === 'error'
+                                            ? 'border-red-500'
+                                            : ($notif->type === 'info'
+                                                ? 'border-blue-500'
+                                                : '')))) }}"
                                 data-id="{{ $notif->id }}">
                                 <div class="w-2/3">
                                     <p class="text-sm font-medium text-gray-800">{{ $notif->title }}</p>
-                                    <p class="text-xs text-gray-600">{{ $notif->message }}</p>
+                                    <p class="text-xs text-gray-600 truncate">{{ $notif->message }}</p>
                                 </div>
                                 <div class="w-1/3 flex justify-center">
                                     <span

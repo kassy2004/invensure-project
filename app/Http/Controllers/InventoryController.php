@@ -108,6 +108,8 @@ class InventoryController extends Controller
 
             if (!$existing) {
                 DB::table('notifications')->insert([
+                    'user_id' => auth()->id(),
+                    'for' => 'inventory_manager',
                     'title' => 'Item Expired',
                     'message' => "Item: {$item->id}. {$item->item_code} (SKU: {$item->sku}) has expired",
                     'type' => 'error',

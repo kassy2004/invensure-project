@@ -1,5 +1,5 @@
 <div class="w-full">
-    <div class="flex flex-wrap lg:flex-nowrap gap-6 mb-5 mt-5">
+    {{-- <div class="flex flex-wrap lg:flex-nowrap gap-6 mb-5 mt-5">
 
         <!-- Total Equipment Card -->
         <div class="bg-gray-50 rounded-lg p-6 border-2 border-gray-200 w-full sm:w-1/2 lg:w-1/4">
@@ -68,11 +68,106 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
-    <div class="flex gap-5">
+    <div class="flex flex-col lg:grid gap-5 grid-cols-10">
 
-        <div
+        <div class="col-span-7 flex flex-col gap-6 p-6 bg-zinc-50 rounded-xl border border-gray-200 w-full">
+            <div>
+                <h1 class="text-zinc-800 font-semibold">Inventory Breakdown: Quantity & Kilograms</h1>
+                <p class="text-zinc-600 text-sm">Chart displays side-by-side metrics for each item group</p>
+            </div>
+
+            <div class="w-11/12 mx-auto">
+                <canvas id="stockCategory" class="w-full"></canvas>
+            </div>
+        </div>
+        <div class="col-span-3 flex flex-col gap-5">
+            <div class="p-6 border border-gray-200 rounded-lg bg-gray-50">
+                <h1 class="text-lg font-semibold text-gray-800">Recent Activities</h1>
+                <p class="text-sm text-gray-500">Latest updates from your supply chain</p>
+            </div>
+
+            <div class="p-6 border border-gray-200 rounded-lg bg-gray-50">
+                <div x-data="auditPagination({{ $audits->toJson() }})" class="flex flex-col justify-between min-h-[400px]">
+
+                    <!-- Paginated items container -->
+                    <div class="space-y-6">
+                        <template x-for="audit in paginatedAudits" :key="audit.id">
+                            <div class="flex flex-col">
+                                <span class="text-gray-700 text-sm font-semibold" x-text="audit.event"></span>
+                                <span class="text-gray-500 text-sm"
+                                    x-text="`${audit.user_name} (${audit.user_role})`"></span>
+                                <div class="flex items-center mt-2 gap-2">
+                                    <x-lucide-clock class="h-4 w-4 text-gray-500" />
+                                    <span class="text-gray-500 text-sm" x-text="timeAgo(audit.created_at)"></span>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- Pagination controls -->
+                    <div class="flex justify-between items-center mt-4 text-zinc-600 text-sm">
+                        <button class="px-2 py-1 border rounded" :class="{ 'bg-orange-500 text-white': page > 1 }"
+                            :disabled="page === 1" @click="page--">
+                            Previous
+                        </button>
+
+                        <span class="text-sm text-gray-600">
+                            Page <span x-text="page"></span> of <span x-text="totalPages"></span>
+                        </span>
+
+                        <button class="px-2 py-1 border rounded"
+                            :class="{ 'bg-orange-500 text-white': page < totalPages }" :disabled="page === totalPages"
+                            @click="page++">
+                            Next
+                        </button>
+                    </div>
+                </div>
+
+                <script>
+                    function auditPagination(data) {
+                        return {
+                            audits: data,
+                            page: 1,
+                            perPage: 3,
+
+                            get totalPages() {
+                                return Math.ceil(this.audits.length / this.perPage);
+                            },
+                            get paginatedAudits() {
+                                return this.audits.slice((this.page - 1) * this.perPage, this.page * this.perPage);
+                            },
+                            timeAgo(dateString) {
+                                const date = new Date(dateString);
+                                const now = new Date();
+                                const seconds = Math.floor((now - date) / 1000);
+
+                                const intervals = {
+                                    year: 31536000,
+                                    month: 2592000,
+                                    week: 604800,
+                                    day: 86400,
+                                    hour: 3600,
+                                    minute: 60,
+                                    second: 1
+                                };
+
+                                for (const [unit, value] of Object.entries(intervals)) {
+                                    const amount = Math.floor(seconds / value);
+                                    if (amount >= 1) {
+                                        return `${amount} ${unit}${amount > 1 ? 's' : ''} ago`;
+                                    }
+                                }
+
+                                return "just now";
+                            }
+                        }
+                    }
+                </script>
+            </div>
+
+            {{-- <div
             class= "flex flex-col gap-6 flex-wrap lg:flex-nowrap p-6 bg-zinc-50 rounded-xl border border-gray-200 w-full ">
             <div>
                 <h1 class="text-zinc-800 font-semibold">Stock by Categories</h1>
@@ -83,9 +178,9 @@
             <div class="w-11/12 mx-auto">
                 <canvas id="stockCategory" class="w-full"></canvas>
             </div>
-        </div>
+        </div> --}}
 
-        <div class="p-6 border-2 border-gray-200 rounded-lg w-full bg-gray-50">
+            {{-- <div class="p-6 border-2 border-gray-200 rounded-lg w-full bg-gray-50">
             <h1 class="text-xl text-gray-800 font-semibold">Recent Activities</h1>
             <p class="text-sm text-gray-500">Latest updates from your supply chain</p>
 
@@ -127,6 +222,7 @@
                 </div>
 
             </div>
+        </div> --}}
         </div>
     </div>
     <div class="flex flex-wrap lg:flex-nowrap gap-6 mb-5 mt-5 w-full justify-between">
@@ -184,7 +280,7 @@
                         </div>
                     </div>
                     <div>
-                        <p class="text-3xl font-bold text-gray-800">{{ $totalEquipment ?? '4.7/5' }}</p>
+                        <p class="text-3xl font-bold text-gray-800">{{ $averageRating ?? '4.7/5' }}/5</p>
                         <span class="text-xs text-gray-500">Average rating</span>
                     </div>
                 </div>
@@ -199,33 +295,44 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const ctxStockCategory = document.getElementById('stockCategory');
-        const stockcategoriesLabels = @json($stockSummary->pluck('item_group'));
-        const stockcategoriesData = @json($stockSummary->pluck('total_quantity'));
 
-        console.log(stockcategoriesLabels, stockcategoriesData);
+        const stockcategoriesLabelsRaw  = @json($stockSummary->pluck('item_group'));
+        const quantityData = @json($stockSummary->pluck('total_quantity'));
+        const kilogramData = @json($stockKiloSummary->pluck('total_kilogram'));
+        const labelMap = {
+            'DRESSED CHICKEN': 'DC',
+            'FILLET': 'FF',
+            'CHOICE CUT': 'CC',
+            'VALUE ADDED PRODUCT': 'VA',
+            'BY PRODUCT': 'BP',
+        };
+
+
+        const stockcategoriesLabels = stockcategoriesLabelsRaw.map(label => labelMap[label] || label);
+        // console.log(stockcategoriesLabels, stockcategoriesData);
         window.myChart3 = new Chart(ctxStockCategory, {
-            type: 'bar',
+            type: 'line',
             data: {
                 labels: stockcategoriesLabels,
                 datasets: [{
-                    label: 'Stock',
-                    data: stockcategoriesData,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.7)', // 30 days
-                        'rgba(75, 192, 192, 0.7)', // 90 days
-                        'rgba(255, 206, 86, 0.7)', // 60 days
-                        'rgba(255, 206, 86, 0.7)', // 60 days
-                        'rgba(75, 192, 192, 0.7)' // 90 days
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)'
-                    ],
-                    borderWidth: 1
-                }]
+                        label: 'Quantity',
+                        data: quantityData,
+                        borderColor: 'rgb(249, 115, 22)',
+                        backgroundColor: 'rgba(249, 115, 22, 0.2)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4
+                    },
+                    {
+                        label: 'Kilogram',
+                        data: kilogramData,
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4
+                    }
+                ]
             },
             options: {
 

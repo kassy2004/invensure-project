@@ -3,8 +3,8 @@
     @include('layouts.sidebar')
 
     <div class="py-8 w-full">
-        <div class="w-full px-4">
-            <div class=" overflow-hidden p-6">
+        <div class="w-full px-2 lg:px-4">
+            <div class=" overflow-hidden lg:p-6">
 
                 <div class="flex items-center justify-between">
                     <div class="flex flex-col">
@@ -47,7 +47,7 @@
 
                 <form method="POST" action="{{ route('signatures.submit') }}">
                     @csrf
-                    <div class="flex  gap-6 mb-5 mt-5 w-full ">
+                    <div class="flex flex-col lg:flex-row gap-6 mb-5 mt-5 w-full ">
                         <div class="w-full border rounded-lg p-6 bg-zinc-50 border-zinc-300">
                             <div>
                                 <h1 class="text-xl font-bold text-zinc-900">Signature Details</h1>

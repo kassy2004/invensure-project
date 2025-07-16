@@ -10,8 +10,10 @@ class JFPCController extends Controller
 {
     public function index()
     {
-      
-    
+
+        if (auth()->user()->role !== 'inventory_manager') {
+            return redirect()->back()->with('error', 'Unauthorized access.');
+        }
         $inventory = DB::table('jfpc_incoming')->get();
         $item_master = DB::table('item_master')->get();
 

@@ -2,9 +2,9 @@
     @include('layouts.sidebar')
     
         <div class="w-full">
-            <div class="w-full px-4">
+            <div class="w-full px-2 lg:px-4">
                 <div class=" overflow-hidden">
-                    <div class="p-6">
+                    <div class="lg:p-6">
                         <div class="flex flex-wrap lg:flex-nowrap gap-6 mb-5 mt-5">
 
                             <div class="bg-gray-50 rounded-lg p-6 border-2 border-gray-200 w-full">
@@ -21,7 +21,7 @@
                                     Chart
                                 </span>
 
-                                <div class="absolute bottom-5 flex gap-10">
+                                <div class="absolute bottom-5 flex lg:gap-10">
                                     <div class="flex gap-2 items-center">
                                         <div class="h-4 w-4 bg-blue-500 rounded-full"></div>
                                         <span class="text-gray-700 text-sm">Actual Sales</span>

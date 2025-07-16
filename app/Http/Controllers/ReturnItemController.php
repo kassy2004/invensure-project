@@ -9,6 +9,9 @@ class ReturnItemController extends Controller
 {
     public function index()
     {
+        if (auth()->user()->role !== 'inventory_manager') {
+            return redirect()->back()->with('error', 'Unauthorized access.');
+        }
         $returns = DB::table('returns')->get();
 
         $returnsJson = $returns->toJson();

@@ -3,15 +3,15 @@
     @include('layouts.sidebar')
 
     <div class="py-8 w-full">
-        <div class="w-full px-4">
-            <div class=" overflow-hidden p-6">
+        <div class="w-full px-2 lg:px-4">
+            <div class=" overflow-hidden lg:p-6">
 
-                <div class="flex items-center justify-between">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
                     <div class="flex flex-col">
                         <h1 class="text-2xl font-bold text-zinc-900">Finished Goods Inventory</h1>
                         <h4 class="text-zinc-700">3JFPC Warehouse</h4>
                     </div>
-                    <div class="flex gap-2">
+                    <div class="flex gap-2 mt-5 lg:mt-0">
                         <button onclick="onExport()"
                             class="px-4 py-2 flex items-center gap-3 rounded-md text-zinc-900 text-sm border border-zinc-300 hover:border-zinc-400 transition duration-200 ease-in-out"><x-lucide-download
                                 class="h-4 w-4" />Export</button>
@@ -148,12 +148,11 @@
                                         <fieldset class="fieldset">
                                             <legend class="fieldset-legend text-zinc-600">Remarks</legend>
                                             <input type="text" name="remarks"
-                                                class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400 w-full"
-                                                  />
+                                                class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400 w-full" />
                                             <p class="label text-zinc-400">Optional</p>
                                         </fieldset>
-                                        
-                                        
+
+
                                     </div>
                                 </div>
                                 <input type="hidden" name="item_group" id="item_group">
@@ -204,34 +203,12 @@
                         </div>
                     </div>
 
-                    <div class=" p-10 bg-zinc-50  h-auto mt-10 rounded-lg border border-zinc-300">
+                    <div class="p-4 lg:p-10 bg-zinc-50  h-auto mt-10 rounded-lg border border-zinc-300">
                         <div class=" mb-5 flex gap-5 items-center">
                             <h1 class="text-lg font-semibold text-zinc-900">
-                                Finished Goods Inventory (Pinnacle Cold Storage Solutions)
+                                Incoming
                             </h1>
-                            <details class="dropdown ">
-                                <summary
-                                    class="btn h-10 rounded-lg bg-transparent text-zinc-500 font-semibold border-zinc-300 shadow-none hover:border-zinc-400 transition duration-200 ease-in-out text-xs">
-                                    2025
-                                    <x-lucide-chevron-down class="h-4 w-4" />
 
-                                </summary>
-                                <ul
-                                    class="dropdown-content flex flex-col px-2 border border-zinc-300 bg-gray-100 rounded-box z-10 w-24  overflow-y-auto max-h-64 overflow-x-auto whitespace-nowrap pb-2">
-                                    <li
-                                        class="text-xs text-zinc-500 uppercase font-semibold px-1 flex justify-between mt-3 cursor-pointer hover:bg-zinc-300 py-1 rounded-md">
-                                        2024</li>
-                                    <li
-                                        class="text-xs text-zinc-500 uppercase font-semibold px-1 flex justify-between mt-3 cursor-pointer hover:bg-zinc-300 py-1 rounded-md">
-                                        2023</li>
-                                    <li
-                                        class="text-xs text-zinc-500 uppercase font-semibold px-1 flex justify-between mt-3 cursor-pointer hover:bg-zinc-300 py-1 rounded-md">
-                                        2022</li>
-                                    <li
-                                        class="text-xs text-zinc-500 uppercase font-semibold px-1 flex justify-between mt-3 cursor-pointer hover:bg-zinc-300 py-1 rounded-md">
-                                        2021</li>
-                                </ul>
-                            </details>
 
                         </div>
 
@@ -409,12 +386,12 @@
 
                         <div id="myGrid" class="ag-theme-alpine bg-zinc-300"></div>
                     </div>
-                    <div class=" p-10 bg-zinc-50  h-auto mt-10 rounded-lg border border-zinc-300">
+                    <div class="p-4 lg:p-10 bg-zinc-50  h-auto mt-10 rounded-lg border border-zinc-300">
                         <div class=" mb-5 flex gap-5 items-center">
                             <h1 class="text-lg font-semibold text-zinc-900">
                                 Remarks
                             </h1>
-                       
+
                         </div>
 
                         <div class="flex gap-2 mb-5">
@@ -432,7 +409,7 @@
                                 class=" h-10 px-3 flex rounded-lg text-zinc-900 border border-zinc-300 items-center justify-center text-center hover:border-zinc-400 transition duration-200 ease-in-out cursor-pointer">
                                 <x-lucide-filter class="h-4 w-4" />
                             </div>
-                           
+
 
                         </div>
 
@@ -752,7 +729,7 @@
             paginationPageSize: 10,
 
         };
-        
+
         const gridDivTwo = document.getElementById('myGridTwo');
         console.log('Grid Div:', gridDivTwo);
 

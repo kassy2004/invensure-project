@@ -1,6 +1,6 @@
-<div class="navbar bg-white border-b border-zinc-300">
+<div class="navbar bg-white border-b border-zinc-300 z-99">
     <div class="flex-1">
-        <x-invensure-logo class="ml-10" />
+        <x-invensure-logo class=" ml-2 lg:ml-10" />
 
 
     </div>
@@ -19,7 +19,7 @@
                     @endif
                 </div>
             </button>
-            <div tabindex="0" class="card card-compact dropdown-content bg-zinc-50 z-1 mt-3 w-96 shadow h-96">
+            <div tabindex="0" class="card card-compact dropdown-content bg-zinc-50 z-1 mt-3 w-86 lg:w-96 shadow h-96">
                 <div class="card-body">
                     <div class=" mb-5 flex justify-between items-center text-center">
                         <span class="text-lg font-bold text-zinc-700">Notifications</span>
@@ -59,7 +59,8 @@
                 </div>
             </div>
         </div>
-        <div class="border border-gray-200 py-2 px-3 rounded-md text-gray-600 flex items-center gap-2 cursor-pointer">
+        <div
+            class="hidden lg:flex border border-gray-200 py-2 px-3 rounded-md text-gray-600 items-center gap-2 cursor-pointer">
             <x-lucide-log-out class="h-4 w-4 shrink-0" />
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
@@ -67,9 +68,103 @@
             </form>
 
         </div>
+
+
+        <div class="flex top-4 right-4 z-50 lg:hidden">
+            <button id="mobile-sidebar-toggle" onclick="toggleMobileSidebar()"
+                class="p-2 rounded-md bg-white shadow text-gray-800 z-50 relative">
+                <x-lucide-menu class="h-6 w-6" />
+            </button>
+        </div>
+
+        <!-- Dark Overlay -->
+
+    </div>
+
+</div>
+
+<div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"
+    onclick="toggleMobileSidebar()">
+</div>
+
+<div id="mobile-sidebar"
+    class="fixed top-0 bottom-0 z-60 bg-white  right-0 w-64 transform translate-x-full transition-transform duration-300 ease-in-out lg:hidden overflow-y-auto flex flex-col justify-between">
+
+    <!-- Header -->
+    <div>
+
+        <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-300">
+            <span class="text-lg font-bold text-gray-700">
+                @auth
+                    {{ ucfirst(str_replace('_', ' ', auth()->user()->role)) }}
+                @endauth
+            </span>
+            <button id="mobile-sidebar-toggle" onclick="toggleMobileSidebar()"
+                class="p-2 rounded-md bg-white shadow text-gray-800 z-50 relative ">
+                <x-lucide-x id="mobile-close-icon" class="h-6 w-6 transition-transform duration-500 ease-in-out" />
+            </button>
+
+        </div>
+
+        <!-- Sidebar links -->
+        <ul class="space-y-2 py-2 px-2">
+            @if (auth()->check() && auth()->user()->role === 'admin')
+                <x-sidebar-link label="Dashboard" url="/dashboard" icon="layout-dashboard" />
+                <x-sidebar-link label="Sales Forecasting" url="/sales" icon="line-chart" />
+                <x-sidebar-link label="Customer" url="/customer" icon="book-user" />
+                <x-sidebar-link label="User Management" url="/user" icon="users" />
+            @endif
+
+            @if (auth()->check() && auth()->user()->role === 'customer')
+                <x-sidebar-link label="Orders" url="/orders" icon="package-2" />
+            @endif
+
+            @if (auth()->check() && auth()->user()->role === 'inventory_manager')
+                <x-sidebar-label label="Main" />
+                <x-sidebar-link label="Dashboard" url="/dashboard" icon="layout-dashboard" />
+                <x-sidebar-link label="Item Master" url="/item-master" icon="archive" />
+                <x-sidebar-link label="Return Item" url="/return-item" icon="rotate-ccw" />
+                <x-sidebar-label label="Warehouse" />
+                <x-sidebar-link label="PCSI" url="/warehouse/pcsi" icon="warehouse" />
+                <x-sidebar-link label="3JFPC" url="/warehouse/jfpc" icon="warehouse" />
+            @endif
+
+            @if (auth()->check() && auth()->user()->role === 'logistics_coordinator')
+                <x-sidebar-link label="Delivery Ops." url="/operations" icon="truck" />
+                <x-sidebar-link label="POD Automation" url="/pod" icon="clipboard-check" />
+                <x-sidebar-link label="Digital Signatures" url="/signatures" icon="pen-tool" />
+            @endif
+
+
+        </ul>
+    </div>
+    <div class="border-t border-gray-200 px-5 py-4">
+        <form method="POST" action="{{ route('logout') }}" class="flex items-center gap-2 text-gray-600 justify-end">
+            @csrf
+            <x-lucide-log-out class="h-4 w-4 shrink-0" />
+            <button type="submit" class="text-sm">Sign Out</button>
+        </form>
     </div>
 </div>
 <script>
+    function toggleMobileSidebar() {
+        const sidebar = document.getElementById('mobile-sidebar');
+        const overlay = document.getElementById('mobile-overlay');
+        const isVisible = !sidebar.classList.contains('translate-x-full');
+        const icon = document.getElementById('mobile-close-icon');
+
+        if (isVisible) {
+            sidebar.classList.add('translate-x-full');
+            overlay.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        } else {
+            sidebar.classList.remove('translate-x-full');
+            overlay.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+
+            icon.classList.add('rotate-180');
+        }
+    }
     document.addEventListener('DOMContentLoaded', function() {
         const trigger = document.getElementById('notifBell');
         const marked = document.getElementById('marked');

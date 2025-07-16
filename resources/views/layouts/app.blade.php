@@ -6,13 +6,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Invensure</title>
+    <title> Invensure
+        @auth
+            @php
+                $roles = [
+                    'admin' => 'Admin',
+                    'customer' => 'Customer',
+                    'inventory_manager' => 'Inventory Manager',
+                    'logistics_coordinator' => 'Logistics Coordinator',
+                ];
+                $userRole = auth()->user()->role ?? null;
+            @endphp
+
+            {{ isset($roles[$userRole]) ? ' | ' . $roles[$userRole] : '' }}
+        @endauth
+    </title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+
 
     <!-- Fonts -->
     {{-- <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" /> --}}
-        <link rel="stylesheet" href="/path/to/starability-all.css">
+    {{-- <link rel="stylesheet" href="/path/to/starability-all.css"> --}}
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
@@ -94,11 +110,6 @@
             setTimeout(() => alertBox.remove(), 500); // remove after fade-out
         }
     }, 5000);
-
-    
-
-   
-    
 </script>
 
 </html>

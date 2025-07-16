@@ -12,6 +12,9 @@ class InventoryController extends Controller
 {
     public function index()
     {
+        if (auth()->user()->role !== 'inventory_manager') {
+            return redirect()->back()->with('error', 'Unauthorized access.');
+        }
         $inventory = DB::table('pcsi_incoming')->get();
 
 

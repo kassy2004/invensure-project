@@ -43,7 +43,7 @@
 <body class="antialiased font-sans bg-white">
     <div class="min-h-screen hero-bg">
         <!-- Header -->
-        <header class="sticky top-0 z-50 bg-white/30 backdrop-blur-sm">
+        <header class="sticky top-0 z-50 bg-white/30 backdrop-blur-sm" data-aos="fade-down" data-aos-duration="1000">
             <div class=" container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
@@ -63,7 +63,7 @@
                     </div>
 
                     <!-- Auth Buttons -->
-                    <div class="flex items-center">
+                    <div class="flex items-center ">
                         @if (Route::has('login'))
                             <div class="flex items-center space-x-4">
                                 @auth
@@ -85,7 +85,7 @@
 
                     <!-- Mobile menu button -->
                     <div class="flex items-center md:hidden">
-                        <button type="button" class="text-white hover:text-opacity-80" id="mobile-menu-button">
+                        <button type="button" class="text-black hover:text-opacity-80" id="mobile-menu-button">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -96,13 +96,13 @@
                 </div>
 
                 <!-- Mobile Navigation Menu (hidden by default) -->
-                <div class="hidden md:hidden" id="mobile-menu">
-                    <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <div class="hidden md:hidden border rounded-lg transition duration-300 ease-in" id="mobile-menu">
+                    <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 text-zinc-600">
                         <a href="#features"
-                            class="block px-3 py-2 text-white hover:text-opacity-80 font-medium">Features</a>
-                        <a href="#about" class="block px-3 py-2 text-white hover:text-opacity-80 font-medium">About</a>
+                            class="block px-3 py-2  hover:text-opacity-80 font-medium">Features</a>
+                        <a href="#about" class="block px-3 py-2 hover:text-opacity-80 font-medium">About</a>
                         <a href="#contact"
-                            class="block px-3 py-2 text-white hover:text-opacity-80 font-medium">Contact</a>
+                            class="block px-3 py-2  hover:text-opacity-80 font-medium">Contact</a>
                     </div>
                 </div>
 
@@ -111,65 +111,40 @@
 
         <!-- Hero Section -->
         <section id="hero" class="hero-bg">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-20 ">
                 <div class="flex flex-col md:flex-row items-center justify-between">
-                    <div class="mx-auto text-center md:w-1/2 mb-12 md:mb-0">
+                    <div class="mx-auto text-center md:w-1/2 mb-12 md:mb-0 " data-aos="fade-up"
+                        data-aos-duration="1000">
                         <h1 class="text-zinc-900 mt-8 max-w-4xl text-balance mx-auto text-6xl md:text-7xl lg:mt-16 ">
                             Streamline Your Supply Chain
                         </h1>
-                        {{-- <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-                            <span class="">Streamline Your Supply Chain</span>
-                        </h1> --}}
+
                         <p class="mx-auto mt-8 max-w-2xl text-balance text-lg text-zinc-800">
                             A comprehensive supply chain management platform tailored specifically for Sunny &
                             Scramble's perishable chicken goods business. Manage inventory, track shipments, and ensure
                             quality in one secure platform.
                         </p>
-                        {{-- <p class="text-lg md:text-xl text-gray-700 mb-8">
-                            A comprehensive supply chain management platform tailored specifically for Sunny &
-                            Scramble's perishable chicken goods business. Manage inventory, track shipments, and ensure
-                            quality in one secure platform.
-                        </p> --}}
-                        <div class="flex space-y-4 sm:space-y-0 sm:space-x-4 justify-center mt-12">
+
+                        <div class="flex space-y-4 sm:space-y-0 sm:space-x-4 justify-center items-center mt-12">
                             <a href="{{ Route::has('register') ? route('register') : '#' }}"
                                 class="bg-orange-500 hover:bg-orange-400 hover:border-orange-400 transition duration-500 ease-in-out flex gap-2 items-center text-white px-6 py-3 justify-center rounded-xl">
 
                                 <span>Get Started</span>
-                                {{-- <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20"
-                                    fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                        d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                                        clip-rule="evenodd" />
-                                </svg> --}}
+
                                 <x-lucide-move-right class="h-5 w-5" />
                             </a>
                             <a href="#features"
-                                class="text-zinc-800 text-center flex items-center justify-center px-4 py-2 rounded-xl border border-transparent hover:border-zinc-400 hover:text-zinc-950 transition duration-500 ease-in-out">
+                                class="text-zinc-800 text-center flex items-center justify-center px-6 py-3 rounded-xl border border-transparent hover:border-zinc-400 hover:text-zinc-950 transition duration-500 ease-in-out">
                                 <span>Learn More</span>
                             </a>
                         </div>
                     </div>
-                    {{-- <div class="md:w-1/2">
-                        <div class="relative">
-                            <!-- Decorative circles -->
-                            <div
-                                class="absolute -top-12 -right-4 w-32 h-32 rounded-full bg-brand-gold opacity-20 blur-xl">
-                            </div>
-                            <div
-                                class="absolute bottom-10 -left-8 w-40 h-40 rounded-full bg-brand-orange opacity-20 blur-xl">
-                            </div>
-                            <div
-                                class="absolute top-20 left-20 w-24 h-24 rounded-full bg-brand-crimson opacity-20 blur-xl">
-                            </div>
 
-                            <!-- Hero image -->
-                            {{-- <img src="https://placehold.co/600x400/f5f5f5/333?text=Invensure+Platform" alt="Invensure Platform" class="rounded-lg shadow-2xl w-full"> --}}
-                    {{-- </div>
-                    </div>  --}}
                 </div>
             </div>
 
-            <div class="relative -mr-56 mt-8 overflow-hidden px-2 sm:mr-0 sm:mt-12 md:mt-20">
+            <div class="relative -mr-56 mt-8 overflow-hidden px-2 sm:mr-0 sm:mt-12 md:mt-20" data-aos="fade-up"
+                data-aos-duration="1000">
                 <div aria-hidden="true"
                     class="bg-gradient-to-b from-transparent to-white absolute inset-0 z-10 from-[35%]"></div>
                 <div
@@ -185,7 +160,7 @@
 
 
         <!-- Features Section -->
-        <section id="features" class="py-20 bg-white">
+        <section id="features" class="py-20 bg-white" data-aos="fade-up" data-aos-duration="1000">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
                     <h2 class="text-3xl md:text-4xl font-bold mb-4">
@@ -200,8 +175,8 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <!-- Feature 1: Inventory Management -->
-                    <div
-                        class="card bg-transparent border border-gray-300 rounded-xl transition-all duration-300 hover:-translate-y-1">
+                    <div class="card bg-transparent border border-gray-300 rounded-xl transition-all duration-300 hover:-translate-y-1"
+                        data-aos="zoom-in" data-aos-duration="500">
                         <div class="card-body">
                             <div
                                 class="flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-brand-gold bg-opacity-20">
@@ -220,13 +195,13 @@
                     </div>
 
                     <!-- Feature 2: Logistics Coordination -->
-                    <div
-                        class="card bg-transparent border border-gray-300 rounded-xl transition-all duration-300 hover:-translate-y-1">
+                    <div class="card bg-transparent border border-gray-300 rounded-xl transition-all duration-300 hover:-translate-y-1"
+                        data-aos="zoom-in" data-aos-duration="500">
                         <div class="card-body">
                             <div
                                 class="flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-brand-orange bg-opacity-20">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-brand-orange" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-brand-orange"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -242,8 +217,8 @@
                     </div>
 
                     <!-- Feature 3: Quality Assurance -->
-                    <div
-                        class="card bg-transparent border border-gray-300 rounded-xl transition-all duration-300 hover:-translate-y-1">
+                    <div class="card bg-transparent border border-gray-300 rounded-xl transition-all duration-300 hover:-translate-y-1"
+                        data-aos="zoom-in" data-aos-duration="500">
                         <div class="card-body">
                             <div
                                 class="flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-brand-crimson bg-opacity-20">
@@ -262,8 +237,8 @@
                     </div>
 
                     <!-- Feature 4: Real-time Analytics -->
-                    <div
-                        class="card bg-transparent border border-gray-300 rounded-xl transition-all duration-300 hover:-translate-y-1">
+                    <div class="card bg-transparent border border-gray-300 rounded-xl transition-all duration-300 hover:-translate-y-1"
+                        data-aos="zoom-in" data-aos-duration="1500">
                         <div class="card-body">
                             <div
                                 class="flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-brand-gold bg-opacity-20">
@@ -282,8 +257,8 @@
                     </div>
 
                     <!-- Feature 5: Role-Based Access -->
-                    <div
-                        class="card bg-transparent border border-gray-300 rounded-xl transition-all duration-300 hover:-translate-y-1">
+                    <div class="card bg-transparent border border-gray-300 rounded-xl transition-all duration-300 hover:-translate-y-1"
+                        data-aos="zoom-in" data-aos-duration="1500">
                         <div class="card-body">
                             <div
                                 class="flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-brand-orange bg-opacity-20">
@@ -302,8 +277,8 @@
                     </div>
 
                     <!-- Feature 6: Secure Platform -->
-                    <div
-                        class="card bg-transparent border border-gray-300 rounded-xl transition-all duration-300 hover:-translate-y-1">
+                    <div class="card bg-transparent border border-gray-300 rounded-xl transition-all duration-300 hover:-translate-y-1"
+                        data-aos="zoom-in" data-aos-duration="1500">
                         <div class="card-body">
                             <div
                                 class="flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-brand-crimson bg-opacity-20">
@@ -342,20 +317,38 @@
                             Get Started Today
                         </a>
                     </div>
+                    <div class=" p-8 md:p-12 text-center" data-aos="zoom-in" data-aos-duration="1500">
                 </div> --}}
                 <x-glow-card glow-color="orange" size="xl" class="text-white">
                     <div class=" p-8 md:p-12 text-center">
-                        <h2 class="text-3xl md:text-4xl font-semibold mb-4">
+                        <h2 class="text-3xl md:text-4xl font-semibold mb-4" data-aos="fade-up"
+                            data-aos-duration="1000">
                             <span class="text-zinc-800">Ready to Transform Your Supply Chain?</span>
                         </h2>
-                        <p class="text-lg text-zinc-600 mb-8">
+                        <p class="text-lg text-zinc-600 mb-8" data-aos="fade-up" data-aos-duration="1800">
                             Join Sunny & Scramble and hundreds of other businesses that rely on Invensure to streamline
                             their supply chain management.
                         </p>
+                        <!-- From Uiverse.io by ParasSalunke -->
+
+                        <button
+                            class="px-10 py-3.5 overflow-hidden group bg-gradient-to-r from-orange-500 to-orange-600 relative hover:from-orange-400 hover:to-orange-600 text-white transition-all ease-out duration-300 rounded-xl" data-aos="zoom-in" data-aos-duration="1000">
+                            <span
+                                class="absolute right-0 w-10 h-full top-0 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 -skew-x-12 group-hover:-translate-x-36 ease"></span>
+                            <div class="flex gap-4 items-center">
+
+                                <span class="relative text-lg font-semibold">Get Started Today</span>
+                                <x-lucide-move-right class="h-6 w-6" />
+                            </div>
+
+                        </button>
+
+                        {{-- 
                         <a href="{{ Route::has('register') ? route('register') : '#' }}"
-                            class="btn btn-lg bg-orange-500 border-orange-500 hover:border-orange-400 text-white px-8 md:px-12 shadow-none hover:bg-orange-400 transition duration-300 ease-in-out rounded-xl">
+                            class="btn btn-lg bg-orange-500 border-orange-500 hover:border-orange-400 text-white px-8 md:px-12 shadow-none hover:bg-orange-400 transition duration-300 ease-in-out rounded-xl"
+                            data-aos="zoom-in-up" data-aos-duration="1500">
                             Get Started Today
-                        </a>
+                        </a> --}}
                     </div>
                 </x-glow-card>
             </div>
@@ -370,7 +363,8 @@
 
             <div class="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <hr class="border-zinc-300">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-12  z-50">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-12  z-50" data-aos="fade-up"
+                    data-aos-duration="1000" data-aos-offset="300">
 
 
                     <div>

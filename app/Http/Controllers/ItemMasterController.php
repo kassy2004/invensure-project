@@ -9,8 +9,12 @@ use Carbon\Carbon;
 
 class ItemMasterController extends Controller
 {
+
     public function index()
     {
+        if (auth()->user()->role !== 'inventory_manager') {
+            return redirect()->back()->with('error', 'Unauthorized access.');
+        }
         $item = DB::table('item_master')->get();
         $count = DB::table('item_index')
             ->get();

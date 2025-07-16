@@ -114,7 +114,7 @@
                 calc(var(--y, 0) * 1px),
                 hsl(var(--hue, 210) 100% 70% / var(--bg-spot-opacity, 0.1)), transparent
             );
-            background-color: var(--backdrop, transparent);
+            background-color: --color-orange-500;
             background-size: calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)));
             background-position: 50% 50%;
             background-attachment: fixed;

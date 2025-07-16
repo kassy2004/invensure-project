@@ -3,18 +3,18 @@
     {{-- @include('layouts.sidebar') --}}
 
     <div class="py-8 w-full">
-        <div class="w-full px-4">
-            <div class=" overflow-hidden p-6">
+        <div class="w-full px-2 lg:px-4">
+            <div class=" overflow-hidden lg:p-6">
 
-                <div class="flex items-center justify-between w-1/2 mx-auto">
-                    <div class="flex flex-col">
+                <div class="flex items-center justify-between w-full lg:w-1/2 mx-auto">
+                    <div class="flex flex-col ml-3 lg:ml-0">
                         <h1 class="text-2xl font-bold text-zinc-900">My Orders</h1>
                         <p class="text-sm text-zinc-500">View your order history, provide feedback, and request returns
                             within 12 hours of delivery.</p>
 
                     </div>
                 </div>
-                <div class="w-1/2 mx-auto">
+                <div class="w-full lg:w-1/2 mx-auto">
 
                     @if (session('success'))
                         <div id="alert" role="alert" class="alert alert-success mt-5">
@@ -54,7 +54,7 @@
 
                 <div class="flex flex-col gap-6 mb-5 mt-5 w-full ">
                     @foreach ($order as $orders)
-                        <div class=" p-5 bg-zinc-50  h-auto rounded-lg border border-zinc-300 w-1/2 mx-auto">
+                        <div class=" p-5 bg-zinc-50  h-auto rounded-lg border border-zinc-300 w-full lg:w-1/2 mx-auto">
                             <div class="flex justify-between items-center">
 
                                 <div class="flex flex-col">

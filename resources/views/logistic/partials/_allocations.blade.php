@@ -19,7 +19,7 @@
             <x-lucide-calendar class="h-4 w-4 " />
             <span>{{ date('Y-m-d', strtotime($item->transaction_date)) }}</span>
         </div>
-        <div class="flex justify-between w-1/2">
+        <div class="flex justify-between w-full lg:w-1/2">
 
             <div class=" mt-5">
                 <span class="text-zinc-700 text-sm font-semibold">Customer Information</span>
@@ -78,7 +78,7 @@
                 </div>
             </div>
         </div>
-        <div class="flex  gap-2">
+        <div class="flex  gap-2 mt-2">
 
             <!-- View Button (trigger) -->
             <button onclick="viewModal{{ $item->id }}.showModal()"
@@ -89,7 +89,7 @@
 
             <!-- Modal -->
             <dialog id="viewModal{{ $item->id }}" class="modal modal-bottom sm:modal-middle">
-                <div class="modal-box bg-zinc-50 border border-zinc-300 w-11/12 max-w-4xl max-h-[50vh] ">
+                <div class="modal-box bg-zinc-50 border border-zinc-300 lg:w-11/12 lg:max-w-4xl max-h-[50vh] ">
                     <form method="dialog">
                         <button
                             class="btn btn-sm btn-circle shadow-none btn-ghost hover:bg-zinc-200 hover:border-zinc-200 absolute right-2 top-2 text-zinc-800">✕</button>
@@ -142,7 +142,7 @@
             @else
             @endif
             <dialog id="assignModal{{ $item->id }}" class="modal modal-bottom sm:modal-middle">
-                <div class="modal-box bg-zinc-50 border border-zinc-300 w-11/12 max-w-xl max-h-[70vh] overflow-visible">
+                <div class="modal-box bg-zinc-50 border border-zinc-300  lg:w-11/12 lg:max-w-xl max-h-[70vh]">
                     <form method="dialog">
                         <button
                             class="btn btn-sm btn-circle shadow-none btn-ghost hover:bg-zinc-200 hover:border-zinc-200 absolute right-2 top-2 text-zinc-800">✕</button>
@@ -201,7 +201,7 @@
             </dialog>
 
             <dialog id="signModal{{ $item->id }}" class="modal modal-bottom sm:modal-middle">
-                <div class="modal-box bg-zinc-50 border border-zinc-300 w-11/12 max-w-xl max-h-[70vh] overflow-visible">
+                <div class="modal-box bg-zinc-50 border border-zinc-300 lg:w-11/12 lg:max-w-xl max-h-[70vh] overflow-visible">
                     <form method="dialog">
                         <button
                             class="btn btn-sm btn-circle shadow-none btn-ghost hover:bg-zinc-200 hover:border-zinc-200 absolute right-2 top-2 text-zinc-800">✕</button>

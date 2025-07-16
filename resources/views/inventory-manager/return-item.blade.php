@@ -3,8 +3,8 @@
     @include('layouts.sidebar')
 
     <div class="py-8 w-full">
-        <div class="w-full px-4">
-            <div class=" overflow-hidden p-6">
+        <div class="w-full px-2 lg:px-4">
+            <div class=" overflow-hidden lg:p-6">
 
                 <div class="flex items-center justify-between">
                     <div class="flex flex-col">
@@ -50,7 +50,7 @@
                 <div class="flex flex-col gap-6 mb-5 mt-5 w-full">
 
 
-                    <div class=" p-10 bg-zinc-50  h-auto rounded-lg border border-zinc-300">
+                    <div class="p-4 lg:p-10 bg-zinc-50  h-auto rounded-lg border border-zinc-300">
                         <div class="flex gap-2 mb-5">
                             <label class="input bg-transparent border border-zinc-300 rounded-lg">
                                 <x-lucide-search class="h-4 w-4 text-gray-400 " />

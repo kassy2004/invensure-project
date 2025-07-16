@@ -3,8 +3,8 @@
     @include('layouts.sidebar')
 
     <div class="py-8 w-full">
-        <div class="w-full px-4">
-            <div class=" overflow-hidden p-6">
+        <div class="w-full px-4 lg:px-4">
+            <div class=" overflow-hidden lg:p-6">
 
                 <div class="flex items-center justify-between">
                     <div class="flex flex-col">

@@ -14,6 +14,9 @@ class UserController extends Controller
 
     public function index()
     {
+        if (auth()->user()->role !== 'admin') {
+            return redirect()->back()->with('error', 'Unauthorized access.');
+        }
         $audit = DB::table('audits')
             ->leftJoin('users', function ($join) {
                 $join->on('audits.user_id', '=', 'users.id')

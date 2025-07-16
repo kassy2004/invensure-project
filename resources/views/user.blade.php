@@ -2,9 +2,9 @@
     @include('layouts.sidebar')
     
         <div class="py-8 w-full">
-            <div class="w-full px-4">
+            <div class="w-full px-2 lg:px-4">
                 <div class=" overflow-hidden">
-                    <div class="p-6 ">
+                    <div class="lg:p-6 ">
                         @if (session('success'))
                         <div id="successAlert" role="alert" class="alert alert-success mb-6 transition-opacity duration-500">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">

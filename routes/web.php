@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeliveryOperationsController;
 use App\Http\Controllers\FeedbackController;
@@ -108,9 +109,13 @@ Route::put('/reject-return/{id}', [ReturnItemController::class, 'rejectRequest']
 
 Route::get('/user', [UserController::class, 'index'])->middleware('auth');
 
-Route::get('/pod/{id}/pdf', [PODController::class, 'downloadPdf'])->name('pod.pdf');
+Route::get('/pod/{id}/pdf', [PODController::class, 'downloadPdf'])->name('pod.pdf')->middleware('auth');
 
 
-Route::get('/pod/preview/{id}', [PODController::class, 'previewPdf']);
+Route::get('/pod/preview/{id}', [PODController::class, 'previewPdf'])->middleware('auth');
+
+
+Route::get('/pod/preview/{id}', [PODController::class, 'previewPdf'])->middleware('auth');
+Route::get('/customer', [CustomerController::class, 'index'])->middleware('auth');
 
 

@@ -1,4 +1,4 @@
-<div class="flex justify-between gap-5 w-full">
+<div class="flex flex-col lg:flex-row justify-between gap-5 w-full">
     <div class="bg-gray-50 rounded-lg p-6 border-2 border-gray-200 w-full">
         <h1 class="text-xl text-gray-800 font-semibold">Analytics Overview</h1>
         <p class="text-sm text-gray-500">This content would show detailed analytics data</p>

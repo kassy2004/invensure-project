@@ -9,6 +9,11 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        if (!auth()->check()) {
+            return redirect('/');
+        }
+
+        
         $topItems = collect([]);
         $categories = ['Dressed Chicken', 'Choice Cut', 'Fillet', 'By Product', 'Value Added Product'];
 
@@ -18,6 +23,8 @@ class DashboardController extends Controller
         if (Auth::user()->role === 'logistics_coordinator') {
             return redirect('/operations');
         }
+
+
         if (Auth::user()->role === 'inventory_manager' || Auth::user()->role === 'admin') {
 
             $pcsi = DB::table('pcsi_outgoing')
@@ -57,7 +64,26 @@ class DashboardController extends Controller
                 ->orderByDesc('total_quantity')
                 ->get();
 
-            // dd($stockSummary);
+            $categoriesKiloPcsi = DB::table('pcsi_incoming')
+                ->select('item_group', DB::raw('SUM(balance_kilo) as total_kilo'))
+                ->whereIn('item_group', $categories)
+                ->groupBy('item_group');
+
+            $categoriesKiloJfpc = DB::table('jfpc_incoming')
+                ->select('item_group', DB::raw('SUM(balance_kilo) as total_kilo'))
+                ->whereIn('item_group', $categories)
+                ->groupBy('item_group');
+
+            $stockKiloSummary = DB::query()
+                ->fromSub($categoriesKiloPcsi->unionAll($categoriesKiloJfpc), 'combined')
+                ->select('item_group', DB::raw('SUM(total_kilo) as total_kilogram'))
+                ->groupBy('item_group')
+                ->orderByDesc('total_kilogram')
+                ->get();
+
+                
+
+            // dd($stockKiloSummary);
 
             $pendingCount = DB::table('pcsi_outgoing')
                 ->where('approval_status', 'pending')
@@ -72,10 +98,21 @@ class DashboardController extends Controller
                 ->count() + DB::table('jfpc_incoming')
                     ->count();
 
-            return view('dashboard', compact('topItems', 'stockSummary', 'pendingCount', 'totalProducts'));
+            $averageRating = round(DB::table('feedback')->avg('rating'), 2);
+
+            $audits = DB::table('audits')
+                ->leftJoin('users', function ($join) {
+                    $join->on('audits.user_id', '=', 'users.id')
+                        ->where('audits.user_type', '=', \App\Models\User::class);
+                })
+                ->select('audits.*', 'users.name as user_name', 'users.role as user_role')
+                ->orderBy('audits.created_at', 'desc')
+                ->get();
+
+            return view('dashboard', compact('topItems', 'stockSummary', 'stockKiloSummary', 'pendingCount', 'totalProducts', 'averageRating', 'audits'));
         } else {
             // For other roles, return the view with an empty topItems
-            return view('dashboard', ['topItems' => collect([]), 'stockSummary' => collect([]), 'pendingCount' => collect([]), 'totalProducts' => collect([])]);
+            return view('dashboard', ['topItems' => collect([]), 'stockSummary' => collect([]), 'stockKiloSummary' => collect([]), 'pendingCount' => collect([]), 'totalProducts' => collect([])]);
         }
     }
 }

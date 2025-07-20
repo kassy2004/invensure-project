@@ -139,8 +139,50 @@ class InventoryController extends Controller
             ->where('status', 'FG AVAILABLE')
             ->get();
 
+        $customer = DB::table('customers')
+            ->get();
 
-        return view('inventory-manager.pcsi', compact('inventoryJson', 'inventory_head', 'inventory_kilo', 'qty_head', 'qty_kilo', 'balance_head', 'balance_kilo', 'expiring', 'available', 'expiringItem', 'availableItem', 'item_master', 'notifications', 'outoging', 'outogingJson', 'inventory'));
+
+
+        $pod = DB::table('pod')
+            ->join('orders', 'pod.order_id', '=', 'orders.order_id')
+            ->join('customers', 'orders.customer_id', '=', 'customers.id')
+            ->join('truck_loading', DB::raw("REPLACE(truck_loading.allocation_id, 'ALLOC-', '')"), '=', 'orders.order_id')
+            ->join('truck', 'truck_loading.truck_id', '=', 'truck.id')
+            ->where('pod.status', 'completed')
+            ->selectRaw('
+    pod.pod_number,
+    pod.id,
+    pod.updated_at as date_delivered,
+    orders.order_id,
+    GROUP_CONCAT(DISTINCT orders.product_id) as product_ids,
+    customers.business_name,
+    customers.delivery_location,
+    customers.numbers,
+    customers.email,
+    truck_loading.id as loading_id,
+    truck.driver_name,
+    truck.plate_number,
+    truck.id as truck_id
+')
+            ->groupBy('pod.pod_number', 'customers.delivery_location', 'pod.id', 'orders.order_id', 'date_delivered', 'customers.business_name', 'truck_loading.id', 'truck.driver_name' , 'customers.numbers', 'customers.email', 'truck.plate_number', 'truck.id')
+            ->get();
+        foreach ($pod as $pods) {
+            // Convert comma-separated string to array
+            $productIdsArray = explode(',', $pods->product_ids);
+
+            // Fetch matching pcsi_outgoing records
+            $pods->pcsi_outgoing = DB::table('pcsi_outgoing')
+                ->whereIn('id', $productIdsArray)
+                ->get();
+            $pods->signatures = DB::table('signature')
+                ->where('pod_number', $pods->pod_number)
+                ->get();
+        }
+        // dd($pod);
+
+
+        return view('inventory-manager.pcsi', compact('inventoryJson', 'inventory_head', 'inventory_kilo', 'qty_head', 'qty_kilo', 'balance_head', 'balance_kilo', 'expiring', 'available', 'expiringItem', 'availableItem', 'item_master', 'notifications', 'outoging', 'outogingJson', 'inventory', 'customer', 'pod'));
     }
 
     public function add(Request $request)
@@ -153,8 +195,8 @@ class InventoryController extends Controller
         ]);
 
         $itemMaster = DB::table('item_master')
-        ->select('item', 'new_mrp_code', 'item_group', 'variant', 'kilogram_tray', 'class', 'sku', 'fg', 'primary_packaging', 'secondary_packaging')
-        ->first();
+            ->select('item', 'new_mrp_code', 'item_group', 'variant', 'kilogram_tray', 'class', 'sku', 'fg', 'primary_packaging', 'secondary_packaging')
+            ->first();
 
         $prodDate = Carbon::parse($request->input('prod_date'));
         $expirationStage = (int) DB::table('item_master')
@@ -181,7 +223,7 @@ class InventoryController extends Controller
                 'sku' => $itemMaster->sku ?? null,
                 'fg' => $itemMaster->fg ?? null,
                 'primary_packaging' => $itemMaster->primary_packaging ?? null,
-                'secondary_packaging' => $itemMaster->secondary_packaging ?? null ,
+                'secondary_packaging' => $itemMaster->secondary_packaging ?? null,
                 'prod_date' => $validated['prod_date'],
                 'exp_date' => $formattedExpDate,
                 'left' => $daysLeft,
@@ -228,6 +270,16 @@ class InventoryController extends Controller
                 return back()->withErrors(['item_id' => 'Selected item not found.']);
             }
 
+            $updateInventory = DB::table('pcsi_incoming')
+                ->where('id', $validated['item_id'])
+                ->update([
+                    'qty_head' => $validated['quantity'],
+                    'qty_kilo' => $validated['kilogram'],
+                    'balance_head' => DB::raw('inventory_head - ' . $validated['quantity']),
+                    'balance_kilo' => DB::raw('inventory_kilo - ' . $validated['kilogram']),
+                ]);
+
+
             DB::table('pcsi_outgoing')->insert([
                 'transaction_date' => $validated['transaction_date'],
                 'customer' => $validated['customer'],
@@ -246,10 +298,10 @@ class InventoryController extends Controller
                 'remarks' => $validated['remarks'],
 
             ]);
-           
-                return redirect()->back()->with('success', 'Item successfully shipped.');
-            
-        }catch(\Exception $e){
+
+            return redirect()->back()->with('success', 'Item successfully shipped.');
+
+        } catch (\Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Something went wrong: ' . $e->getMessage()]);
         }
 

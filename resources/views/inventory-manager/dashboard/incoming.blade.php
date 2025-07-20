@@ -23,7 +23,7 @@
                     <hr class="my-5">
                     <div>
                         <legend class="fieldset-legend text-orange-400">Item Details</legend>
-                        <div x-data="{ search: '', selected: '', open: false }" class="relative z-[9999]">
+                        <div x-data="{ search: '', selected: '', open: false, productionDate: '', qty: '', kilo: '' }" class="relative z-[9999]">
                             <fieldset class="fieldset">
                                 <legend class="fieldset-legend text-zinc-600">Search Item</legend>
 
@@ -37,10 +37,21 @@
                                 class="absolute z-[9999] mt-1 w-full bg-white border border-zinc-300 rounded-md max-h-48 overflow-y-auto">
                                 @foreach ($inventory as $item)
                                     <div x-show="{{ json_encode($item->item_code) }}.toLowerCase().includes(search.toLowerCase())"
-                                        @click="selected = '{{ $item->id }}'; search = '{{ $item->item_code }} ({{ $item->qty_head }})'; open = false"
+                                        @click="selected = '{{ $item->id }}';
+                                        search = '{{ $item->item_code }} ({{ $item->balance_head }})';
+                                        productionDate = '{{ $item->prod_date }}';
+                                        document.getElementById('production_date').value = productionDate;
+                                        document.getElementById('cally3').innerText = productionDate;
+                                        document.getElementById('max-qty').innerText = '{{ $item->balance_head }}';
+                                        document.getElementById('max-kilo').innerText = '{{ $item->balance_kilo }}';
+                                        document.getElementById('quantity-input').setAttribute('max', '{{ $item->balance_head }}');
+                                        document.getElementById('kilogram-input').setAttribute('max', '{{ $item->balance_kilo }}');
+                                        open = false"
                                         class="px-3 py-2 cursor-pointer hover:bg-zinc-100 text-sm text-zinc-700 flex flex-col">
                                         <span>{{ $item->item_code }}</span>
-                                        <span class="text-gray-500 text-xs">{{ $item->data_entry }} ({{ $item->qty_head }})</span>
+                                        <span class="text-gray-500 text-xs">{{ $item->data_entry }}
+                                            ({{ $item->balance_head }})
+                                        </span>
                                     </div>
                                 @endforeach
                             </div>
@@ -115,13 +126,44 @@
 
                         <input type="hidden" id="production_date" name="production_date">
                         <input type="hidden" id="transaction_date" name="transaction_date">
-                        <fieldset class="fieldset">
+                        {{-- <fieldset class="fieldset">
                             <legend class="fieldset-legend text-zinc-600">Customer</legend>
                             <input type="text" name="customer"
                                 class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
                                 placeholder="Customer" />
 
-                        </fieldset>
+                        </fieldset> --}}
+                        <div x-data="{ search: '', selected: '', open: false }" class="relative z-[999]">
+                            <fieldset class="fieldset">
+                                <legend class="fieldset-legend text-zinc-600">Customer</legend>
+
+
+                            </fieldset>
+                            <input type="text" x-model="search" @focus="open = true" @click.away="open = false"
+                                placeholder="Search customer..."
+                                class="w-full border border-zinc-300 rounded-md px-3 py-2 text-sm text-zinc-800" />
+
+                            <div x-show="open"
+                                class="absolute z-[9999] mt-1 w-full bg-white border border-zinc-300 rounded-md max-h-48 overflow-y-auto">
+                                @foreach ($customer as $customers)
+                                    <div x-show="{{ json_encode($customers->business_name) }}.toLowerCase().includes(search.toLowerCase())"
+                                        @click="selected = '{{ $customers->business_name }}';
+                                        search = '{{ $customers->business_name }} ({{ $customers->email }})';
+                                      
+                                        
+                                        open = false"
+                                        class="px-3 py-2 cursor-pointer hover:bg-zinc-100 text-sm text-zinc-700 flex flex-col">
+                                        <span>{{ $customers->business_name }}</span>
+                                        <span class="text-xs text-zinc-500">{{ $customers->email }}</span>
+                                        {{-- <span class="text-gray-500 text-xs">{{ $item->data_entry }}
+                                            ({{ $item->qty_head }})
+                                        </span> --}}
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <input type="hidden" name="customer" :value="selected" required />
+                        </div>
                         <fieldset class="fieldset">
                             <legend class="fieldset-legend text-zinc-600">CM Code</legend>
                             <input type="text" name="cm_code"
@@ -151,17 +193,27 @@
                         <div class="flex justify-between gap-4">
 
                             <fieldset class="fieldset">
-                                <legend class="fieldset-legend text-zinc-600">Quantity</legend>
-                                <input type="text" name="quantity"
-                                    class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
-                                    placeholder="0" required />
+                                <div class="flex gap-2">
+                                    <legend class="fieldset-legend text-zinc-600">Quantity |</legend>
+                                    <legend class="fieldset-legend text-red-400 text-xs">Max: <span
+                                            id="max-qty"></span></legend>
+                                </div>
+                                <input type="number" name="quantity" id="quantity-input"
+                                    class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400 w-full"
+                                    placeholder="0" required
+                                    oninput="if (this.max) this.value = Math.min(this.value, this.max);" />
 
                             </fieldset>
                             <fieldset class="fieldset">
-                                <legend class="fieldset-legend text-zinc-600">Kilogram</legend>
-                                <input type="text" name="kilogram"
+                                <div class="flex gap-2">
+                                    <legend class="fieldset-legend text-zinc-600">Kilogram |</legend>
+                                    <legend class="fieldset-legend text-red-400 text-xs">Max: <span
+                                            id="max-kilo"></span></legend>
+                                </div>
+                                <input type="text" name="kilogram" id="kilogram-input"
                                     class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
-                                    placeholder="0.00" required />
+                                    placeholder="0.00" required
+                                    oninput="if (this.max) this.value = Math.min(this.value, this.max);" />
 
                             </fieldset>
                         </div>

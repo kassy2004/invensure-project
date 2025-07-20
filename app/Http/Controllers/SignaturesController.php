@@ -74,7 +74,7 @@ class SignaturesController extends Controller
 
         $success = DB::table('signature')
             ->insert([
-                'pod_number' => $request->input('pod_number'),
+                'pod_number' => '000' . $request->input('pod_number'),
                 'name' => $request->input('name'),
                 'signature' => 'img/sign/' . $filename,
                 'type' => $request->input('type'),
@@ -82,20 +82,22 @@ class SignaturesController extends Controller
                 'updated_at' => now(),
 
             ]);
-
+// dd($request->input('pod_number'));
         $orderId = DB::table('pod')
-        ->where('pod_number', $request->input('pod_number'))
+        ->where('pod_number', '000' .$request->input('pod_number'))
         ->first();
+        // dd($orderId);
 
 
 
         if ($status === 'completed') {
             DB::table('pod')
-                ->where('pod_number', $request->input('pod_number'))
+                ->where('pod_number', '000' . $request->input('pod_number'))
                 ->update([
                     'status' => $status,
                     'updated_at' => now(),
                 ]);
+                // dd($orderId->order_id);
 
             DB::table('truck_loading')
                 ->where('allocation_id', 'ALLOC-' . $orderId->order_id)

@@ -71,7 +71,7 @@
 
 
                         <form method="POST" action="{{ route('warehouse.pcsi.add') }}" x-data="{ loading: false }"
-                        @submit.prevent="loading = true; $nextTick(() => $el.submit())" id="addItemForm">
+                            @submit.prevent="loading = true; $nextTick(() => $el.submit())" id="addItemForm">
                             @csrf
                             <div class="flex flex-col gap-5">
 
@@ -174,7 +174,7 @@
                                         </fieldset>
                                     </div>
                                 </div>
-                         
+
                                 <input type="hidden" name="prod_date" id="prod_date">
                             </div>
                             <hr class="my-5">
@@ -226,6 +226,8 @@
                                 class="px-4 py-2 rounded-md cursor-pointer text-xs text-gray-900">Incoming</span>
                             <span @click="tab = 'outgoing'" :class="tab === 'outgoing' ? 'bg-gray-50' : 'bg-gray-200'"
                                 class="px-4 py-2 rounded-md cursor-pointer text-xs text-gray-900">Outgoing </span>
+                            <span @click="tab = 'pod-pcsi'" :class="tab === 'pod-pcsi' ? 'bg-gray-50' : 'bg-gray-200'"
+                                class="px-4 py-2 rounded-md cursor-pointer text-xs text-gray-900">POD </span>
 
                         </div>
                         <div class="mt-5 w-full">
@@ -235,6 +237,9 @@
 
                             <div x-show="tab === 'outgoing'" x-transition class="flex flex-col gap-6 w-full ">
                                 @include('inventory-manager.dashboard.outgoing')
+                            </div>
+                            <div x-show="tab === 'pod-pcsi'" x-transition class="flex flex-col gap-6 w-full ">
+                                @include('inventory-manager.dashboard.pod-pcsi')
                             </div>
 
                         </div>

@@ -69,29 +69,40 @@
                         </div>
                     @endif
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    @if (auth()->check() && auth()->user()->role === 'customer')
-                        <h1 class="text-2xl font-bold text-gray-900">Customer Dashboard</h1>
-                    @endif
-
-
-
                     @if (auth()->check() && auth()->user()->role === 'inventory_manager')
                         <h1 class="text-2xl font-bold text-gray-900">Inventory Manager Dashboard</h1>
-
+                        @if (session('success'))
+                            <div id="alert" role="alert" class="alert alert-success mt-5">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current"
+                                    fill="none" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span>{{ session('success') }}</span>
+                            </div>
+                        @elseif (session('error'))
+                            <div id="alert" role="alert" class="alert alert-error mt-5">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current"
+                                    fill="none" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span>{{ session('error') }}</span>
+                            </div>
+                        @elseif ($errors->any())
+                            <div id="alert" role="alert" class="alert alert-error mt-5">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current"
+                                    fill="none" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <ul class="list-disc pl-5 text-white text-sm">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
 
                         <div class="flex gap-6 flex-wrap lg:flex-nowrap mt-5">
                             <!-- Total Equipment Card -->
@@ -200,7 +211,8 @@
                                 class= "flex flex-col gap-6 flex-wrap lg:flex-nowrap mt-5 p-6 bg-zinc-50 rounded-xl border border-gray-200 w-full ">
                                 <div>
                                     <h1 class="text-zinc-800 font-semibold">Stock by Categories</h1>
-                                    <p class="text-zinc-600 text-sm">Live status of your inventory across all categories
+                                    <p class="text-zinc-600 text-sm">Live status of your inventory across all
+                                        categories
                                     </p>
                                 </div>
 
@@ -249,15 +261,15 @@
     const categoriesLabelsRaw = @json($stockSummary->pluck('item_group'));
     const categoriesData = @json($stockSummary->pluck('total_quantity'));
 
-     const labelMap = {
-            'DRESSED CHICKEN': 'DC',
-            'FILLET': 'FF',
-            'CHOICE CUT': 'CC',
-            'VALUE ADDED PRODUCT': 'VA',
-            'BY PRODUCT': 'BP',
-        };
+    const labelMap = {
+        'DRESSED CHICKEN': 'DC',
+        'FILLET': 'FF',
+        'CHOICE CUT': 'CC',
+        'VALUE ADDED PRODUCT': 'VA',
+        'BY PRODUCT': 'BP',
+    };
 
-        const categoriesLabels = categoriesLabelsRaw.map(label => labelMap[label] || label);
+    const categoriesLabels = categoriesLabelsRaw.map(label => labelMap[label] || label);
 
     window.myChart2 = new Chart(ctxDeadStock, {
         type: 'bar',

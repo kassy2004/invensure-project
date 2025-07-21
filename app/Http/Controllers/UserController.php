@@ -14,6 +14,7 @@ class UserController extends Controller
 
     public function index()
     {
+        
         if (auth()->user()->role !== 'admin') {
             return redirect()->back()->with('error', 'Unauthorized access.');
         }

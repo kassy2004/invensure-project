@@ -13,13 +13,17 @@ class DashboardController extends Controller
             return redirect('/');
         }
 
-        
+
         $topItems = collect([]);
         $categories = ['Dressed Chicken', 'Choice Cut', 'Fillet', 'By Product', 'Value Added Product'];
 
-        if (Auth::user()->role === 'customer') {
+
+
+        if (Auth::check() && Auth::user()->role === 'customer') {
             return redirect('/orders');
         }
+
+
         if (Auth::user()->role === 'logistics_coordinator') {
             return redirect('/operations');
         }
@@ -81,7 +85,7 @@ class DashboardController extends Controller
                 ->orderByDesc('total_kilogram')
                 ->get();
 
-                
+
 
             // dd($stockKiloSummary);
 

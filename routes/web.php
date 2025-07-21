@@ -13,6 +13,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReturnItemController;
 use App\Http\Controllers\SignaturesController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WarehouseTransferController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
@@ -60,6 +61,8 @@ Route::post('/items/{id}/update', [ItemMasterController::class, 'update'])->name
 Route::post('/warehouse/pcsi/add', [InventoryController::class, 'add'])->name('warehouse.pcsi.add');
 
 Route::get('/warehouse/jfpc', [JFPCController::class, 'index'])->middleware(['auth', 'verified'])->name('warehouse/jfpc');
+
+
 Route::post('/warehouse/jfpc/add', [JFPCController::class, 'add'])->name('warehouse.jfpc.add');
 Route::post('/item-master/add', [ItemMasterController::class, 'add'])->name('item-master.add');
 Route::post('/notifications/read-all', function () {
@@ -119,3 +122,4 @@ Route::get('/pod/preview/{id}', [PODController::class, 'previewPdf'])->middlewar
 Route::get('/customer', [CustomerController::class, 'index'])->middleware('auth');
 
 
+Route::get('/warehouse/transfer', [WarehouseTransferController::class, 'index'])->middleware(['auth', 'verified'])->name('warehouse/transfer');

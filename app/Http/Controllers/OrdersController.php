@@ -10,6 +10,9 @@ class OrdersController extends Controller
 {
     public function index()
     {
+        if (Auth::check() && Auth::user()->role !== 'customer') {
+            return redirect()->back()->with('error', 'Access denied. Only customers can view orders.');
+        }
 
         $orders = DB::table('orders')
 

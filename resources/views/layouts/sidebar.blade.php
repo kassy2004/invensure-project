@@ -127,6 +127,15 @@
                     <x-lucide-warehouse class="h-5 w-5 shrink-0 " />
                     <span class="ml-3 hidden group-[.w-64]:inline ">3JFPC</span>
                 </li>
+
+
+                <li onclick="window.location='{{ url('/warehouse/transfer') }}'"
+                    class="flex items-center  px-5 py-3  cursor-pointer
+{{ Request::is('warehouse/transfer') ? 'bg-orange-500 text-zinc-50' : 'hover:bg-gray-200 transition duration-300 ease-in-out text-gray-700' }}">
+
+                    <x-lucide-package class="h-5 w-5 shrink-0 " />
+                    <span class="ml-3 hidden group-[.w-64]:inline ">Transfer</span>
+                </li>
             @endif
             @if (auth()->check() && auth()->user()->role === 'logistics_coordinator')
                

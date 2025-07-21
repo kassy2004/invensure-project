@@ -9,6 +9,11 @@ use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 
+/**
+ * App\Models\User
+ *
+ * @property string $role
+ */
 class User extends Authenticatable implements Auditable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -24,6 +29,7 @@ class User extends Authenticatable implements Auditable
         'name',
         'email',
         'password',
+        'role',
     ];
     /**
      * The attributes to be audited (optional).

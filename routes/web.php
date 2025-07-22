@@ -124,3 +124,4 @@ Route::get('/customer', [CustomerController::class, 'index'])->middleware('auth'
 
 Route::get('/warehouse/transfer', [WarehouseTransferController::class, 'index'])->middleware(['auth', 'verified'])->name('warehouse/transfer');
 Route::post('/warehouse/transfer/submit', [WarehouseTransferController::class, 'submit'])->middleware(['auth', 'verified'])->name('warehouse-transfer.submit');
+Route::post('/warehouse/jfpc/ship', [JFPCController::class, 'ship'])->name('warehouse.jfpc.ship');

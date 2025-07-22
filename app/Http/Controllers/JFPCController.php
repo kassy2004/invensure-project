@@ -15,6 +15,7 @@ class JFPCController extends Controller
             return redirect()->back()->with('error', 'Unauthorized access.');
         }
         $inventory = DB::table('jfpc_incoming')->get();
+        $outgoing = DB::table('jfpc_outgoing')->get();
         $item_master = DB::table('item_master')->get();
 
         // Debug: Log the count of items
@@ -55,7 +56,7 @@ class JFPCController extends Controller
                         'status' => $status,
                     ]);
 
-              
+
 
             } catch (\Exception $e) {
                 Log::warning("Failed to parse exp_date for ID {$item->id}: {$item->exp_date} - {$e->getMessage()}");
@@ -81,10 +82,51 @@ class JFPCController extends Controller
             ->whereRaw("TRIM(remarks) != ''")   // Exclude spaces-only
             ->get();
 
+        $pod = DB::table('pod')
+            ->join('orders', 'pod.order_id', '=', 'orders.order_id')
+            ->join('customers', 'orders.customer_id', '=', 'customers.id')
+            ->join('truck_loading', DB::raw("REPLACE(truck_loading.allocation_id, 'ALLOC-', '')"), '=', 'orders.order_id')
+            ->join('truck', 'truck_loading.truck_id', '=', 'truck.id')
+            ->where('pod.status', 'completed')
+            ->where('orders.warehouse', 'jfpc')
+            ->selectRaw('
+    pod.pod_number,
+    pod.id,
+    pod.updated_at as date_delivered,
+    orders.order_id,
+    GROUP_CONCAT(DISTINCT orders.product_id) as product_ids,
+    customers.business_name,
+    customers.delivery_location,
+    customers.numbers,
+    customers.email,
+    truck_loading.id as loading_id,
+    truck.driver_name,
+    truck.plate_number,
+    truck.id as truck_id
+')
+            ->groupBy('pod.pod_number', 'customers.delivery_location', 'pod.id', 'orders.order_id', 'date_delivered', 'customers.business_name', 'truck_loading.id', 'truck.driver_name', 'customers.numbers', 'customers.email', 'truck.plate_number', 'truck.id')
+            ->get();
+
+        foreach ($pod as $pods) {
+            // Convert comma-separated string to array
+            $productIdsArray = explode(',', $pods->product_ids);
+
+            // Fetch matching pcsi_outgoing records
+            $pods->pcsi_outgoing = DB::table('pcsi_outgoing')
+                ->whereIn('id', $productIdsArray)
+                ->get();
+            $pods->signatures = DB::table('signature')
+                ->where('pod_number', $pods->pod_number)
+                ->get();
+        }
+// dd($pod);
+
+        $customer = DB::table('customers')
+            ->get();
         // $remarksJson = $remarks->toJson();
-        return view('inventory-manager.jfpc', compact('inventoryJson', 'inventory_head', 'inventory_kilo', 'qty_head', 'qty_kilo', 'balance_head', 'balance_kilo', 'expiring', 'available', 'expiringItem', 'availableItem', 'item_master', 'remarks'));
-    
-       
+        return view('inventory-manager.jfpc', compact('inventoryJson', 'inventory_head', 'inventory_kilo', 'qty_head', 'qty_kilo', 'balance_head', 'balance_kilo', 'expiring', 'available', 'expiringItem', 'availableItem', 'item_master', 'remarks', 'outgoing', 'pod', 'inventory', 'customer'));
+
+
     }
 
     public function add(Request $request)
@@ -151,5 +193,70 @@ class JFPCController extends Controller
             Log::error('Error adding item to PCSI: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Error adding item: ' . $e->getMessage());
         }
+    }
+
+    public function ship(Request $request)
+    {
+        try {
+
+
+            $validated = $request->validate([
+                'item_id' => 'required|numeric',
+                'customer' => 'nullable|string|max:255',
+                'cm_code' => 'nullable|string|max:255',
+                'production_date' => 'required|date',
+                'transaction_date' => 'required|date',
+                'description' => 'string|max:255',
+                'cm_category' => 'string|max:255',
+                'quantity' => 'required|numeric',
+                'kilogram' => 'required|numeric',
+                'remarks' => 'nullable|string|max:255',
+
+
+            ]);
+
+            $incoming = DB::table('jfpc_incoming')
+                ->select('item_code', 'sku', 'primary_packaging', 'secondary_packaging', 'variant', 'item_group')
+                ->where('id', $validated['item_id'])
+                ->first();
+            if (!$incoming) {
+                return back()->withErrors(['item_id' => 'Selected item not found.']);
+            }
+
+            $updateInventory = DB::table('jfpc_incoming')
+                ->where('id', $validated['item_id'])
+                ->update([
+                    'qty_head' => $validated['quantity'],
+                    'qty_kilo' => $validated['kilogram'],
+                    'balance_head' => DB::raw('inventory_head - ' . $validated['quantity']),
+                    'balance_kilo' => DB::raw('inventory_kilo - ' . $validated['kilogram']),
+                ]);
+
+
+            DB::table('jfpc_outgoing')->insert([
+                'transaction_date' => $validated['transaction_date'],
+                'customer' => $validated['customer'],
+                'cm_code' => $validated['cm_code'],
+                'item_code' => $incoming->item_code,
+                'description' => $validated['description'],
+                'sku_description' => $incoming->sku,
+                'primary_packaging' => $incoming->primary_packaging,
+                'secondary_packaging' => $incoming->secondary_packaging,
+                'cm_category' => $validated['cm_category'],
+                'product_category' => $incoming->item_group,
+                'variant' => $incoming->variant,
+                'production' => $validated['production_date'],
+                'quantity' => $validated['quantity'],
+                'kilogram' => $validated['kilogram'],
+                'remarks' => $validated['remarks'],
+
+            ]);
+
+            return redirect()->back()->with('success', 'Item successfully shipped.');
+
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Something went wrong: ' . $e->getMessage()]);
+        }
+
     }
 }

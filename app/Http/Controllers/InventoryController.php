@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
@@ -231,6 +232,20 @@ class InventoryController extends Controller
                 'inventory_kilo' => $validated['inventory_kilo'] ?? null,
                 'created_at' => now(),
             ]);
+            $user = Auth::user();
+
+            \OwenIt\Auditing\Models\Audit::create([
+                'user_type' => get_class($user),
+                'user_id' => $user->id,
+                'event' => 'Added Item to  PCSI Warehouse',
+                'auditable_type' => get_class($user),
+                'auditable_id' => $user->id,
+                'old_values' => [],
+                'new_values' => ['status' => 'Inventory Manager added item to PCSI Warehouse'],
+                'url' => url()->current(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->header('User-Agent'),
+            ]);
 
             if ($result) {
                 return redirect()->back()->with('success', 'Item added successfully!');
@@ -297,6 +312,20 @@ class InventoryController extends Controller
                 'kilogram' => $validated['kilogram'],
                 'remarks' => $validated['remarks'],
 
+            ]);
+            $user = Auth::user();
+
+            \OwenIt\Auditing\Models\Audit::create([
+                'user_type' => get_class($user),
+                'user_id' => $user->id,
+                'event' => 'Shipped '. $incoming->item_code. ' from PCSI Warehouse',
+                'auditable_type' => get_class($user),
+                'auditable_id' => $user->id,
+                'old_values' => [],
+                'new_values' => ['item' => $incoming->item_code],
+                'url' => url()->current(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->header('User-Agent'),
             ]);
 
             return redirect()->back()->with('success', 'Item successfully shipped.');

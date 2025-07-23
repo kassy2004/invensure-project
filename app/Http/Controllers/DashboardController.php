@@ -38,7 +38,13 @@ class DashboardController extends Controller
             $jfpc = DB::table('jfpc_outgoing')
                 ->select('description', DB::raw('quantity as total_qty'));
 
-
+            $lowStockItem = DB::table('pcsi_incoming')
+                ->where('balance_head', '<=', 10)
+                ->count()
+                +
+                DB::table('jfpc_incoming')
+                    ->where('balance_head', '<=', 10)
+                    ->count();
             $topItems = DB::query()
                 ->fromSub(
                     $pcsi->unionAll($jfpc),
@@ -113,7 +119,12 @@ class DashboardController extends Controller
                 ->orderBy('audits.created_at', 'desc')
                 ->get();
 
-            return view('dashboard', compact('topItems', 'stockSummary', 'stockKiloSummary', 'pendingCount', 'totalProducts', 'averageRating', 'audits'));
+                $returnCount = DB::table('returns')
+                ->where('status', 'pending')
+                ->count();
+                // dd($returnCount);
+
+            return view('dashboard', compact('topItems', 'stockSummary', 'stockKiloSummary', 'pendingCount', 'totalProducts', 'averageRating', 'audits', 'lowStockItem', 'returnCount'));
         } else {
             // For other roles, return the view with an empty topItems
             return view('dashboard', ['topItems' => collect([]), 'stockSummary' => collect([]), 'stockKiloSummary' => collect([]), 'pendingCount' => collect([]), 'totalProducts' => collect([])]);

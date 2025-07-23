@@ -34,7 +34,7 @@ class AuthenticatedSessionController extends Controller
         \OwenIt\Auditing\Models\Audit::create([
             'user_type' => get_class($user),
             'user_id' => $user->id,
-            'event' => 'logged_in',
+            'event' => 'Logged In',
             'auditable_type' => get_class($user),
             'auditable_id' => $user->id,
             'old_values' => [],
@@ -57,7 +57,7 @@ class AuthenticatedSessionController extends Controller
         \OwenIt\Auditing\Models\Audit::create([
             'user_type' => get_class($user),
             'user_id' => $user->id,
-            'event' => 'logged_out',
+            'event' => 'Logged Out',
             'auditable_type' => get_class($user),
             'auditable_id' => $user->id,
             'old_values' => [],

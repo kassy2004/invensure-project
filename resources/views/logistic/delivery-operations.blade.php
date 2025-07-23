@@ -66,7 +66,7 @@
                                 </div>
                                 <div>
                                     <p class="text-3xl font-bold text-gray-800">
-                                        500</p>
+                                        {{$pendingAllocations}}</p>
 
                                 </div>
                             </div>
@@ -90,7 +90,7 @@
                                 </div>
                                 <div>
                                     <p class="text-3xl font-bold text-gray-800">
-                                        2000</p>
+                                        {{$truckInTransit}}</p>
                                 </div>
                             </div>
                         </div>

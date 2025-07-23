@@ -111,6 +111,20 @@ class ItemMasterController extends Controller
             'created_at' => now(), 
         ]);
 
+        $user = Auth::user();
+
+        \OwenIt\Auditing\Models\Audit::create([
+            'user_type' => get_class($user),
+            'user_id' => $user->id,
+            'event' => 'Added Item to  Item Master',
+            'auditable_type' => get_class($user),
+            'auditable_id' => $user->id,
+            'old_values' => [],
+            'new_values' => ['status' => 'Inventory Manager added item to Item Master'],
+            'url' => url()->current(),
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->header('User-Agent'),
+        ]);
         if ($result) {
             return redirect()->back()->with('success', 'Item added successfully!');
         } else {

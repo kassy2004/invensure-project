@@ -63,7 +63,17 @@ class DeliveryOperationsController extends Controller
             return view('logistic.partials._allocations', ['allocations' => $paginated])->render();
         }
 
-        return view('logistic.delivery-operations', ['allocations' => $paginated, 'truck_loading' => $truck_loading]);
+        $pendingAllocations = DB::table('allocations')
+            ->where('status', '!=', 'in transit')
+            ->distinct('allocation_id')
+            ->count('allocation_id');
+
+        $truckInTransit = DB::table('truck_loading')
+            ->where('status', 'in_transit')
+            ->count();
+
+
+        return view('logistic.delivery-operations', ['allocations' => $paginated, 'truck_loading' => $truck_loading, 'pendingAllocations' => $pendingAllocations, 'truckInTransit' => $truckInTransit]);
     }
 
     private function getFilteredAllocations()

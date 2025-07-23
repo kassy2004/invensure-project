@@ -146,7 +146,7 @@
                                         <div>
                                             <p class="text-3xl font-bold text-gray-800">
                                                 {{-- {{ number_format($expiring) ?? '24,500' }}</p> --}}
-                                                23,500
+                                                {{$lowStockItem}}
                                         </div>
                                     </div>
                                 </div>
@@ -186,7 +186,7 @@
                                         <div>
                                             <p class="text-3xl font-bold text-gray-800">
                                                 {{-- {{ number_format($expiring) ?? '24,500' }}</p> --}}
-                                                23,500
+                                                {{$returnCount}}
                                         </div>
                                     </div>
                                 </div>

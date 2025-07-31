@@ -14,7 +14,7 @@
                         </div>
                         @endif
                         <div class="flex justify-between items-center">
-
+                            
                             <h1 class="text-2xl font-bold text-gray-900">User Management</h1>
                             {{-- <div class="bg-gray-900 flex items-center px-3 py-2 rounded-md gap-2">
                                 <x-lucide-user-plus class="h-4 w-4 shrink-0 text-gray-100"/>

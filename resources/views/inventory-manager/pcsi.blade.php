@@ -12,9 +12,14 @@
                         <h4 class="text-zinc-700">PCSI Warehouse</h4>
                     </div>
                     <div class="flex gap-2 mt-5 lg:mt-0">
-                        <button onclick="onExport()"
+                        <button popovertarget="popover-1" style="anchor-name:--anchor-1" {{-- onclick="window.location='{{ url('/export-pcsi-incoming') }}'" --}}
                             class="px-4 py-2 flex items-center gap-3 rounded-md text-zinc-900 text-sm border border-zinc-300 hover:border-zinc-400 transition duration-200 ease-in-out"><x-lucide-download
                                 class="h-4 w-4" />Export</button>
+                        <ul class="dropdown menu w-52 rounded-box bg-zinc-50 text-zinc-600 shadow-sm" popover id="popover-1"
+                            style="position-anchor:--anchor-1">
+                            <li class="text-zinc-600  hover:bg-zinc-100 rounded-lg  active:bg-orange-500"><a href="{{ url('/export-pcsi-incoming') }}">Incoming</a></li>
+                             <li class="text-zinc-600  hover:bg-zinc-100 rounded-lg  active:bg-orange-500"><a href="{{ url('/export-pcsi-outgoing') }}">Outgoing</a></li>
+                        </ul>
                         <button onclick="my_modal_5.showModal()"
                             class="bg-orange-500 px-4 py-2 flex items-center gap-3 rounded-md text-gray-50 text-sm hover:bg-orange-400 transition duration-200 ease-in-out">
                             <x-lucide-plus class="h-4 w-4" />

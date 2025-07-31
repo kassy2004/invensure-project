@@ -129,7 +129,7 @@
 
                             <input type="hidden" id="production_date" name="production_date">
                             <input type="hidden" id="transaction_date" name="transaction_date">
-                           
+
                             <div x-data="{ search: '', selected: '', open: false }" class="relative z-[999]">
                                 <fieldset class="fieldset">
                                     <legend class="fieldset-legend text-zinc-600">Customer</legend>
@@ -688,8 +688,21 @@
             defaultColDef: {
                 resizable: true,
                 flex: 1,
+                editable: true,
                 sortable: true,
                 filter: true
+            },
+            rowSelection: 'single',
+            getRowClass: function(params) {
+                if (params.data && params.data.isUpdating) {
+                    return 'updating-row';
+                }
+                return '';
+            },
+            onCellValueChanged: function(event) {
+                const updatedRow = event.data;
+                console.log('Cell value changed:', updatedRow);
+                updateRowData(updatedRow);
             },
             onGridReady: function(params) {
                 gridOptions.api = params.api;
@@ -712,7 +725,12 @@
 
         const grid = new agGrid.Grid(gridDiv, gridOptions);
         gridOptions.api.addEventListener('firstDataRendered', function() {
-            gridOptions.columnApi.autoSizeColumn('data_entry');
+
+            const allColumnIds = [];
+            gridOptions.columnApi.getAllColumns().forEach(col => {
+                allColumnIds.push(col.getColId());
+            });
+            gridOptions.columnApi.autoSizeColumns(allColumnIds);
         });
         const columnDefsTwo = [{
                 headerName: "Line No.",
@@ -738,9 +756,11 @@
             defaultColDef: {
                 resizable: true,
                 flex: 1,
+
                 sortable: true,
                 filter: true
             },
+
             pagination: true,
             paginationPageSize: 10,
 
@@ -752,6 +772,73 @@
         const gridTwo = new agGrid.Grid(gridDivTwo, gridOptionsTwo);
 
 
+        function updateRowData(rowData) {
+            console.log('Updating row data:', rowData);
+
+            // Mark row as updating
+            rowData.isUpdating = true;
+            gridOptions.api.refreshCells({
+                force: true
+            });
+
+            fetch(`/jfpc/incoming/${rowData.id}/update`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: JSON.stringify(rowData),
+                })
+                .then((res) => res.json())
+                .then((data) => {
+                    console.log("Row updated:", data);
+                    if (data.success) {
+                        // Show success message
+                        showNotification('Item updated successfully!', 'success');
+                        // Remove updating state
+                        rowData.isUpdating = false;
+                        gridOptions.api.refreshCells({
+                            force: true
+                        });
+                    } else {
+                        showNotification('Failed to update item: ' + data.message, 'error');
+                        // Remove updating state
+                        rowData.isUpdating = false;
+                        gridOptions.api.refreshCells({
+                            force: true
+                        });
+                    }
+                })
+                .catch((err) => {
+                    console.error("Update failed:", err);
+                    showNotification('Error updating item. Please try again.', 'error');
+                    // Remove updating state
+                    rowData.isUpdating = false;
+                    gridOptions.api.refreshCells({
+                        force: true
+                    });
+                });
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+                type === 'success' ? 'bg-green-500 text-white' : 
+                type === 'error' ? 'bg-red-500 text-white' : 
+                'bg-blue-500 text-white'
+            }`;
+            notification.textContent = message;
+
+            document.body.appendChild(notification);
+
+            // Remove notification after 3 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 3000);
+        }
 
 
     });

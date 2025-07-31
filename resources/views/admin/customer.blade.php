@@ -12,11 +12,81 @@
                         <p class="text-sm text-zinc-500">Manage your customers and view their feedback</p>
 
                     </div>
-                    <button
+                    <button onclick="my_modal_5.showModal()"
                         class="bg-orange-500 px-4 py-2 flex items-center mt-5 lg:mt-0 gap-3 rounded-md text-gray-50 lg:text-sm hover:bg-orange-400 transition duration-200 ease-in-out justify-center">
                         <x-lucide-plus class="h-4 w-4" />
                         <span>Add Customer</span>
                     </button>
+                    <dialog id="my_modal_5" class="modal modal-bottom sm:modal-middle">
+                        <div class="modal-box bg-zinc-50 border border-zinc-300 h-100">
+                            <form method="dialog">
+                                <button
+                                    class="btn btn-sm btn-circle shadow-none btn-ghost hover:bg-zinc-200 hover:border-zinc-200 absolute right-2 top-2 text-zinc-800 ">✕</button>
+                            </form>
+                            <h3 class="text-lg font-bold text-zinc-900">Add Customer and Delivery Details</h3>
+                            <form method="POST" action="{{ route('customer.add') }}" x-data="{ loading: false }"
+                                @submit.prevent="loading = true; $nextTick(() => $el.submit())" id="addItemForm">
+                                @csrf
+                                <div class="flex flex-col gap-5 mt-5">
+                                    <fieldset class="fieldset">
+                                        <legend class="fieldset-legend text-zinc-600">Email</legend>
+                                        <input type="text" name="email"
+                                            class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
+                                            placeholder="example@gmail.com" required />
+
+                                    </fieldset>
+                                    <div class="flex justify-between items-center gap-2">
+                                        <fieldset class="fieldset">
+                                            <legend class="fieldset-legend text-zinc-600">Business Name</legend>
+                                            <input type="text" name="business_name"
+                                                class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
+                                                placeholder="Enter business name" required />
+                                        </fieldset>
+                                        <fieldset class="fieldset">
+                                            <legend class="fieldset-legend text-zinc-600">Business Type</legend>
+                                            <input type="text" name="business_type"
+                                                class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
+                                                placeholder="e.g., Fast Food Chain, Supermarket" required />
+                                        </fieldset>
+                                    </div>
+                                    <div class="flex justify-between items-center gap-2">
+                                        <fieldset class="fieldset">
+                                            <legend class="fieldset-legend text-zinc-600">Address</legend>
+                                            <input type="text" name="address"
+                                                class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
+                                                placeholder="Enter business address" required />
+                                        </fieldset>
+                                        <fieldset class="fieldset">
+                                            <legend class="fieldset-legend text-zinc-600">Delivery Location</legend>
+                                            <input type="text" name="delivery_location"
+                                                class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
+                                                placeholder="Enter delivery location" required />
+                                        </fieldset>
+                                    </div>
+                                    <fieldset class="fieldset">
+                                        <legend class="fieldset-legend text-zinc-600">Phone Numbers</legend>
+                                        <input type="text" name="numbers"
+                                            class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
+                                            placeholder="e.g., 9123456789" required />
+                                    </fieldset>
+                                </div>
+                                <hr class="my-5">
+                                <div class="flex justify-end gap-5">
+
+                                    <button type="button" onclick="document.getElementById('my_modal_5').close()"
+                                        class="flex justify-end mt-2 px-4 py-2 text-sm bg-transparent text-zinc-500 hover:bg-zinc-200 rounded-md transition duration-200 ease-in-out ">Cancel</button>
+
+                                    <button type="submit" :disabled="loading"
+                                        class="flex justify-end mt-2 px-4 py-2 text-sm bg-orange-500 text-white rounded-md hover:bg-orange-400 transition duration-200 ease-in-out gap-2 items-center">
+                                        <template x-if="loading">
+                                            <x-lucide-loader class="h-4 w-4 animate-spin" />
+                                        </template>
+                                        <span x-text="loading ? 'Adding…' : 'Add'"></span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </dialog>
                 </div>
 
 
@@ -96,7 +166,8 @@
                                 <hr>
                                 <div class="flex justify-evenly mt-3">
                                     <div class="flex flex-col items-center">
-                                        <span class="text-zinc-700 font-semibold text-lg ">25</span>
+                                        <span
+                                            class="text-zinc-700 font-semibold text-lg ">{{ $customer->total_orders }}</span>
                                         <span class="text-sm text-zinc-500">Total Orders</span>
                                     </div>
                                     <div class="flex flex-col items-center">
@@ -118,8 +189,7 @@
 
                             </div>
 
-                            <dialog id="customerModal{{ $customer->id }}" class="modal modal-bottom sm:modal-middle"
-                                >
+                            <dialog id="customerModal{{ $customer->id }}" class="modal modal-bottom sm:modal-middle">
                                 <div class="modal-box bg-zinc-50  lg:w-11/12 lg:max-w-4xl max-h-[70vh]">
                                     <span class="text-zinc-700 font-bold">Customer Details</span>
                                     <form method="dialog">
@@ -164,14 +234,125 @@
                                             <div>
                                                 <div class="flex gap-2 items-center ">
                                                     <span class="text-xs text-zinc-600">Total Orders:</span>
-                                                    <span class="text-sm text-zinc-700 text-center">22</span>
+                                                    <span
+                                                        class="text-sm text-zinc-700 text-center">{{ $customer->total_orders }}</span>
                                                 </div>
 
                                             </div>
+
+
                                         </div>
+                                        <div class="flex justify-end gap-5">
+
+                                            <button type="button" onclick="edit{{ $customer->id }}.showModal()"
+                                                {{-- onclick="document.getElementById('my_modal_5').close()" --}}
+                                                class="flex justify-end mt-2 px-4 py-2 text-sm bg-transparent text-zinc-500 hover:bg-zinc-200 rounded-md transition duration-200 ease-in-out ">Edit</button>
+
+                                            <form action="{{ route('customer.destroy', $customer->id) }}"
+                                                method="POST"
+                                                onsubmit="return confirm('Are you sure you want to delete this customer?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="flex justify-end mt-2 px-4 py-2 text-sm bg-red-500 text-white rounded-md hover:bg-red-400 transition duration-200 ease-in-out gap-2 items-center">
+
+                                                    <span>Delete</span>
+                                                </button>
+                                            </form>
+                                            <dialog id="edit{{ $customer->id }}"
+                                                class="modal modal-bottom sm:modal-middle">
+                                                <div class="modal-box bg-zinc-50 border border-zinc-300 h-100">
+                                                    <form method="dialog">
+                                                        <button
+                                                            class="btn btn-sm btn-circle shadow-none btn-ghost hover:bg-zinc-200 hover:border-zinc-200 absolute right-2 top-2 text-zinc-800 ">✕</button>
+                                                    </form>
+                                                    <h3 class="text-lg font-bold text-zinc-900">Edit Customer
+                                                        Details
+                                                    </h3>
+                                                    <form method="POST"
+                                                        action="{{ route('customer.edit', $customer->id) }}"
+                                                        x-data="{ loading: false }"
+                                                        @submit.prevent="loading = true; $nextTick(() => $el.submit())"
+                                                        id="editItemForm">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <div class="flex flex-col gap-5 mt-5">
+                                                            <fieldset class="fieldset">
+                                                                <legend class="fieldset-legend text-zinc-600">Email
+                                                                </legend>
+                                                                <input type="text" name="email"
+                                                                    class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
+                                                                    placeholder="example@gmail.com" required
+                                                                    value="{{ $customer->email }}" />
+
+                                                            </fieldset>
+                                                            <div class="flex justify-between items-center gap-2">
+                                                                <fieldset class="fieldset">
+                                                                    <legend class="fieldset-legend text-zinc-600">
+                                                                        Business Name</legend>
+                                                                    <input type="text" name="business_name"
+                                                                        class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
+                                                                        placeholder="Enter business name" required
+                                                                        value="{{ $customer->business_name }}" />
+                                                                </fieldset>
+                                                                <fieldset class="fieldset">
+                                                                    <legend class="fieldset-legend text-zinc-600">
+                                                                        Business Type</legend>
+                                                                    <input type="text" name="business_type"
+                                                                        class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
+                                                                        placeholder="e.g., Fast Food Chain, Supermarket"
+                                                                        required
+                                                                        value="{{ $customer->business_type }}" />
+                                                                </fieldset>
+                                                            </div>
+                                                            <div class="flex justify-between items-center gap-2">
+                                                                <fieldset class="fieldset">
+                                                                    <legend class="fieldset-legend text-zinc-600">
+                                                                        Address</legend>
+                                                                    <input type="text" name="address"
+                                                                        class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
+                                                                        placeholder="Enter business address" required
+                                                                        value="{{ $customer->address }}" />
+                                                                </fieldset>
+                                                                <fieldset class="fieldset">
+                                                                    <legend class="fieldset-legend text-zinc-600">
+                                                                        Delivery Location</legend>
+                                                                    <input type="text" name="delivery_location"
+                                                                        class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
+                                                                        placeholder="Enter delivery location" required
+                                                                        value="{{ $customer->delivery_location }}" />
+                                                                </fieldset>
+                                                            </div>
+                                                            <fieldset class="fieldset">
+                                                                <legend class="fieldset-legend text-zinc-600">Phone
+                                                                    Numbers</legend>
+                                                                <input type="text" name="numbers"
+                                                                    class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
+                                                                    placeholder="e.g., 9123456789" required
+                                                                    value="{{ $customer->numbers }}" />
+                                                            </fieldset>
+                                                        </div>
+                                                        <hr class="my-5">
+                                                        <div class="flex justify-end gap-5">
+
+                                                            <button type="button"
+                                                                onclick="document.getElementById('my_modal_5').close()"
+                                                                class="flex justify-end mt-2 px-4 py-2 text-sm bg-transparent text-zinc-500 hover:bg-zinc-200 rounded-md transition duration-200 ease-in-out ">Cancel</button>
+
+                                                            <button type="submit" :disabled="loading"
+                                                                class="flex justify-end mt-2 px-4 py-2 text-sm bg-orange-500 text-white rounded-md hover:bg-orange-400 transition duration-200 ease-in-out gap-2 items-center">
+                                                                <template x-if="loading">
+                                                                    <x-lucide-loader class="h-4 w-4 animate-spin" />
+                                                                </template>
+                                                                <span x-text="loading ? 'Adding…' : 'Add'"></span>
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </dialog>
 
 
-
+                                        </div>
                                     </div>
                                     <div class="p-5 w-full border border-zinc-300 rounded-lg mt-5">
                                         <span class="text-zinc-700 font-bold">Recent Orders & Feedback</span>
@@ -218,8 +399,9 @@
                                                 @endforelse
 
                                             </div>
-                                            @else
-                                            <div class="flex text-zinc-500 justify-center my-10 text-center items-center">
+                                        @else
+                                            <div
+                                                class="flex text-zinc-500 justify-center my-10 text-center items-center">
                                                 Empty!
                                             </div>
                                         @endif

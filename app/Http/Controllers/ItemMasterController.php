@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ItemMasterExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ItemMasterController extends Controller
 {
@@ -130,5 +132,11 @@ class ItemMasterController extends Controller
         } else {
             return redirect()->back()->with('error', 'Failed to add item.');
         }
+    }
+
+    public function exportItemMaster()
+    {
+        return Excel::download(new ItemMasterExport, 'item-master.xlsx');
+
     }
 }

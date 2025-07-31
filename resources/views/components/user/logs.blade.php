@@ -1,6 +1,14 @@
 <div class="p-10 bg-zinc-50  h-auto rounded-lg border border-zinc-300 w-full">
-    <h1 class="text-xl text-gray-800 font-semibold">Activity Logs</h1>
-    <p class="text-sm text-gray-500">Track user management activities</p>
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-xl text-gray-800 font-semibold">Activity Logs</h1>
+            <p class="text-sm text-gray-500">Track user management activities</p>
+        </div>
+        <button  onclick="window.location='{{ url('/export-audits') }}'"
+            class="px-4 py-2 flex items-center gap-3 rounded-md text-zinc-900 text-sm border border-zinc-300 hover:border-zinc-400 transition duration-200 ease-in-out"><x-lucide-download
+                class="h-4 w-4" />Export</button>
+    </div>
+
     <div class="flex mt-5 gap-3">
 
         <label class="input bg-transparent border border-zinc-300 rounded-lg">
@@ -31,8 +39,8 @@
                     </li>
                     <li class="text-xs text-zinc-500  font-semibold px-1 flex justify-between mt-3">
                         <label class="flex items-center gap-2 text-sm">
-                            <input type="checkbox" value="logistics_coordinator" onchange="filterByRoles()" class="role-filter"
-                                checked>
+                            <input type="checkbox" value="logistics_coordinator" onchange="filterByRoles()"
+                                class="role-filter" checked>
                             Logistic Coordinator
                         </label>
                     </li>
@@ -45,8 +53,8 @@
                     </li>
                     <li class="text-xs text-zinc-500  font-semibold px-1 flex justify-between mt-3">
                         <label class="flex items-center gap-2 text-sm">
-                            <input type="checkbox" value="inventory_manager" onchange="filterByRoles()" class="role-filter"
-                                checked>
+                            <input type="checkbox" value="inventory_manager" onchange="filterByRoles()"
+                                class="role-filter" checked>
                             Inventory Manager
                         </label>
                     </li>

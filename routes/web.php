@@ -125,3 +125,17 @@ Route::get('/customer', [CustomerController::class, 'index'])->middleware('auth'
 Route::get('/warehouse/transfer', [WarehouseTransferController::class, 'index'])->middleware(['auth', 'verified'])->name('warehouse/transfer');
 Route::post('/warehouse/transfer/submit', [WarehouseTransferController::class, 'submit'])->middleware(['auth', 'verified'])->name('warehouse-transfer.submit');
 Route::post('/warehouse/jfpc/ship', [JFPCController::class, 'ship'])->name('warehouse.jfpc.ship');
+
+
+Route::get('/export-pcsi-incoming', [InventoryController::class, 'exportIncoming'])->name('export-pcsi-incoming');
+Route::get('/export-pcsi-outgoing', [InventoryController::class, 'exportOutgoing'])->name('export-pcsi-outgoing');
+Route::get('/export-jfpc-incoming', [JFPCController::class, 'exportIncoming'])->name('export-jfpc-incoming');
+Route::get('/export-jfpc-outgoing', [JFPCController::class, 'exportOutgoing'])->name('export-jfpc-outgoing');
+Route::get('/export-item-master', [ItemMasterController::class, 'exportItemMaster'])->name('export-item-master');
+Route::get('/export-audits', [UserController::class, 'exportAudits'])->name('export-audits');
+
+Route::post('/customer/add', [CustomerController::class, 'addCustomer'])->name('customer.add');
+Route::put('/customer/edit/{id}', [CustomerController::class, 'edit'])->name('customer.edit');
+Route::delete('/customer/destroy/{id}', [CustomerController::class, 'destroy'])->name('customer.destroy');
+Route::post('/pcsi/incoming/{id}/update', [InventoryController::class, 'update'])->name('pcsi.incoming.update');
+Route::post('/jfpc/incoming/{id}/update', [JFPCController::class, 'update'])->name('jfpc.incoming.update');

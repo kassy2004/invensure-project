@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
-
+use App\Exports\PCSIIncomingExport;
+use App\Exports\PCSIOutgingExport;
+use Maatwebsite\Excel\Facades\Excel;
 class InventoryController extends Controller
 {
     public function index()
@@ -334,5 +336,62 @@ class InventoryController extends Controller
             return redirect()->back()->withErrors(['error' => 'Something went wrong: ' . $e->getMessage()]);
         }
 
+    }
+    public function exportIncoming()
+    {
+        return Excel::download(new PCSIIncomingExport, 'pcsi-incoming.xlsx');
+    }
+    public function exportOutgoing()
+    {
+        return Excel::download(new PCSIOutgingExport, 'pcsi-outgoing.xlsx');
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            // Log the incoming data for debugging
+            Log::info('Update request received', [
+                'id' => $id,
+                'data' => $request->all()
+            ]);
+
+            // Check if the item exists first
+            $existingItem = DB::table('pcsi_incoming')->where('id', $id)->first();
+            if (!$existingItem) {
+                return response()->json(['success' => false, 'message' => 'Item not found'], 404);
+            }
+
+            $result = DB::table('pcsi_incoming')->where('id', $id)
+                ->update([
+                    'data_entry' => $request->input('data_entry'),
+                    'item_group' => $request->input('item_group'),
+                    'item_code' => $request->input('item_code'),
+                    'variant' => $request->input('variant'),
+                    'kilogram_tray' => $request->input('kilogram_tray'),
+                    'class' => $request->input('class'),
+                    'sku' => $request->input('sku'),
+                    'fg' => $request->input('fg'),
+                    'primary_packaging' => $request->input('primary_packaging'),
+                    'secondary_packaging' => $request->input('secondary_packaging'),
+                    'prod_date' => $request->input('prod_date'),
+                    'exp_date' => $request->input('exp_date'),
+                    'left' => $request->input('left'),
+                    'inventory_head' => $request->input('inventory_head'),
+                    'inventory_kilo' => $request->input('inventory_kilo'),
+                    'updated_at' => now(),
+
+                ]);
+
+            Log::info('Update result', ['result' => $result]);
+
+            if ($result) {
+                return response()->json(['success' => true, 'message' => 'Item updated successfully']);
+            } else {
+                return response()->json(['success' => false, 'message' => 'No changes were made to the item'], 400);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error updating item', ['error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'Error updating item: ' . $e->getMessage()], 500);
+        }
     }
 }

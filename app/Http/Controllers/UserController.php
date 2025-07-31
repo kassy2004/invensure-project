@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\AuditExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -70,5 +72,11 @@ class UserController extends Controller
             'updated_at' => now(),
         ]);
         return back()->with('success', 'User successfully added.');
+    }
+
+    public function exportAudits()
+    {
+        return Excel::download(new AuditExport, 'audit-logs.xlsx');
+
     }
 }

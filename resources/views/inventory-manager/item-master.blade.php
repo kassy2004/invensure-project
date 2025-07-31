@@ -21,7 +21,7 @@
                         <h4 class="text-zinc-700">Manage your item master</h4>
                     </div>
                     <div class="flex gap-2 mt-5 lg:mt-0 ">
-                        <button onclick="onExport()"
+                        <button onclick="window.location='{{ url('/export-item-master') }}'"
                             class="px-4 py-2 flex items-center gap-3 rounded-md text-zinc-900 text-sm border border-zinc-300 hover:border-zinc-400 transition duration-200 ease-in-out"><x-lucide-download
                                 class="h-4 w-4" />Export</button>
                         <button onclick="my_modal_5.showModal()"

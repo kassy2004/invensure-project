@@ -1,8 +1,31 @@
 <div>
-    <h1 class="text-lg font-semibold text-zinc-900">
-        Truck Loading Management
-    </h1>
-    <h4 class="text-zinc-700">Manage truck loading and dispatch operations</h4>
+    <div class="flex justify-between items-center">
+        <div class="">
+
+            <h1 class="text-lg font-semibold text-zinc-900">
+                Truck Loading Management
+            </h1>
+            <h4 class="text-zinc-700">Manage truck loading and dispatch operations</h4>
+        </div>
+        <div class="flex gap-3 text-sm">
+            <a href="{{ url('/operations?status=delivered') }}"
+                class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition">
+                Delivered
+            </a>
+
+            <a href="{{ url('/operations?status=in_transit') }}"
+                class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-500 transition">
+                In Transit
+            </a>
+
+            <a href="{{ url('/operations') }}"
+                class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition">
+                All
+            </a>
+        </div>
+
+    </div>
+
     @forelse ($truck_loading as $item)
         <div
             class=" p-5 bg-zinc-50  h-auto rounded-lg border border-zinc-300 mt-5 hover:shadow-md transition duration-300">
@@ -76,15 +99,14 @@
                 </div>
             </div>
         </div>
-        @empty
-            <div class="text-xl text-zinc-300 flex items-center justify-center h-86 ">
-                <div class="flex flex-col items-center ">
-                    <x-lucide-package-open class="h-24 w-24"/>
-                    <span>Empty</span>
-                </div>
-                
+    @empty
+        <div class="text-xl text-zinc-300 flex items-center justify-center h-86 ">
+            <div class="flex flex-col items-center ">
+                <x-lucide-package-open class="h-24 w-24" />
+                <span>Empty</span>
             </div>
-        
+
+        </div>
     @endforelse
 
 </div>

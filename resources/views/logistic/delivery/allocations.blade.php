@@ -1,8 +1,34 @@
 <div>
-    <h1 class="text-lg font-semibold text-zinc-900">
-        Allocation Management
-    </h1>
-    <h4 class="text-zinc-700">Complete logistics management from allocation to delivery</h4>
+    <div class="flex items-center justify-between mb-4">
+        <div>
+            <h1 class="text-lg font-semibold text-zinc-900">
+                Allocation Management
+            </h1>
+            <h4 class="text-zinc-700">Complete logistics management from allocation to delivery</h4>
+        </div>
+
+        {{-- <button id="sortToggleBtn"
+            class="px-4 py-2 text-sm bg-zinc-200 hover:bg-zinc-300 text-zinc-700 rounded-md border border-zinc-300 transition">
+            Sort by Allocation ID
+        </button> --}}
+        <div class="flex gap-3 text-sm items-center">
+            <span class="text-zinc-600 text-sm">Sort by</span>
+            <a href="{{ url('/operations?sort=asc') }}" onclick="resetPagination()"
+                class="px-4 py-2 rounded-lg transition flex items-center gap-1
+        {{ request('sort') === 'asc' ? 'bg-orange-500 text-white hover:bg-orange-600' : 'text-zinc-600 border hover:border-orange-500' }}">
+                <x-lucide-arrow-up-0-1 class="h-4 w-4 " />
+                <span>Asc</span>
+            </a>
+
+            <a href="{{ url('/operations?sort=desc') }}" onclick="resetPagination()"
+                class="px-4 py-2 rounded-lg transition flex items-center gap-1
+        {{ request('sort') === 'desc' ? 'bg-orange-500 text-white hover:bg-orange-600' : 'text-zinc-600 border hover:border-orange-500 ' }}">
+                <x-lucide-arrow-down-1-0 class="h-4 w-4 " />
+                <span>Desc</span>
+            </a>
+        </div>
+
+    </div>
 
     {{-- Loop --}}
     <div id="allocation-container">
@@ -17,6 +43,20 @@
     let page = 1;
     let loading = false;
 
+    // Get current sort parameter from URL
+    function getCurrentSort() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('sort') || '';
+    }
+
+    // Reset pagination when sorting changes
+    function resetPagination() {
+        page = 1;
+        // Clear existing content and start fresh
+        document.getElementById('allocation-container').innerHTML = '';
+        // The page will reload with new sorting, so this is just a safety measure
+    }
+
     window.addEventListener('scroll', () => {
         if (loading) return;
 
@@ -30,21 +70,25 @@
 
             document.getElementById('loader').classList.remove('hidden');
 
-            fetch(`?page=${page}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(res => res.text())
-            .then(html => {
-                document.getElementById('allocation-container').insertAdjacentHTML('beforeend', html);
-                loading = false;
-                document.getElementById('loader').classList.add('hidden');
-            })
-            .catch(() => {
-                loading = false;
-                document.getElementById('loader').classList.add('hidden');
-            });
+            // Build query string with sort parameter
+            const sort = getCurrentSort();
+            const queryString = sort ? `?page=${page}&sort=${sort}` : `?page=${page}`;
+
+            fetch(queryString, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(res => res.text())
+                .then(html => {
+                    document.getElementById('allocation-container').insertAdjacentHTML('beforeend', html);
+                    loading = false;
+                    document.getElementById('loader').classList.add('hidden');
+                })
+                .catch(() => {
+                    loading = false;
+                    document.getElementById('loader').classList.add('hidden');
+                });
         }
     });
 </script>
@@ -85,4 +129,3 @@
         });
     });
 </script>
-

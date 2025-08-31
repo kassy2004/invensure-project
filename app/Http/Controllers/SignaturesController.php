@@ -11,8 +11,33 @@ class SignaturesController extends Controller
     public function index()
     {
         $pod = DB::table('pod')
-        ->where('status', 'incomplete')
-        ->get();
+            ->leftJoin('truck_loading', DB::raw("CONCAT('ALLOC-', pod.order_id)"), '=', 'truck_loading.allocation_id')
+            ->leftjoin('signature', 'pod.pod_number', '=', 'signature.pod_number')
+            ->select(
+                'pod.id',
+                'pod.pod_number',
+                'pod.order_id',
+                'pod.status',
+                'pod.created_at',
+                'pod.updated_at',
+                'truck_loading.truck_id',
+                DB::raw("GROUP_CONCAT(signature.type) as signed_types")
+            )
+
+            ->where('pod.status', 'incomplete')
+            ->groupBy(
+                'pod.id',
+                'pod.pod_number',
+                'pod.order_id',
+                'pod.status',
+                'pod.created_at',
+                'pod.updated_at',
+                'truck_loading.truck_id'
+            )
+            ->get();
+        foreach ($pod as $p) {
+            $p->signed_types = $p->signed_types ? explode(',', $p->signed_types) : [];
+        }
         // dd($pod);
         return view('logistic.signatures', compact('pod'));
     }
@@ -25,10 +50,12 @@ class SignaturesController extends Controller
             'name' => 'required|string',
             'pod_number' => 'required',
         ]);
-
+        $truck_id = $request->input('truck_id');
+        // dd($truck_id);
         $usertype = null;
         $status = null;
         $pod_number = $request->input('pod_number');
+        // dd($pod_number);
 
         if ($request->input('type') === 'driver') {
             $usertype = 'DR';
@@ -72,9 +99,11 @@ class SignaturesController extends Controller
         File::put($filepath, $data);
 
 
+        // dd($pod_number);
+
         $success = DB::table('signature')
             ->insert([
-                'pod_number' => '000' . $request->input('pod_number'),
+                'pod_number' => $request->input('pod_number'),
                 'name' => $request->input('name'),
                 'signature' => 'img/sign/' . $filename,
                 'type' => $request->input('type'),
@@ -82,27 +111,33 @@ class SignaturesController extends Controller
                 'updated_at' => now(),
 
             ]);
-// dd($request->input('pod_number'));
+        // dd($request->input('pod_number'));
         $orderId = DB::table('pod')
-        ->where('pod_number', '000' .$request->input('pod_number'))
-        ->first();
+            ->where('pod_number', $request->input('pod_number'))
+            ->first();
         // dd($orderId);
 
 
 
         if ($status === 'completed') {
             DB::table('pod')
-                ->where('pod_number', '000' . $request->input('pod_number'))
+                ->where('pod_number', $request->input('pod_number'))
                 ->update([
                     'status' => $status,
                     'updated_at' => now(),
                 ]);
-                // dd($orderId->order_id);
+            // dd($orderId->order_id);
 
             DB::table('truck_loading')
                 ->where('allocation_id', 'ALLOC-' . $orderId->order_id)
                 ->update([
                     'status' => 'delivered',
+                    'updated_at' => now(),
+                ]);
+            DB::table('truck')
+                ->where('id', $truck_id)
+                ->update([
+                    'status' => 'available',
                     'updated_at' => now(),
                 ]);
 
@@ -113,12 +148,12 @@ class SignaturesController extends Controller
                     'updated_at' => now(),
                 ]);
 
-                DB::table('notifications')
+            DB::table('notifications')
                 ->insert([
                     'user_id' => auth()->id(),
-                    'for' =>'logistics_coordinator',
+                    'for' => 'logistics_coordinator',
                     'title' => 'Order Delivered',
-                    'message' => 'Order # '. $orderId->order_id . ' has been delivered',
+                    'message' => 'Order # ' . $orderId->order_id . ' has been delivered',
                     'type' => 'info',
                     'created_at' => now(),
                 ]);

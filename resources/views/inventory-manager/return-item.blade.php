@@ -11,6 +11,10 @@
                         <h1 class="text-2xl font-bold text-zinc-900">Rejects and Returns</h1>
 
                     </div>
+                    <button 
+                        class="bg-orange-500 px-4 py-2 flex items-center gap-3 rounded-md text-gray-50 text-sm hover:bg-orange-400 transition duration-200 ease-in-out">
+                        <x-lucide-plus class="h-4 w-4" />
+                        Add Manually</button>
                 </div>
                 @if (session('success'))
                     <div id="alert" role="alert" class="alert alert-success mt-5">
@@ -129,23 +133,23 @@
                             <div class="text-sm mt-5 ">
                                 <div class="flex gap-2 ">
                                     <span class="text-zinc-500">POD #: </span>
-                                    <span id="pod" class="text-zinc-700 font-semibold ">0001</span>
+                                    <span id="reject-pod" class="text-zinc-700 font-semibold ">0001</span>
                                 </div>
                                 <div class="flex gap-2 ">
                                     <span class="text-zinc-500">Customer: </span>
-                                    <span id="customer" class="text-zinc-700 font-semibold ">Jollibee</span>
+                                    <span id="reject-customer" class="text-zinc-700 font-semibold ">Jollibee</span>
                                 </div>
                                 <div class="flex gap-2 ">
                                     <span class="text-zinc-500">Reason for return: </span>
-                                    <span id="reason" class="text-zinc-700 font-semibold ">Hematoma</span>
+                                    <span id="reject-reason" class="text-zinc-700 font-semibold ">Hematoma</span>
                                 </div>
                                 <div class="flex gap-2 ">
                                     <span class="text-zinc-500">Detail Description: </span>
-                                    <span id="others" class="text-zinc-700 font-semibold ">nyenye</span>
+                                    <span id="reject-others" class="text-zinc-700 font-semibold ">nyenye</span>
                                 </div>
                                 <div class="flex gap-2 ">
                                     <span class="text-zinc-500">Request Date: </span>
-                                    <span id="date" class="text-zinc-700 font-semibold ">Today</span>
+                                    <span id="reject-date" class="text-zinc-700 font-semibold ">Today</span>
                                 </div>
                             </div>
                             <div class="flex justify-end gap-3 mt-6">
@@ -154,7 +158,8 @@
                                         class="py-2 px-4 text-sm rounded-lg bg-zinc-200 text-zinc-700 shadow-none border-none">Cancel</button>
                                 </form>
 
-                                <form method="POST" id="rejectForm" x-data="{ loading: false }" @submit="loading = true">
+                                <form method="POST" id="rejectForm" x-data="{ loading: false }"
+                                    @submit="loading = true">
                                     @csrf
                                     @method('PUT')
                                     <button type="submit"
@@ -294,7 +299,7 @@
             pagination: true,
             paginationPageSize: 10,
             getRowStyle: params => {
-               
+
                 if (params.data.status === 'approved') {
                     return {
                         backgroundColor: '#DCFCE7'
@@ -364,12 +369,12 @@
         });
         document.getElementById('reject-text').textContent =
             `Are you sure you want to approve the return request for:`;
-        document.getElementById('pod').textContent = `${pod_number}`;
-        document.getElementById('customer').textContent = `${customer}`;
+        document.getElementById('reject-pod').textContent = `${pod_number}`;
+        document.getElementById('reject-customer').textContent = `${customer}`;
 
-        document.getElementById('reason').textContent = `${reason_for_return}`;
-        document.getElementById('others').textContent = `${others}`;
-        document.getElementById('date').textContent = formattedDate;
+        document.getElementById('reject-reason').textContent = `${reason_for_return}`;
+        document.getElementById('reject-others').textContent = `${others}`;
+        document.getElementById('reject-date').textContent = formattedDate;
         const form = document.getElementById('rejectForm');
         form.action = `/reject-return/${id}`;
         document.getElementById('rejectModal').showModal();

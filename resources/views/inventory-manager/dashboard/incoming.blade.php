@@ -259,9 +259,17 @@
         {{-- <input type="text" id="quickFilterInput"
         placeholder="Search by ID, borrower, or equipment..."
         class="h-10 rounded-lg bg-transparent  text-gray-300 border border-zinc-300  w-2/8"> --}}
-        <div
-            class=" h-10 px-3 flex rounded-lg text-zinc-900 border border-zinc-300 items-center justify-center text-center hover:border-zinc-400 transition duration-200 ease-in-out cursor-pointer">
-            <x-lucide-filter class="h-4 w-4" />
+        <div class="dropdown dropdown-end">
+            {{-- <div  class="btn m-1">Click ⬇️</div> --}}
+            <div tabindex="0" role="button"
+                class=" h-10 px-3 flex rounded-lg text-zinc-900 border border-zinc-300 items-center justify-center text-center hover:border-zinc-400 transition duration-200 ease-in-out cursor-pointer">
+                <x-lucide-filter class="h-4 w-4" />
+            </div>
+            <ul tabindex="0"
+                class="filter dropdown-content menu bg-gray-100 border border-zinc-300 text-zinc-900 rounded-box z-1 w-52 p-2 shadow-sm">
+                <li class="hover:bg-gray-200 rounded-md"><a href="#" data-filter="all">All</a></li>
+                <li class="hover:bg-gray-200 rounded-md"><a href="#" data-filter="return">Returns</a></li>
+            </ul>
         </div>
         <div>
             <details class="dropdown ">
@@ -566,6 +574,11 @@
                     {
                         headerName: "Storage #",
                         field: "storage_num"
+                    },
+                    {
+
+                        field: 'return_date'
+
                     }
                 ]
             }
@@ -603,6 +616,34 @@
                         const colKey = cb.getAttribute('onchange').match(/'([^']+)'/)[1];
                         gridOptions.columnApi.setColumnVisible(colKey, cb.checked);
                     });
+                const menu = document.querySelector('.filter');
+                if (menu) {
+                    menu.addEventListener('click', function(e) {
+                        const link = e.target.closest('a[data-filter]');
+                        if (!link) return;
+                        e.preventDefault();
+
+                        const mode = link.dataset.filter;
+                        const currentModel = gridOptions.api.getFilterModel() || {};
+
+                        if (mode === 'return') {
+                            // Keep other filters; add "return_date is not blank"
+                            currentModel.return_date = {
+                                filterType: 'text',
+                                type: 'notBlank',
+                            };
+                            gridOptions.api.setFilterModel(currentModel);
+                            gridOptions.api.onFilterChanged();
+                        } else if (mode === 'all') {
+                            // Keep other filters; remove only the return_date filter
+                            delete currentModel.return_date;
+                            // If nothing left, pass null to clear; else set the remaining model
+                            gridOptions.api.setFilterModel(Object.keys(currentModel).length ?
+                                currentModel : null);
+                            gridOptions.api.onFilterChanged();
+                        }
+                    });
+                }
 
             },
             pagination: true,

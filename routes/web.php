@@ -139,3 +139,4 @@ Route::put('/customer/edit/{id}', [CustomerController::class, 'edit'])->name('cu
 Route::delete('/customer/destroy/{id}', [CustomerController::class, 'destroy'])->name('customer.destroy');
 Route::post('/pcsi/incoming/{id}/update', [InventoryController::class, 'update'])->name('pcsi.incoming.update');
 Route::post('/jfpc/incoming/{id}/update', [JFPCController::class, 'update'])->name('jfpc.incoming.update');
+Route::get('/allocations/sorted', [DeliveryOperationsController::class, 'getSortedAllocations'])->name('allocations.sorted');

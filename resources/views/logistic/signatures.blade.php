@@ -54,35 +54,44 @@
                                 <h4 class="text-zinc-700">Enter information for the digital signature</h4>
                             </div>
 
-                            <div class="flex flex-col gap-4 mt-5 pr-2 max-h-128">
+                            <div class="flex flex-col gap-4 mt-5 pr-2 max-h-128" x-data="{ open: false, search: '', selected: null, truckId: null, signedTypes: [] }">
                                 <fieldset class="fieldset">
                                     <legend class="fieldset-legend text-zinc-600">Type</legend>
                                     <div class="flex">
 
                                         <div class="flex gap-2 ml-5 items-center">
                                             <input type="radio" name="type" value="customer"
-                                                class="radio radio-xs bg-red-100 border-orange-300 checked:bg-orange-200 checked:text-orange-600 checked:border-orange-600" />
+                                                :disabled="signedTypes.includes('customer')"
+                                                class="radio radio-xs bg-red-100 border-orange-300 
+        checked:bg-orange-200 checked:text-orange-600 checked:border-orange-600 
+        disabled:opacity-50 disabled:cursor-not-allowed" />
                                             <span class="text-zinc-700">Customer</span>
-
                                         </div>
+
                                         <div class="flex gap-2 ml-5 items-center">
                                             <input type="radio" name="type" value="driver"
-                                                class="radio radio-xs bg-red-100 border-orange-300 checked:bg-orange-200 checked:text-orange-600 checked:border-orange-600" />
+                                                :disabled="signedTypes.includes('driver')"
+                                                class="radio radio-xs bg-red-100 border-orange-300 
+        checked:bg-orange-200 checked:text-orange-600 checked:border-orange-600 
+        disabled:opacity-50 disabled:cursor-not-allowed" />
                                             <span class="text-zinc-700">Driver</span>
-
                                         </div>
+
                                         <div class="flex gap-2 ml-5 items-center">
-                                            <input type="radio"name="type" value="planner"
-                                                class="radio radio-xs bg-red-100 border-orange-300 checked:bg-orange-200 checked:text-orange-600 checked:border-orange-600" />
+                                            <input type="radio" name="type" value="planner"
+                                                :disabled="signedTypes.includes('planner')"
+                                                class="radio radio-xs bg-red-100 border-orange-300 
+        checked:bg-orange-200 checked:text-orange-600 checked:border-orange-600 
+        disabled:opacity-50 disabled:cursor-not-allowed" />
                                             <span class="text-zinc-700">Planner</span>
-
                                         </div>
+
                                     </div>
 
                                 </fieldset>
 
 
-                                <div x-data="{ open: false, search: '', selected: null }" class="relative w-full">
+                                <div class="relative w-full">
                                     <fieldset class="fieldset">
                                         <legend class="fieldset-legend text-zinc-600">POD Number</legend>
                                     </fieldset>
@@ -94,12 +103,18 @@
                                         class="absolute z-[9999] mt-1 w-full bg-white border border-zinc-300 rounded-md max-h-48 overflow-y-auto">
                                         @forelse ($pod as $items)
                                             <div x-show="`{{ $items->pod_number }}`.toLowerCase().includes(search.toLowerCase())"
-                                                @click="selected = '{{ $items->id }}'; search = '{{ $items->pod_number }}'; open = false"
+                                                @click="
+                                                selected = '{{ $items->pod_number }}';
+                                                truckId = '{{ $items->truck_id }}';
+                                                search = '{{ $items->pod_number }}';
+                                                signedTypes = @js($items->signed_types); 
+                                                open = false"
                                                 class="px-3 py-2 cursor-pointer hover:bg-zinc-100 text-sm text-zinc-700 flex flex-col">
                                                 <span>{{ $items->pod_number }}</span>
                                                 {{-- <span class="text-gray-500 text-xs">{{ $trucks->driver_name }}</span>
                                                 <span class="text-gray-500 text-xs">Capacity:
                                                     {{ $trucks->capacity_kg }}kg</span> --}}
+                                                {{-- <span class="text-gray-500 text-xs">Truck ID: {{ $items->truck_id }}</span> --}}
                                             </div>
                                         @empty
                                             <div class="px-3 py-2 text-sm text-zinc-500 select-none">
@@ -108,9 +123,10 @@
                                         @endforelse
                                     </div>
                                     <input type="hidden" name="pod_number" :value="selected" required />
+                                    <input type="hidden" name="truck_id" :value="truckId" required />
 
 
-                                </div>
+                                </div
                                 {{-- <fieldset class="fieldset">
                                     <legend class="fieldset-legend text-zinc-600">POD Number</legend>
                                     <input type="text" name="pod_number"

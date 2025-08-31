@@ -222,12 +222,12 @@
                                                     <x-lucide-circle-check-big class="h-3 w-3" />
                                                 @elseif($orders->return_data->status === 'rejected')
                                                     <x-lucide-ticket-x class="h-3 w-3" />
-
                                                 @else
                                                     <x-lucide-clock class="h-3 w-3" />
                                                 @endif
 
-                                                <span>{{ ucwords(str_replace('_', ' ',$orders->return_data->status)) }} </span>
+                                                <span>{{ ucwords(str_replace('_', ' ', $orders->return_data->status)) }}
+                                                </span>
                                             </div>
 
                                         </div>
@@ -279,7 +279,27 @@
                                         </div>
 
                                         <div class="flex flex-col gap-4 mt-5">
+                                            <div>
+                                                <span class="text-sm text-zinc-600">Select an item/s to return</span>
+                                                @foreach ($orders->products as $product)
+                                                    <div
+                                                        class="flex gap-5 border rounded-lg p-3 border-zinc-300 items-center">
+                                                        <input type="checkbox" name="selected_products[]" value="{{ $product->id }}"
+                                                            class="form-checkbox h-5 w-5 text-orange-500 border-orange-500 rounded focus:ring-orange-500 transition duration-150 cursor-pointer product-checkbox" />
+                                                        <div class="flex flex-col">
 
+                                                            <span class="text-sm text-zinc-700">
+                                                                {{ $loop->iteration }}. {{ $product->description }}
+                                                            </span>
+                                                            <span class="text-xs text-zinc-600">
+                                                                {{ $product->quantity }} - {{ $product->kilogram }}kg
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                  
+                                                @endforeach
+                                                <input type="hidden" name="selected_product_ids" id="selected_product_ids" value="">
+                                            </div>
                                             <!-- Return Reason -->
                                             <div>
                                                 <label for="reason"
@@ -542,4 +562,28 @@
                 </div>
             </div>
         </div>
+
+<script>
+    // Function to update selected product IDs
+    function updateSelectedProductIds() {
+        const checkboxes = document.querySelectorAll('.product-checkbox:checked');
+        const selectedIds = Array.from(checkboxes).map(checkbox => checkbox.value);
+        document.getElementById('selected_product_ids').value = selectedIds.join(',');
+    }
+
+    // Add event listeners to all product checkboxes
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('.product-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateSelectedProductIds);
+        });
+    });
+
+    // Update selected IDs when form is submitted
+    document.addEventListener('submit', function(e) {
+        if (e.target.action && e.target.action.includes('/return-order')) {
+            updateSelectedProductIds();
+        }
+    });
+</script>
 </x-app-layout>

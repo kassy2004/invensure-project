@@ -8,22 +8,37 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+
 class DeliveryOperationsController extends Controller
 {
     public function index(Request $request)
     {
         $allocations = $this->getFilteredAllocations();
-
+        $status = $request->query('status');
+        $sort = $request->query('sort');
+        // dd($status);
         $perPage = 5;
         $page = $request->input('page', 1);
         $offset = ($page - 1) * $perPage;
+
+        // Apply sorting to the entire dataset before pagination
+        if ($sort === 'asc') {
+            usort($allocations, function ($a, $b) {
+                return strcmp($a->allocation_id, $b->allocation_id);
+            });
+        } elseif ($sort === 'desc') {
+            usort($allocations, function ($a, $b) {
+                return strcmp($b->allocation_id, $a->allocation_id);
+            });
+        }
 
         $paginated = new LengthAwarePaginator(
             array_slice($allocations, $offset, $perPage),
             count($allocations),
             $perPage,
             $page,
-            ['path' => url()->current()]
+            ['path' => url()->current(), 'query' => $request->query()]
         );
 
         $truck_loading = DB::table('truck_loading')
@@ -44,6 +59,14 @@ class DeliveryOperationsController extends Controller
                 'customers.address',
                 DB::raw('COUNT(DISTINCT allocations.allocation_id) as allocation_count')
             )
+            ->when($status, function ($query, $status) {
+                if ($status === 'delivered') {
+                    $query->where('truck_loading.status', 'delivered'); // 👈 filter available
+                } elseif ($status === 'in_transit') {
+                    $query->where('truck_loading.status', 'in_transit'); // 👈 filter unavailable
+                }
+            })
+
             ->groupBy(
                 'truck_loading.truck_id',
                 'truck_loading.allocation_id',
@@ -73,7 +96,7 @@ class DeliveryOperationsController extends Controller
             ->count();
 
 
-        return view('logistic.delivery-operations', ['allocations' => $paginated, 'truck_loading' => $truck_loading, 'pendingAllocations' => $pendingAllocations, 'truckInTransit' => $truckInTransit]);
+        return view('logistic.delivery-operations', ['allocations' => $paginated, 'truck_loading' => $truck_loading, 'pendingAllocations' => $pendingAllocations, 'truckInTransit' => $truckInTransit, 'status' => $status]);
     }
 
     private function getFilteredAllocations()
@@ -90,6 +113,7 @@ class DeliveryOperationsController extends Controller
             ->orderByDesc('allocation_id')
             ->value('allocation_id');
 
+        // dd($latest);
         $nextNumber = $latest
             ? intval(str_replace('ALLOC-', '', $latest)) + 1
             : 1;
@@ -101,6 +125,7 @@ class DeliveryOperationsController extends Controller
         $nextOrderNumber = $latestOrderId
             ? intval($latestOrderId) + 1
             : 1;
+        // dd($nextOrderNumber, $nextNumber);
         $groupedOrders = collect($outgoingOrders)->groupBy(function ($item) {
             return $item->customer . '_' . date('Y-m-d', strtotime($item->transaction_date)) . '_pcsi';
         });
@@ -119,7 +144,8 @@ class DeliveryOperationsController extends Controller
 
             // Generate allocation group ID
             $allocationId = 'ALLOC-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
-            $nextNumber++; // Increment for the next group 
+            // $nextNumber++; // Increment for the next group 
+            // dd($nextOrderNumber, $nextNumber);
 
             foreach ($orders as $order) {
                 $exists = DB::table('allocations')
@@ -145,17 +171,15 @@ class DeliveryOperationsController extends Controller
 
                 if (!$ordersexists) {
                     DB::table('orders')->insert([
-                        'order_id' => str_pad($nextOrderNumber, 4, '0', STR_PAD_LEFT),
+                        'order_id' => str_pad($nextNumber, 4, '0', STR_PAD_LEFT),
                         'customer_id' => $customer->id,
                         'product_id' => $order->id,
                         'warehouse' => 'pcsi',
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
-                   
                 }
             }
-            $nextOrderNumber++;
         }
 
         foreach ($groupedJfpcOrders as $key => $order) {
@@ -166,8 +190,9 @@ class DeliveryOperationsController extends Controller
                 continue;
             // Generate allocation group ID
             $allocationId = 'ALLOC-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
-            $nextNumber++; // Increment for the next group 
+            // $nextNumber++; // Increment for the next group 
 
+            // dd($nextOrderNumber, $nextNumber);
 
 
 
@@ -195,6 +220,7 @@ class DeliveryOperationsController extends Controller
 
                 if (!$jfpcordersexists) {
                     DB::table('orders')->insert([
+                        'order_id' => str_pad($nextNumber, 4, '0', STR_PAD_LEFT),
                         'customer_id' => $customer->id,
                         'product_id' => $jfpcorder->id,
                         'warehouse' => 'jfpc',
@@ -203,6 +229,7 @@ class DeliveryOperationsController extends Controller
                     ]);
                 }
             }
+            // $nextOrderNumber++;
         }
         $allocations = DB::table('allocations')
             ->where('status', '!=', 'in transit')
@@ -252,7 +279,9 @@ class DeliveryOperationsController extends Controller
                 ->get();
 
 
-            $allocation->truck = DB::table('truck')->get();
+            $allocation->truck = DB::table('truck')
+                ->where('status', 'available')
+                ->get();
 
 
 
@@ -318,6 +347,14 @@ class DeliveryOperationsController extends Controller
                 'updated_at' => now(),
             ]);
 
+        $truckStatus = DB::table('truck')
+            ->where('id', $request->input('truck_id'))
+            ->update([
+
+                'status' => 'unavailable',
+                'updated_at' => now()
+            ]);
+
 
         if ($product && isset($product->kilogram)) {
             $totalKg += $product->kilogram;
@@ -381,7 +418,7 @@ class DeliveryOperationsController extends Controller
                 'pod_number' => $podNumber,
                 'signature' => 'img/sign/' . $filename,
                 'type' => 'planner',
-                'name' => auth()->user()->name,
+                'name' => Auth::user()->name,
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
@@ -398,7 +435,6 @@ class DeliveryOperationsController extends Controller
                 'filename' => 'img/sign/' . $filename,
                 'pod_number' => $podNumber
             ]);
-
         } catch (\Exception $e) {
             Log::error('Error saving signature', [
                 'message' => $e->getMessage(),

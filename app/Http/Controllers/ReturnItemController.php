@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ReturnItemController extends Controller
 {
     public function index()
     {
-        if (auth()->user()->role !== 'inventory_manager') {
+        if (Auth::user()->role !== 'inventory_manager') {
             return redirect()->back()->with('error', 'Unauthorized access.');
         }
         $returns = DB::table('returns')->get();
@@ -22,10 +23,10 @@ class ReturnItemController extends Controller
     {
         // dd($request->all());
         $reason = $request->input('reason');
-        $email = auth()->user()->email;
+        $email = Auth::user()->email;
         $order_id = $request->input('order_id');
         $comments = $request->input('comments');
-
+        // dd($email);
 
         $customer = DB::table('customers')
             ->where('email', $email)
@@ -39,18 +40,23 @@ class ReturnItemController extends Controller
         //     ->where('order_id', $order_id)
         //     ->get();
 
+        foreach ($request->selected_products as $productId) {
+            $success = DB::table('returns')
+                ->insert([
+                    'product_id' => $productId,
+                    'customer' => $customer->business_name,
+                    'reason_for_return' => $reason,
+                    'others' => $comments,
+                    'pod_number' => $order_id,
+                    'status' => 'pending',
+                    'warehouse' => $warehouse->warehouse,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
 
-        $success = DB::table('returns')
-            ->insert([
-                'customer' => $customer->business_name,
-                'reason_for_return' => $reason,
-                'others' => $comments,
-                'pod_number' => $order_id,
-                'status' => 'pending',
-                'warehouse' => $warehouse->warehouse,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        }
+
+
 
         if (!$success) {
             return redirect()->back()->with('error', 'Error: Failed to request a return.');
@@ -71,9 +77,9 @@ class ReturnItemController extends Controller
             return redirect()->back()->with('error', 'Return request not found.');
         }
 
-       $customer =  DB::table('customers')
-        ->where('business_name', $return->customer)
-        ->first();
+        $customer = DB::table('customers')
+            ->where('business_name', $return->customer)
+            ->first();
 
         $user_id = DB::table('users')
             ->where('email', $customer->email)
@@ -134,7 +140,6 @@ class ReturnItemController extends Controller
             ]);
 
 
-            return redirect()->back()->with('success', 'You’ve successfully rejected the return request. The customer will be informed accordingly.');
-
+        return redirect()->back()->with('success', 'You’ve successfully rejected the return request. The customer will be informed accordingly.');
     }
 }

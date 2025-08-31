@@ -75,11 +75,13 @@ class OrdersController extends Controller
 
 
             $order->can_request_return = false;
-
+                
 
             if ($order->status === 'delivered' && $order->updated_at) {
                 $deliveredAt = Carbon::parse($order->updated_at);
-                $order->can_request_return = now()->diffInHours($deliveredAt) <= 12;
+                $hoursDiff = $deliveredAt->diffInHours(now(), false);
+                // dd($hoursDiff);
+                $order->can_request_return = $hoursDiff <= 12 && $hoursDiff >= 0;
             }
 
             $return = DB::table('returns')
@@ -94,7 +96,7 @@ class OrdersController extends Controller
 
         }
 
-
+        // dd($filteredOrders);
         return view('customer.orders', [
             'order' => $filteredOrders,
         ]);

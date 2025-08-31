@@ -18,8 +18,31 @@ class JFPCController extends Controller
         if (auth()->user()->role !== 'inventory_manager') {
             return redirect()->back()->with('error', 'Unauthorized access.');
         }
-        $inventory = DB::table('jfpc_incoming')->get();
+        $inventory = DB::table('jfpc_incoming')
+            ->leftJoin('jfpc_outgoing', 'jfpc_outgoing.incoming_id', '=', 'jfpc_incoming.id')
+            ->leftJoin('returns', 'returns.product_id', '=', 'jfpc_outgoing.id')
+            ->where(function ($query) {
+                $query->where('returns.warehouse', 'jfpc')
+                    ->orWhereNull('returns.warehouse');
+            })
+            ->select(
+                'jfpc_incoming.id', // This will be your main id
+                'jfpc_incoming.*',
+                'jfpc_outgoing.id as outgoing_id',
+                'returns.id as return_id',
+                'returns.reason_for_return',
+                'returns.created_at as return_date'
+            )
+           
+            ->get()
+            ->unique('id')->values()
+        ;
+        // dd($inventory);
+
         $outgoing = DB::table('jfpc_outgoing')->get();
+
+
+
         $item_master = DB::table('item_master')->get();
 
         // Debug: Log the count of items
@@ -123,7 +146,7 @@ class JFPCController extends Controller
                 ->where('pod_number', $pods->pod_number)
                 ->get();
         }
-// dd($pod);
+        // dd($pod);
 
         $customer = DB::table('customers')
             ->get();
@@ -218,7 +241,7 @@ class JFPCController extends Controller
 
 
             ]);
-
+            // dd($request->all());
             $incoming = DB::table('jfpc_incoming')
                 ->select('item_code', 'sku', 'primary_packaging', 'secondary_packaging', 'variant', 'item_group')
                 ->where('id', $validated['item_id'])
@@ -227,17 +250,18 @@ class JFPCController extends Controller
                 return back()->withErrors(['item_id' => 'Selected item not found.']);
             }
 
-            $updateInventory = DB::table('jfpc_incoming')
+            DB::table('jfpc_incoming')
                 ->where('id', $validated['item_id'])
                 ->update([
                     'qty_head' => $validated['quantity'],
                     'qty_kilo' => $validated['kilogram'],
-                    'balance_head' => DB::raw('inventory_head - ' . $validated['quantity']),
-                    'balance_kilo' => DB::raw('inventory_kilo - ' . $validated['kilogram']),
+                    'balance_head' => DB::raw('balance_head - ' . $validated['quantity']),
+                    'balance_kilo' => DB::raw('balance_kilo - ' . $validated['kilogram']),
                 ]);
 
 
             DB::table('jfpc_outgoing')->insert([
+                'incoming_id' => $validated['item_id'],
                 'transaction_date' => $validated['transaction_date'],
                 'customer' => $validated['customer'],
                 'cm_code' => $validated['cm_code'],

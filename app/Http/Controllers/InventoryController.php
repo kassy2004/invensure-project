@@ -18,7 +18,27 @@ class InventoryController extends Controller
         if (auth()->user()->role !== 'inventory_manager') {
             return redirect()->back()->with('error', 'Unauthorized access.');
         }
-        $inventory = DB::table('pcsi_incoming')->get();
+        $inventory = DB::table('pcsi_incoming')
+            ->leftJoin('pcsi_outgoing', 'pcsi_outgoing.incoming_id', '=', 'pcsi_incoming.id')
+
+            ->leftJoin('returns', 'returns.product_id', '=', 'pcsi_outgoing.id')
+            ->where(function ($query) {
+                $query->where('returns.warehouse', 'pcsi')
+                    ->orWhereNull('returns.warehouse');
+            })
+            ->select(
+                'pcsi_incoming.id', // This will be your main id
+                'pcsi_incoming.*',
+                'pcsi_outgoing.id as outgoing_id',
+                'returns.id as return_id',
+                'returns.reason_for_return',
+                'returns.created_at as return_date'
+            )
+
+            ->get()
+            ->unique('id')->values();
+        // ->get();
+        // dd($inventory);
 
 
         $outoging = DB::table('pcsi_outgoing')->get();
@@ -168,7 +188,7 @@ class InventoryController extends Controller
     truck.plate_number,
     truck.id as truck_id
 ')
-            ->groupBy('pod.pod_number', 'customers.delivery_location', 'pod.id', 'orders.order_id', 'date_delivered', 'customers.business_name', 'truck_loading.id', 'truck.driver_name' , 'customers.numbers', 'customers.email', 'truck.plate_number', 'truck.id')
+            ->groupBy('pod.pod_number', 'customers.delivery_location', 'pod.id', 'orders.order_id', 'date_delivered', 'customers.business_name', 'truck_loading.id', 'truck.driver_name', 'customers.numbers', 'customers.email', 'truck.plate_number', 'truck.id')
             ->get();
         foreach ($pod as $pods) {
             // Convert comma-separated string to array
@@ -320,7 +340,7 @@ class InventoryController extends Controller
             \OwenIt\Auditing\Models\Audit::create([
                 'user_type' => get_class($user),
                 'user_id' => $user->id,
-                'event' => 'Shipped '. $incoming->item_code. ' from PCSI Warehouse',
+                'event' => 'Shipped ' . $incoming->item_code . ' from PCSI Warehouse',
                 'auditable_type' => get_class($user),
                 'auditable_id' => $user->id,
                 'old_values' => [],

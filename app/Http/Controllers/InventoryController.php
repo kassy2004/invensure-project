@@ -318,6 +318,8 @@ class InventoryController extends Controller
 
 
             DB::table('pcsi_outgoing')->insert([
+                'incoming_id' => $validated['item_id'],
+
                 'transaction_date' => $validated['transaction_date'],
                 'customer' => $validated['customer'],
                 'cm_code' => $validated['cm_code'],

@@ -39,7 +39,8 @@
                                 <div x-show="open"
                                     class="absolute z-[9999] mt-1 w-full bg-white border border-zinc-300 rounded-md max-h-48 overflow-y-auto">
                                     @foreach ($inventory as $item)
-                                        <div x-show="{{ json_encode($item->item_code) }}.toLowerCase().includes(search.toLowerCase())"
+                                        <div x-show="{{ json_encode($item->item_code) }}.toLowerCase().includes(search.toLowerCase()) || 
+                '{{ strtolower($item->data_entry) }}'.includes(search.toLowerCase())"
                                             @click="selected = '{{ $item->id }}';
                                         search = '{{ $item->item_code }} ({{ $item->balance_head }})';
                                         productionDate = '{{ $item->prod_date }}';

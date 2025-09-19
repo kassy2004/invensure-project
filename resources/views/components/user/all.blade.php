@@ -43,6 +43,23 @@
                 headerName: "Date Created",
                 field: "created_at"
             },
+            {
+                headerName: "Actions",
+                field: "actions",
+                pinned: 'right',
+                cellStyle: { display: 'flex', justifyContent: 'center',alignItems: 'center' },
+                // headerClass: 'ag-center-cols-header',
+                 cellRenderer: function(params) {
+                return `
+                    <button class="bg-red-500 p-2 rounded-lg hover:bg-red-400 transition duration-300 ease-in-out flex gap-1 items-center"
+                       >
+                        <x-lucide-trash class="h-4 w-4 text-white"/>
+                       <span class="text-xs text-white">Remove</span>
+                    </button>
+                `;
+            }
+            },
+           
         ];
         const rowUsersData = @json($users);
 

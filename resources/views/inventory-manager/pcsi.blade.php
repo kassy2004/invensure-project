@@ -101,7 +101,10 @@
                                         <div x-show="open"
                                             class="absolute z-[9999] mt-1 w-full bg-white border border-zinc-300 rounded-md max-h-48 overflow-y-auto">
                                             @foreach ($item_master as $item)
-                                                <div x-show="{{ json_encode($item->item) }}.toLowerCase().includes(search.toLowerCase())"
+                                                <div x-show="
+                                                
+                                                {{ json_encode($item->item) }}.toLowerCase().includes(search.toLowerCase()) || 
+                '{{ strtolower($item->new_mrp_code) }}'.includes(search.toLowerCase())"
                                                     @click="selected = '{{ $item->id }}'; search = '{{ $item->item }}'; open = false"
                                                     class="px-3 py-2 cursor-pointer hover:bg-zinc-100 text-sm text-zinc-700 flex flex-col">
                                                     <span>{{ $item->item }}</span>

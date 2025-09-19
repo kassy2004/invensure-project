@@ -83,7 +83,7 @@
                                                 class="radio radio-xs bg-red-100 border-orange-300 
         checked:bg-orange-200 checked:text-orange-600 checked:border-orange-600 
         disabled:opacity-50 disabled:cursor-not-allowed" />
-                                            <span class="text-zinc-700">Planner</span>
+                                            <span class="text-zinc-700">Logistics Staff</span>
                                         </div>
 
                                     </div>

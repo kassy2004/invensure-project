@@ -79,4 +79,41 @@ class UserController extends Controller
         return Excel::download(new AuditExport, 'audit-logs.xlsx');
 
     }
+    public function destroy($id)
+    {
+        // dd($id);
+        $users = DB::table('users')->where('id', $id)->delete();
+        if (!$users) {
+            return redirect()->back()->with('error', 'User not found.');
+        }
+        return redirect()->back()->with('success', 'User deleted successfully.');
+    }
+    public function edit($id)
+    {
+        // dd($id);
+        $users = DB::table('users')->where('id', $id)->first();
+        
+        return view('components.user.edit', compact('users'));
+        // return redirect()->back()->with('success', 'User deleted successfully.');
+    }
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'role' => 'required|string',
+        ]);
+
+        DB::table('users')
+            ->where('id', $id)
+            ->update([
+                'name' => $request->input('name'),
+                'email' => $request->input('email'),
+                'role' => $request->input('role'),
+                'updated_at' => now(), // optional
+            ]);
+
+        return redirect()->route('users')
+            ->with('success', 'User updated successfully!');
+    }
 }

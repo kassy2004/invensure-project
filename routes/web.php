@@ -110,7 +110,7 @@ Route::put('/reject-return/{id}', [ReturnItemController::class, 'rejectRequest']
 //     return view('user');
 // })->middleware(['auth', 'verified'])->name('user');
 
-Route::get('/user', [UserController::class, 'index'])->middleware('auth');
+Route::get('/user', [UserController::class, 'index'])->name('users')->middleware('auth');
 
 Route::get('/pod/{id}/pdf', [PODController::class, 'downloadPdf'])->name('pod.pdf')->middleware('auth');
 
@@ -140,3 +140,6 @@ Route::delete('/customer/destroy/{id}', [CustomerController::class, 'destroy'])-
 Route::post('/pcsi/incoming/{id}/update', [InventoryController::class, 'update'])->name('pcsi.incoming.update');
 Route::post('/jfpc/incoming/{id}/update', [JFPCController::class, 'update'])->name('jfpc.incoming.update');
 Route::get('/allocations/sorted', [DeliveryOperationsController::class, 'getSortedAllocations'])->name('allocations.sorted');
+Route::delete('/users/destroy/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+Route::get('/users/edit/{id}', [UserController::class, 'edit'])->name('users.edit');
+Route::put('/users/update/{id}', [UserController::class, 'update'])->name('users.update');

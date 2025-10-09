@@ -7,7 +7,15 @@
         <h1 class="text-2xl font-bold text-orange-500">Welcome Back</h1>
         <p class="text-sm text-gray-600 mt-2">Sign in to access your Invensure dashboard</p>
     </div>
-
+    <a href="{{ url('/auth/google') }}" class="flex items-center border border-gray-300 hover:border-gray-400 py-2 rounded-md justify-center gap-2">
+        <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" width="20">
+        Continue with Google
+    </a>
+    <div class="flex items-center w-full my-4">
+                        <hr class="flex-grow border-gray-300">
+                        <span class="mx-2 text-gray-500">or</span>
+                        <hr class="flex-grow border-gray-300">
+    </div>
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
@@ -61,4 +69,5 @@
             <a href="{{ route('register') }}" class="text-primary hover:text-accent font-medium">{{ __('Sign up') }}</a>
         </p>
     </div>
+  
 </x-guest-layout>

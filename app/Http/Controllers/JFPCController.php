@@ -158,6 +158,8 @@ class JFPCController extends Controller
 
     public function add(Request $request)
     {
+        dd($request->all());
+
         $validated = $request->validate([
             'data_entry' => 'required|string|max:255',
             'item_group' => 'required|string|max:255',

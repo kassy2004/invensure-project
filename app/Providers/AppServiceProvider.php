@@ -53,5 +53,9 @@ class AppServiceProvider extends ServiceProvider
                 $view->with('global_unread_count', $unreadCount);
             }
         });
+        View::composer('layouts.sidebar', function ($view) {
+            $warehouses = DB::table('warehouses')->get();
+            $view->with('warehouses', $warehouses);
+        });
     }
 }

@@ -41,17 +41,17 @@
        {{ Request::is('sales') ? 'bg-orange-500 text-zinc-50' : 'hover:bg-gray-200 transition duration-300 ease-in-out text-gray-700' }}">
 
                     <x-lucide-line-chart class="h-5 w-5 shrink-0 " />
-                    <span  class="ml-3 hidden group-[.w-64]:inline ">Sales Forecasting</span>
+                    <span class="ml-3 hidden group-[.w-64]:inline ">Sales Forecasting</span>
                 </li>
 
-            
+
 
                 <li onclick="window.location='{{ url('/customer') }}'"
                     class="flex items-center  px-5 py-3  cursor-pointer
        {{ Request::is('customer') ? 'bg-orange-500 text-zinc-50' : 'hover:bg-gray-200 transition duration-300 ease-in-out text-gray-700' }}">
 
                     <x-lucide-book-user class="h-5 w-5 shrink-0 " />
-                    <span  class="ml-3 hidden group-[.w-64]:inline ">Customer</span>
+                    <span class="ml-3 hidden group-[.w-64]:inline ">Customer</span>
                 </li>
                 <li onclick="window.location='{{ url('/user') }}'"
                     class="flex items-center  px-5 py-3  cursor-pointer
@@ -63,7 +63,6 @@
             @endif
 
             @if (auth()->check() && auth()->user()->role === 'customer')
-              
                 <li onclick="window.location='{{ url('/orders') }}'"
                     class="flex items-center  px-5 py-3  cursor-pointer
 {{ Request::is('orders') ? 'bg-orange-500 text-zinc-50' : 'hover:bg-gray-200 transition duration-300 ease-in-out text-gray-700' }}">
@@ -111,22 +110,132 @@
                 <li class="flex items-center">
                     <span class="ml-3 hidden group-[.w-64]:inline text-gray-700 text-sm">Warehouse</span>
                 </li>
+                <li id="warehouse" class="flex flex-col   cursor-pointer">
+                    <div>
+
+                        <button onclick="toggleDropdown('cropsDropdown', 'chevronIcon')"
+                            class="w-full flex items-center px-5 py-3  justify-between  {{ Request::is('warehouse/pcsi') ||
+                            Request::is('warehouse/jfpc') ||
+                            Request::is('warehouse/add') ||
+                            (Request::is('warehouse') && request()->has('name'))
+                                ? 'bg-orange-500 text-zinc-50'
+                                : 'hover:bg-gray-200 transition duration-300 ease-in-out text-gray-700' }}">
+                            <span class="flex items-center gap-3 ">
+                                <x-lucide-warehouse class="h-5 w-5 shrink-0 " />
+                                <span class="hidden group-[.w-64]:inline">Warehouses</span>
+                            </span> <x-lucide-chevron-down id="chevronIcon"
+                                class="h-5 w-5 shrink-0 hidden group-[.w-64]:inline" />
+                        </button> <!-- Dropdown links -->
+                        <div id="cropsDropdown" class="hidden mx-5  border-l border-gray-300">
+                            <div class="ml-3 mt-2 space-y-2">
+                                <a href="{{ url('/warehouse/pcsi') }}"
+                                    class="block px-4 py-2 text-sm rounded-lg  items-center gap-2  {{ Request::is('warehouse/pcsi') ? 'bg-orange-500 text-zinc-50' : 'hover:bg-gray-200 transition duration-300 ease-in-out text-gray-700' }}">
+                                    <span>PCSI</span>
+                                </a>
+                                <a href="{{ url('/warehouse/jfpc') }}"
+                                    class="block px-4 py-2 text-sm rounded-lg  items-center gap-2  {{ Request::is('warehouse/pcsi') ? 'bg-orange-500 text-zinc-50' : 'hover:bg-gray-200 transition duration-300 ease-in-out text-gray-700' }}">
+                                    <span>3JFPC</span>
+                                </a>
+                                @foreach ($warehouses as $warehouse)
+                                    @php
+                                        $warehouseName = strtolower(preg_replace('/\d/', '', $warehouse->warehouse));
+                                    @endphp
+                                    <a href="{{ url('/warehouse' . '?name=' . $warehouseName) }}"
+                                        class="block px-4 py-2 text-sm rounded-lg  items-center gap-2  {{ request('name') === $warehouseName
+                                            ? 'bg-orange-500 text-zinc-50'
+                                            : 'hover:bg-gray-200 transition duration-300 ease-in-out text-gray-700' }}">
+                                        <span>{{ strtoupper($warehouse->warehouse) }}</span>
+                                    </a>
+                                @endforeach
+
+
+                                <span onclick="addWarehouseModal.showModal()"
+                                    class="flex  px-4 py-2 text-xs rounded-lg items-center gap-2  {{ Request::is('warehouse/add') ? 'bg-orange-500 text-zinc-50' : 'hover:bg-gray-200 transition duration-300 ease-in-out text-orange-500' }}">
+                                    <x-lucide-plus class="h-4 w-4 shrink-0 " />
+                                    <span>Add</span>
+                                </span>
+                                <dialog id="addWarehouseModal" class="modal modal-bottom sm:modal-middle">
+                                    <div class="modal-box bg-zinc-50 border border-zinc-300 h-100">
+                                        <form method="dialog">
+                                            <button
+                                                class="btn btn-sm btn-circle shadow-none btn-ghost hover:bg-zinc-200 hover:border-zinc-200 absolute right-2 top-2 text-zinc-800 ">✕</button>
+                                        </form>
+                                        <h3 class="text-lg font-bold text-zinc-900">Add a new warehouse</h3>
+                                        <form method="POST" action="{{ route('warehouse.add') }}"
+                                            x-data="{ loading: false }"
+                                            @submit.prevent="loading = true; $nextTick(() => $el.submit())"
+                                            id="addItemForm">
+                                            @csrf
+                                            <div class="flex flex-col gap-3 mt-3">
+
+                                                <fieldset class="fieldset">
+                                                    <legend class="fieldset-legend text-zinc-600">Warehouse Name
+                                                    </legend>
+                                                    <input type="text" name="warehouse"
+                                                        class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
+                                                        placeholder="Enter warehouse name" required />
+                                                    <p class="label text-gray-500">Suggestion: use an abbreviation
+                                                        (e.g.,
+                                                        PCSI or JFPC)</p>
+                                                </fieldset>
+                                                <fieldset class="fieldset">
+                                                    <legend class="fieldset-legend text-zinc-600">Location</legend>
+                                                    <input type="text" name="location"
+                                                        class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400  w-full"
+                                                        placeholder="Enter warehouse location (e.g., Main Site, Cavite, or Laguna)"
+                                                        required />
+
+                                                </fieldset>
+                                            </div>
+                                            <hr class="my-5">
+                                            <div class="flex justify-end gap-5">
+
+                                                <button type="button"
+                                                    onclick="document.getElementById('addWarehouseModal').close()"
+                                                    class="flex justify-end mt-2 px-4 py-2 text-sm bg-transparent text-zinc-500 hover:bg-zinc-200 rounded-md transition duration-200 ease-in-out ">Cancel</button>
+
+                                                <button type="submit" :disabled="loading"
+                                                    class="flex justify-end mt-2 px-4 py-2 text-sm bg-orange-500 text-white rounded-md hover:bg-orange-400 transition duration-200 ease-in-out gap-2 items-center">
+                                                    <template x-if="loading">
+                                                        <x-lucide-loader class="h-4 w-4 animate-spin" />
+                                                    </template>
+                                                    <span x-text="loading ? 'Adding…' : 'Add'"></span>
+                                                </button>
+                                            </div>
+                                        </form>
+
+                                    </div>
+                                </dialog>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </li>
                 {{-- PCSI Warehouse --}}
-                <li onclick="window.location='{{ url('/warehouse/pcsi') }}'"
+                {{-- <li onclick="window.location='{{ url('/warehouse/pcsi') }}'"
                     class="flex items-center  px-5 py-3 cursor-pointer
 {{ Request::is('warehouse/pcsi') ? 'bg-orange-500 text-zinc-50' : 'hover:bg-gray-200 transition duration-300 ease-in-out text-gray-700' }}">
 
                     <x-lucide-warehouse class="h-5 w-5 shrink-0 " />
                     <span class="ml-3 hidden group-[.w-64]:inline ">PCSI</span>
-                </li>
+                </li> --}}
                 {{-- 3JFPC Warehouse --}}
-                <li onclick="window.location='{{ url('/warehouse/jfpc') }}'"
+                {{-- <li onclick="window.location='{{ url('/warehouse/jfpc') }}'"
                     class="flex items-center  px-5 py-3  cursor-pointer
 {{ Request::is('warehouse/jfpc') ? 'bg-orange-500 text-zinc-50' : 'hover:bg-gray-200 transition duration-300 ease-in-out text-gray-700' }}">
 
                     <x-lucide-warehouse class="h-5 w-5 shrink-0 " />
                     <span class="ml-3 hidden group-[.w-64]:inline ">3JFPC</span>
-                </li>
+                </li> --}}
+
+                {{-- <li onclick="window.location='{{ url('/warehouse/jfpc') }}'"
+                    class="flex items-center  px-5 py-3  cursor-pointer
+{{ Request::is('warehouse/jfpc') ? 'bg-orange-500 text-zinc-50' : 'hover:bg-gray-200 transition duration-300 ease-in-out text-gray-700' }}">
+
+                    <x-lucide-plus class="h-5 w-5 shrink-0 " />
+                    <span class="ml-3 text-sm hidden group-[.w-64]:inline ">Add Warehouse</span>
+                </li> --}}
 
 
                 <li onclick="window.location='{{ url('/warehouse/transfer') }}'"
@@ -138,7 +247,6 @@
                 </li>
             @endif
             @if (auth()->check() && auth()->user()->role === 'logistics_coordinator')
-               
                 <li onclick="window.location='{{ url('/operations') }}'"
                     class="flex items-center  px-5 py-3 cursor-pointer
 {{ Request::is('operations') ? 'bg-orange-500 text-zinc-50' : 'hover:bg-gray-200 transition duration-300 ease-in-out text-gray-700' }}">
@@ -167,9 +275,18 @@
 
 
     <script>
+        function toggleDropdown(dropdownId, iconId) {
+            const dropdown = document.getElementById(dropdownId);
+            const icon = document.getElementById(iconId);
+            dropdown.classList.toggle("hidden");
+
+            icon.classList.toggle("rotate-90");
+
+        }
         document.addEventListener('DOMContentLoaded', function() {
             const sidebarToggle = document.getElementById('sidebar-toggle');
             const sidebar = document.getElementById('sidebar');
+            const warehouse = document.getElementById('warehouse');
 
             sidebarToggle.addEventListener('change', function() {
                 if (this.checked) {
@@ -193,6 +310,13 @@
                 }, 310);
 
 
+            });
+            warehouse.addEventListener('click', function() {
+                if (!sidebarToggle.checked) {
+                    sidebarToggle.checked = true;
+                    sidebar.classList.add('w-64');
+                    sidebar.classList.remove('w-16');
+                }
             });
         });
     </script>

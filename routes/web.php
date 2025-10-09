@@ -13,9 +13,17 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReturnItemController;
 use App\Http\Controllers\SignaturesController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\GoogleController;
+use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\WarehouseTransferController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
+use Laravel\Socialite\Facades\Socialite;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use OwenIt\Auditing\Models\Audit;
+
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -143,3 +151,18 @@ Route::get('/allocations/sorted', [DeliveryOperationsController::class, 'getSort
 Route::delete('/users/destroy/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 Route::get('/users/edit/{id}', [UserController::class, 'edit'])->name('users.edit');
 Route::put('/users/update/{id}', [UserController::class, 'update'])->name('users.update');
+
+
+Route::get('/auth/google', function () {
+    return Socialite::driver('google')->redirect();
+});
+
+Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+
+
+Route::post('/warehouse/add', [WarehouseController::class, 'add'])->name('warehouse.add');
+Route::get('/warehouse', [WarehouseController::class, 'index'])->name('warehouse.index');
+Route::post('/warehouse/inventory/add', [WarehouseController::class, 'addInventory'])->name('warehouse.inventory.add');
+Route::post('/warehouse/inventory/ship', [WarehouseController::class, 'ship'])->name('warehouse.inventory.ship');
+Route::get('/export-incoming', [WarehouseController::class, 'exportIncoming'])->name('export-incoming');
+Route::get('/export-outgoing', [WarehouseController::class, 'exportOutgoing'])->name('export-outgoing');

@@ -22,7 +22,7 @@ use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use OwenIt\Auditing\Models\Audit;
-
+use App\Http\Controllers\ImportController;
 
 
 Route::get('/', function () {
@@ -166,3 +166,7 @@ Route::post('/warehouse/inventory/add', [WarehouseController::class, 'addInvento
 Route::post('/warehouse/inventory/ship', [WarehouseController::class, 'ship'])->name('warehouse.inventory.ship');
 Route::get('/export-incoming', [WarehouseController::class, 'exportIncoming'])->name('export-incoming');
 Route::get('/export-outgoing', [WarehouseController::class, 'exportOutgoing'])->name('export-outgoing');
+
+//Import
+Route::get('/import', [ImportController::class, 'showForm'])->name('import.form');
+Route::post('/import', [ImportController::class, 'import'])->name('import');

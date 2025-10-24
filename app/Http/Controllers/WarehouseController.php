@@ -335,6 +335,7 @@ class WarehouseController extends Controller
                 'item_id' => 'required|numeric',
                 'warehouse_id' => 'required|numeric',
                 'customer' => 'nullable|string|max:255',
+                'customer_id' => 'required|numeric',
                 'cm_code' => 'nullable|string|max:255',
                 'production_date' => 'required|date',
                 'transaction_date' => 'required|date',
@@ -346,6 +347,7 @@ class WarehouseController extends Controller
 
 
             ]);
+            // dd($request->all());
             $warehouse = DB::table('warehouses')->where('id', $validated['warehouse_id'])->value('warehouse');
 
             $incoming = DB::table('incoming')
@@ -369,7 +371,7 @@ class WarehouseController extends Controller
                     'balance_kilo' => DB::raw('inventory_kilo - ' . $validated['kilogram']),
                 ]);
 
-            DB::table('outgoing')->insert([
+            $success = DB::table('outgoing')->insert([
                 'warehouse_id' => $validated['warehouse_id'],
                 'incoming_id' => $validated['item_id'],
 
@@ -390,12 +392,51 @@ class WarehouseController extends Controller
                 'remarks' => $validated['remarks'],
 
             ]);
+
+            if ($success) {
+
+                // ✅ Check if allocation already exists for this customer + transaction_date
+                $existingAllocation = DB::table('allocations')
+                    ->where('customer_id', $validated['customer_id'])
+                    ->whereDate('transaction_date', $validated['transaction_date'])
+                    ->first();
+
+
+                if ($existingAllocation) {
+                    // ✅ Use the existing allocation_id
+                    $allocationId = $existingAllocation->allocation_id;
+                } else {
+                    $latest = DB::table('allocations')
+                        ->orderByDesc('allocation_id')
+                        ->value('allocation_id');
+
+                    $nextNumber = $latest
+                        ? intval(str_replace('ALLOC-', '', $latest)) + 1
+                        : 1;
+
+                    $allocationId = 'ALLOC-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+
+                   
+
+                    // dd($allocationId);
+                }
+                DB::table('allocations')->insert([
+                    'allocation_id' => $allocationId,
+                    'customer_id' => $validated['customer_id'],
+                    'product_id' => $validated['item_id'],
+                    'warehouse' => $warehouse,
+                    'transaction_date' => $validated['transaction_date'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+            }
             $user = Auth::user();
 
             \OwenIt\Auditing\Models\Audit::create([
                 'user_type' => get_class($user),
                 'user_id' => $user->id,
-                'event' => 'Shipped ' . $incoming->item_code . ' from '. $warehouse.' Warehouse',
+                'event' => 'Shipped ' . $incoming->item_code . ' from ' . $warehouse . ' Warehouse',
                 'auditable_type' => get_class($user),
                 'auditable_id' => $user->id,
                 'old_values' => [],
@@ -425,9 +466,9 @@ class WarehouseController extends Controller
         $warehouseName = DB::table('warehouses')
             ->where('id', $warehouseId)
             ->value('warehouse');
-        return Excel::download(new OutgoingExport($warehouseId), 'outgoing_' . $warehouseName .'_warehouse.xlsx');
+        return Excel::download(new OutgoingExport($warehouseId), 'outgoing_' . $warehouseName . '_warehouse.xlsx');
     }
-   
+
 
 
 }

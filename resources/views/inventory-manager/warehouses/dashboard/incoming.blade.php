@@ -135,7 +135,7 @@
                                 placeholder="Customer" />
 
                         </fieldset> --}}
-                        <div x-data="{ search: '', selected: '', open: false }" class="relative z-[999]">
+                        <div x-data="{ search: '', selected: '', customer_id: '', open: false }" class="relative z-[999]">
                             <fieldset class="fieldset">
                                 <legend class="fieldset-legend text-zinc-600">Customer</legend>
 
@@ -149,7 +149,9 @@
                                 class="absolute z-[9999] mt-1 w-full bg-white border border-zinc-300 rounded-md max-h-48 overflow-y-auto">
                                 @foreach ($customer as $customers)
                                     <div x-show="{{ json_encode($customers->business_name) }}.toLowerCase().includes(search.toLowerCase())"
-                                        @click="selected = '{{ $customers->business_name }}';
+                                        @click="
+                                        selected = '{{ $customers->business_name }}';
+                                        customer_id = '{{ $customers->id }}';
                                         search = '{{ $customers->business_name }} ({{ $customers->email }})';
                                       
                                         
@@ -165,6 +167,7 @@
                             </div>
 
                             <input type="hidden" name="customer" :value="selected" required />
+                            <input type="hidden" name="customer_id" :value="customer_id" required />
                         </div>
                         <fieldset class="fieldset">
                             <legend class="fieldset-legend text-zinc-600">CM Code</legend>

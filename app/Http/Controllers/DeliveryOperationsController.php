@@ -109,6 +109,7 @@ class DeliveryOperationsController extends Controller
 
         $outgoingJfpcOrders = DB::table('jfpc_outgoing')
             ->get();
+        $outgoingGeneral = DB::table('outgoing')->get();
         $latest = DB::table('allocations')
             ->orderByDesc('allocation_id')
             ->value('allocation_id');
@@ -132,6 +133,9 @@ class DeliveryOperationsController extends Controller
 
         $groupedJfpcOrders = collect($outgoingJfpcOrders)->groupBy(function ($item) {
             return $item->customer . '_' . date('Y-m-d', strtotime($item->transaction_date)) . '_jfpc';
+        });
+        $groupedGeneral = collect($outgoingGeneral)->groupBy(function ($item) {
+            return $item->customer . '_' . date('Y-m-d', strtotime($item->transaction_date)) . '_general';
         });
 
 
@@ -231,6 +235,8 @@ class DeliveryOperationsController extends Controller
             }
             // $nextOrderNumber++;
         }
+
+     
         $allocations = DB::table('allocations')
             ->where('status', '!=', 'in transit')
             ->get();
@@ -253,6 +259,8 @@ class DeliveryOperationsController extends Controller
                 $transaction = DB::table('pcsi_outgoing')->where('id', $allocation->product_id)->select('transaction_date')->first();
             } elseif ($allocation->warehouse === 'jfpc') {
                 $transaction = DB::table('jfpc_outgoing')->where('id', $allocation->product_id)->select('transaction_date')->first();
+            } elseif ($allocation->warehouse === 'WHSE') {
+                $transaction = DB::table('outgoing')->where('id', $allocation->product_id)->select('transaction_date')->first();
             }
             if (!$transaction)
                 continue;
@@ -267,12 +275,84 @@ class DeliveryOperationsController extends Controller
             }
 
             $combinedProducts = DB::table('pcsi_outgoing')
-                ->select('*')
+                ->select([
+                    'id',
+                    'incoming_id',
+                    'transaction_date',
+                    DB::raw('NULL AS transfer'), // if pcsi_outgoing doesn't have transfer
+                    'customer',
+                    'cm_code',
+                    'item_code',
+                    'description',
+                    'sku_description',
+                    'primary_packaging',
+                    'secondary_packaging',
+                    'cm_category',
+                    'product_category',
+                    'variant',
+                    'production',
+                    'quantity',
+                    'kilogram',
+                    'remarks',
+                    DB::raw('NULL AS approval_status'), // if missing
+                    'created_at',
+                    'updated_at'
+                ])
                 ->where('customer', $customer->business_name)
                 ->whereDate('transaction_date', $transactionDate)
+
                 ->unionAll(
-                    DB::table('jfpc_outgoing')
-                        ->select('*')
+                    DB::table('jfpc_outgoing')->select([
+                        'id',
+                        'incoming_id',
+                        'transaction_date',
+                        DB::raw('NULL AS transfer'),
+                        'customer',
+                        'cm_code',
+                        'item_code',
+                        'description',
+                        'sku_description',
+                        'primary_packaging',
+                        'secondary_packaging',
+                        'cm_category',
+                        'product_category',
+                        'variant',
+                        'production',
+                        'quantity',
+                        'kilogram',
+                        'remarks',
+                        DB::raw('NULL AS approval_status'),
+                        'created_at',
+                        'updated_at'
+                    ])
+                        ->where('customer', $customer->business_name)
+                        ->whereDate('transaction_date', $transactionDate)
+                )
+
+                ->unionAll(
+                    DB::table('outgoing')->select([
+                        'id',
+                        'incoming_id',
+                        'transaction_date',
+                        'transfer',
+                        'customer',
+                        'cm_code',
+                        'item_code',
+                        'description',
+                        'sku_description',
+                        'primary_packaging',
+                        'secondary_packaging',
+                        'cm_category',
+                        'product_category',
+                        'variant',
+                        'production',
+                        'quantity',
+                        'kilogram',
+                        'remarks',
+                        'approval_status',
+                        'created_at',
+                        'updated_at'
+                    ])
                         ->where('customer', $customer->business_name)
                         ->whereDate('transaction_date', $transactionDate)
                 )

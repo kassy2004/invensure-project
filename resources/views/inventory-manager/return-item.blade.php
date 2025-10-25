@@ -11,7 +11,7 @@
                         <h1 class="text-2xl font-bold text-zinc-900">Rejects and Returns</h1>
 
                     </div>
-                    <button 
+                    <button
                         class="bg-orange-500 px-4 py-2 flex items-center gap-3 rounded-md text-gray-50 text-sm hover:bg-orange-400 transition duration-200 ease-in-out">
                         <x-lucide-plus class="h-4 w-4" />
                         Add Manually</button>
@@ -97,6 +97,7 @@
                                     <span id="date" class="text-zinc-700 font-semibold ">Today</span>
                                 </div>
                             </div>
+                           
                             <div class="flex justify-end gap-3 mt-6">
                                 <form method="dialog">
                                     <button type="submit"
@@ -123,61 +124,77 @@
                         </form>
                     </dialog>
 
+<dialog id="rejectModal" class="modal">
+    <div class="modal-box bg-zinc-50">
+        <h3 class="text-lg font-bold text-zinc-800">Reject Return Request</h3>
+        <p class="text-zinc-600" id="reject-text">
+            Are you sure you want to reject this return request?
+        </p>
 
-                    <dialog id="rejectModal" class="modal">
-                        <div class="modal-box bg-zinc-50">
-                            <h3 class="text-lg font-bold text-zinc-800">Reject Return Request</h3>
-                            <p class="text-zinc-600" id="reject-text">Are you sure you want to reject the return
-                                request?</p>
+        <!-- Request Details -->
+        <div class="text-sm mt-5 space-y-1">
+            <div class="flex gap-2">
+                <span class="text-zinc-500">POD #:</span>
+                <span id="reject-pod" class="text-zinc-700 font-semibold">0001</span>
+            </div>
+            <div class="flex gap-2">
+                <span class="text-zinc-500">Customer:</span>
+                <span id="reject-customer" class="text-zinc-700 font-semibold">Jollibee</span>
+            </div>
+            <div class="flex gap-2">
+                <span class="text-zinc-500">Reason for return:</span>
+                <span id="reject-reason" class="text-zinc-700 font-semibold">Hematoma</span>
+            </div>
+            <div class="flex gap-2">
+                <span class="text-zinc-500">Detail Description:</span>
+                <span id="reject-others" class="text-zinc-700 font-semibold">nyenye</span>
+            </div>
+            <div class="flex gap-2">
+                <span class="text-zinc-500">Request Date:</span>
+                <span id="reject-date" class="text-zinc-700 font-semibold">Today</span>
+            </div>
+        </div>
 
-                            <div class="text-sm mt-5 ">
-                                <div class="flex gap-2 ">
-                                    <span class="text-zinc-500">POD #: </span>
-                                    <span id="reject-pod" class="text-zinc-700 font-semibold ">0001</span>
-                                </div>
-                                <div class="flex gap-2 ">
-                                    <span class="text-zinc-500">Customer: </span>
-                                    <span id="reject-customer" class="text-zinc-700 font-semibold ">Jollibee</span>
-                                </div>
-                                <div class="flex gap-2 ">
-                                    <span class="text-zinc-500">Reason for return: </span>
-                                    <span id="reject-reason" class="text-zinc-700 font-semibold ">Hematoma</span>
-                                </div>
-                                <div class="flex gap-2 ">
-                                    <span class="text-zinc-500">Detail Description: </span>
-                                    <span id="reject-others" class="text-zinc-700 font-semibold ">nyenye</span>
-                                </div>
-                                <div class="flex gap-2 ">
-                                    <span class="text-zinc-500">Request Date: </span>
-                                    <span id="reject-date" class="text-zinc-700 font-semibold ">Today</span>
-                                </div>
-                            </div>
-                            <div class="flex justify-end gap-3 mt-6">
-                                <form method="dialog">
-                                    <button type="submit"
-                                        class="py-2 px-4 text-sm rounded-lg bg-zinc-200 text-zinc-700 shadow-none border-none">Cancel</button>
-                                </form>
+        <hr class="mt-5 mb-5">
 
-                                <form method="POST" id="rejectForm" x-data="{ loading: false }"
-                                    @submit="loading = true">
-                                    @csrf
-                                    @method('PUT')
-                                    <button type="submit"
-                                        class="py-2 px-4 text-sm rounded-lg bg-red-500 text-white hover:bg-red-600 shadow-none border-none disabled:bg-red-500 disabled:text-white disabled:opacity-70"
-                                        :disabled="loading">
-                                        <span x-show="!loading">Reject</span>
-                                        <span x-show="loading" class="flex items-center gap-2">
-                                            <x-lucide-loader class="h-4 w-4 animate-spin" />
-                                            Rejecting...
-                                        </span>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                        <form method="dialog" class="modal-backdrop">
-                            <button>close</button>
-                        </form>
-                    </dialog>
+        <!-- Rejection Form -->
+        <form method="POST" id="rejectForm" x-data="{ loading: false }" @submit="loading = true">
+            @csrf
+            @method('PUT')
+
+            <fieldset class="fieldset mb-4">
+                <legend class="fieldset-legend text-zinc-600">
+                    Please provide a short explanation for rejecting this request.
+                </legend>
+                <input type="text" name="rejection_reason" required
+                    class="border border-gray-300 px-3 py-2 rounded-md text-gray-800 focus:outline-none focus:text-blue-600 focus:border-blue-400 w-full"
+                    placeholder="e.g., Product already thawed or packaging damaged" />
+            </fieldset>
+
+            <div class="flex justify-end gap-3 mt-6">
+                <button type="button" onclick="rejectModal.close()"
+                    class="py-2 px-4 text-sm rounded-lg bg-zinc-200 text-zinc-700 shadow-none border-none">
+                    Cancel
+                </button>
+
+                <button type="submit"
+                    class="py-2 px-4 text-sm rounded-lg bg-red-500 text-white hover:bg-red-600 shadow-none border-none disabled:bg-red-500 disabled:text-white disabled:opacity-70"
+                    :disabled="loading">
+                    <span x-show="!loading">Reject</span>
+                    <span x-show="loading" class="flex items-center gap-2">
+                        <x-lucide-loader class="h-4 w-4 animate-spin" />
+                        Rejecting...
+                    </span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
+
 
                     <!-- Open the modal using ID.showModal() method -->
 

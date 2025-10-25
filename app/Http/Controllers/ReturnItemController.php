@@ -107,6 +107,9 @@ class ReturnItemController extends Controller
 
     public function rejectRequest(Request $request, $id)
     {
+        $validated = $request->validate([
+            'rejection_reason' => 'required|string',
+        ]);
         $return = DB::table('returns')->where('id', $id)->first();
 
 
@@ -114,6 +117,7 @@ class ReturnItemController extends Controller
         if (!$return) {
             return redirect()->back()->with('error', 'Return request not found.');
         }
+        // dd($request->input('rejection_reason'));
 
         $customer = DB::table('customers')
             ->where('business_name', $return->customer)
@@ -127,6 +131,7 @@ class ReturnItemController extends Controller
             ->where('id', $id)
             ->update([
                 'status' => 'rejected',
+                'reason_for_rejection' => $request->input('rejection_reason'),
                 'updated_at' => now(),
             ]);
 
@@ -134,7 +139,8 @@ class ReturnItemController extends Controller
             ->insert([
                 'user_id' => $user_id->id,
                 'title' => 'We’re sorry — Return Request Rejected for POD #' . $return->pod_number,
-                'message' => 'Unfortunately, your return request for POD #' . $return->pod_number . ' was not approved. Please contact support if you have any questions.',
+                'message' => 'Unfortunately, your return request for POD #' . $return->pod_number . ' was not approved. Reason: '
+                 . $request->input('rejection_reason') .' Please contact support if you have any questions.',
                 'for' => $return->customer,
                 'type' => 'error',
             ]);

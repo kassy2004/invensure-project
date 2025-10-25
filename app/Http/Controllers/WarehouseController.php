@@ -416,7 +416,7 @@ class WarehouseController extends Controller
 
                     $allocationId = 'ALLOC-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
 
-                   
+
 
                     // dd($allocationId);
                 }
@@ -426,6 +426,35 @@ class WarehouseController extends Controller
                     'product_id' => $validated['item_id'],
                     'warehouse' => $warehouse,
                     'transaction_date' => $validated['transaction_date'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                $existingOrder = DB::table('orders')
+                    ->where('product_id', $validated['item_id'])
+                    ->where('customer_id', $validated['customer_id'])
+                    ->where('warehouse', $warehouse)
+                    ->first();
+                if ($existingOrder) {
+                    // Reuse existing order_id
+                    $orderId = $existingOrder->order_id;
+                } else {
+
+                    $latestOrder = DB::table('orders')
+                        ->orderByDesc('order_id')
+                        ->value('order_id');
+                    $nextOrderNum = $latestOrder
+                        ? intval(str_replace('ORDER-', '', $latestOrder)) + 1
+                        : 1;
+                    $orderId = 'ORDER-' . str_pad($nextOrderNum, 4, '0', STR_PAD_LEFT);
+
+                }
+
+
+                DB::table('orders')->insert([
+                    'order_id' => str_pad($nextNumber, 4, '0', STR_PAD_LEFT),
+                    'customer_id' => $validated['customer_id'],
+                    'product_id' => $validated['item_id'],
+                    'warehouse' => $warehouse,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);

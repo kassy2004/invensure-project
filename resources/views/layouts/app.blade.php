@@ -110,9 +110,7 @@
             setTimeout(() => alertBox.remove(), 500); // remove after fade-out
         }
     }, 5000);
-
-    
-    
+  
 </script>
 
 </html>

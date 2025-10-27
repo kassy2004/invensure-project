@@ -133,7 +133,7 @@
                                     <span>PCSI</span>
                                 </a>
                                 <a href="{{ url('/warehouse/jfpc') }}"
-                                    class="block px-4 py-2 text-sm rounded-lg  items-center gap-2  {{ Request::is('warehouse/pcsi') ? 'bg-orange-500 text-zinc-50' : 'hover:bg-gray-200 transition duration-300 ease-in-out text-gray-700' }}">
+                                    class="block px-4 py-2 text-sm rounded-lg  items-center gap-2  {{ Request::is('warehouse/jfpc') ? 'bg-orange-500 text-zinc-50' : 'hover:bg-gray-200 transition duration-300 ease-in-out text-gray-700' }}">
                                     <span>3JFPC</span>
                                 </a>
                                 @foreach ($warehouses as $warehouse)

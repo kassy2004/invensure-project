@@ -72,7 +72,7 @@
 
     <div class="flex flex-col lg:grid gap-5 grid-cols-10">
 
-        <div class="col-span-7 flex flex-col gap-6 p-6 bg-zinc-50 rounded-xl border border-gray-200 w-full">
+        <div class="col-span-7 flex flex-col gap-6 p-6 bg-zinc-50 rounded-xl border-2 border-gray-200 w-full">
             <div>
                 <h1 class="text-zinc-800 font-semibold">Inventory Breakdown: Quantity & Kilograms</h1>
                 <p class="text-zinc-600 text-sm">Chart displays side-by-side metrics for each item group</p>
@@ -83,12 +83,12 @@
             </div>
         </div>
         <div class="col-span-3 flex flex-col gap-5">
-            <div class="p-6 border border-gray-200 rounded-lg bg-gray-50">
+            <div class="p-6 border-2 border-gray-200 rounded-lg bg-gray-50">
                 <h1 class="text-lg font-semibold text-gray-800">Recent Activities</h1>
                 <p class="text-sm text-gray-500">Latest updates from your supply chain</p>
             </div>
 
-            <div class="p-6 border border-gray-200 rounded-lg bg-gray-50">
+            <div class="p-6 border-2 border-gray-200 rounded-lg bg-gray-50">
                 <div x-data="auditPagination({{ $audits->toJson() }})" class="flex flex-col justify-between min-h-[400px]">
 
                     <!-- Paginated items container -->
@@ -227,45 +227,85 @@
     </div>
     <div class="flex flex-wrap lg:flex-nowrap gap-6 mb-5 mt-5 w-full justify-between">
 
-        <!-- Total Equipment Card -->
-        <div class="bg-gray-50 rounded-lg p-6 border-2 border-gray-200 w-full ">
-            <div class="flex items-center">
+        <div class="bg-gray-50 rounded-lg p-6 border-2 border-gray-200 w-full">
+    <div class="flex items-center">
+        <div class="flex flex-col w-full gap-3">
+            <div class="flex justify-between items-center w-full">
+                <p class="text-gray-700 font-semibold text-sm">Customer Satisfaction</p>
 
-                <div class="flex flex-col w-full gap-3">
-                    <div class="flex justify-between items-center w-full">
-                        <p class="text-gray-700 font-semibold text-sm">Delivery Perfomance</p>
-                        <div class="text-green-400 flex gap-2 items-center">
-                            <x-lucide-arrow-up-right class="h-5 w-5 shrink-0" />
-                            <span>+4.3%</span>
+                @if (isset($yearlyChange))
+                    <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-1 
+                            {{ $yearlyChange >= 0 ? 'text-green-500' : 'text-red-500' }}">
+                            @if ($yearlyChange >= 0)
+                                <x-lucide-arrow-up-right class="h-5 w-5 shrink-0" />
+                            @else
+                                <x-lucide-arrow-down-right class="h-5 w-5 shrink-0" />
+                            @endif
+                            <span class="font-semibold text-sm">
+                                {{ $yearlyChange >= 0 ? '+' : '' }}{{ $yearlyChange }}
+                            </span>
                         </div>
+                        <span class="text-xs text-gray-500 italic">
+                            compared to last year
+                        </span>
                     </div>
-                    <div>
-                        <p class="text-3xl font-bold text-gray-800">{{ $totalEquipment ?? '92%' }}</p>
-                        <span class="text-xs text-gray-500">On-time delivery rate</span>
-                    </div>
-                </div>
+                @else
+                    <div class="text-gray-400 text-sm">No data</div>
+                @endif
+            </div>
+
+            <div>
+                <p class="text-3xl font-bold text-gray-800">
+                    {{ $yearlyAverage ? number_format($yearlyAverage, 1) : '0.0' }}/5
+                </p>
+                <span class="text-xs text-gray-500">Average rating this year</span>
             </div>
         </div>
+    </div>
+</div>
 
-        <!-- Active Borrowings Card -->
+
+    
         <div class="bg-gray-50 rounded-lg p-6 border-2 border-gray-200 w-full">
             <div class="flex items-center">
-
                 <div class="flex flex-col w-full gap-3">
+
+                    {{-- Header and weekly change --}}
                     <div class="flex justify-between items-center w-full">
-                        <p class="text-gray-700 font-semibold text-sm">Inventory Turnover</p>
-                        <div class="text-green-400 flex gap-2 items-center">
-                            <x-lucide-arrow-up-right class="h-5 w-5 shrink-0" />
-                            <span>+1.2x</span>
-                        </div>
+                        <p class="text-gray-700 font-semibold text-sm">Customer Satisfaction</p>
+
+                        @if (isset($weeklyChange))
+                            <div class="flex flex-col">
+
+                                <div
+                                    class="flex gap-2 items-center {{ $weeklyChange >= 0 ? 'text-green-500' : 'text-red-500' }}">
+                                    @if ($weeklyChange >= 0)
+                                        <x-lucide-arrow-up-right class="h-5 w-5 shrink-0" />
+                                    @else
+                                        <x-lucide-arrow-down-right class="h-5 w-5 shrink-0" />
+                                    @endif
+                                    <span>{{ $weeklyChange >= 0 ? '+' : '' }}{{ $weeklyChange }}</span>
+                                </div>
+                                <span class="text-xs text-gray-500">Compared to last week</span>
+
+                            </div>
+                        @else
+                            <div class="text-gray-400 text-sm">No data</div>
+                        @endif
                     </div>
+
+                    {{-- Average Rating --}}
                     <div>
-                        <p class="text-3xl font-bold text-gray-800">{{ $totalEquipment ?? '8.5x' }}</p>
-                        <span class="text-xs text-gray-500">Monthly turnover rate</span>
+                        <p class="text-3xl font-bold text-gray-800">
+                            {{ $weeklyAverage ? number_format($weeklyAverage, 1) : '0.0' }}/5
+                        </p>
+                        <span class="text-xs text-gray-500">Average rating this week</span>
                     </div>
                 </div>
             </div>
         </div>
+
 
         <!-- Maintenance Requests Card -->
         <div class="bg-gray-50 rounded-lg p-6 border-2 border-gray-200 w-full ">
@@ -274,14 +314,32 @@
                 <div class="flex flex-col w-full gap-3">
                     <div class="flex justify-between items-center w-full">
                         <p class="text-gray-700 font-semibold text-sm">Customer Satisfaction</p>
-                        <div class="text-green-400 flex gap-2 items-center">
-                            <x-lucide-arrow-up-right class="h-5 w-5 shrink-0" />
-                            <span>+0.3</span>
-                        </div>
+                        @if (isset($ratingChange))
+                            <div class="flex flex-col">
+
+                                <div
+                                    class="flex gap-2 items-center 
+                            {{ $ratingChange >= 0 ? 'text-green-400' : 'text-red-400' }}">
+                                    @if ($ratingChange >= 0)
+                                        <x-lucide-arrow-up-right class="h-5 w-5 shrink-0" />
+                                    @else
+                                        <x-lucide-arrow-down-right class="h-5 w-5 shrink-0" />
+                                    @endif
+
+                                    <span>{{ $ratingChange >= 0 ? '+' : '' }}{{ $ratingChange }}</span>
+                                </div>
+                                <span class="text-xs text-gray-500">Compared to last month</span>
+                            </div>
+                        @else
+                            <div class="text-gray-400 text-sm">No data</div>
+                        @endif
+
                     </div>
                     <div>
-                        <p class="text-3xl font-bold text-gray-800">{{ $averageRating ?? '4.7/5' }}/5</p>
-                        <span class="text-xs text-gray-500">Average rating</span>
+                          <p class="text-3xl font-bold text-gray-800">
+                            {{ $monthlyAverage ? number_format($monthlyAverage, 1) : '0.0' }}/5
+                        </p>
+                        <span class="text-xs text-gray-500">Average rating this month</span>
                     </div>
                 </div>
             </div>
@@ -296,7 +354,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const ctxStockCategory = document.getElementById('stockCategory');
 
-        const stockcategoriesLabelsRaw  = @json($stockSummary->pluck('item_group'));
+        const stockcategoriesLabelsRaw = @json($stockSummary->pluck('item_group'));
         const quantityData = @json($stockSummary->pluck('total_quantity'));
         const kilogramData = @json($stockKiloSummary->pluck('total_kilogram'));
         const labelMap = {

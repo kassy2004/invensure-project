@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 class DashboardController extends Controller
 {
     public function index()
@@ -108,8 +109,73 @@ class DashboardController extends Controller
                 ->count() + DB::table('jfpc_incoming')
                     ->count();
 
+            $currentMonth = Carbon::now()->month;
+            $currentYear = Carbon::now()->year;
+            $previousMonth = Carbon::now()->subMonth()->month;
+            $previousYear = Carbon::now()->subMonth()->year;
+
+            $currentAvg = DB::table('feedback')
+                ->whereMonth('created_at', $currentMonth)
+                ->whereYear('created_at', $currentYear)
+                ->avg('rating');
+
+            // Previous month average
+            $previousAvg = DB::table('feedback')
+                ->whereMonth('created_at', $previousMonth)
+                ->whereYear('created_at', $previousYear)
+                ->avg('rating');
+
+            // Calculate the change
+
+            $ratingChange = $previousAvg ? round($currentAvg - $previousAvg, 1) : null;
+
             $averageRating = round(DB::table('feedback')->avg('rating'), 2);
 
+
+            $yearlyAverage = round(DB::table('feedback')
+                ->whereYear('created_at', Carbon::now()->year)
+                ->avg('rating'), 2);
+
+            // --- Monthly average (current month) ---
+            $monthlyAverage = round(DB::table('feedback')
+                ->whereMonth('created_at', Carbon::now()->month)
+                ->whereYear('created_at', Carbon::now()->year)
+                ->avg('rating'), 2);
+
+            // --- Weekly average (current week) ---
+            $weeklyAverage = round(DB::table('feedback')
+                ->whereYear('created_at', Carbon::now()->year)
+                ->whereRaw('WEEKOFYEAR(created_at) = ?', [Carbon::now()->weekOfYear])
+                ->avg('rating'), 2);
+
+            $currentWeek = Carbon::now()->weekOfYear;
+            $currentYear = Carbon::now()->year;
+            $previousWeek = Carbon::now()->subWeek()->weekOfYear;
+            $previousWeekYear = Carbon::now()->subWeek()->year;
+            $currentWeekAvg = DB::table('feedback')
+                ->whereYear('created_at', $currentYear)
+                ->whereRaw('WEEKOFYEAR(created_at) = ?', [$currentWeek])
+                ->avg('rating');
+
+            $previousWeekAvg = DB::table('feedback')
+                ->whereYear('created_at', $previousWeekYear)
+                ->whereRaw('WEEKOFYEAR(created_at) = ?', [$previousWeek])
+                ->avg('rating');
+
+            $weeklyChange = $previousWeekAvg ? round($currentWeekAvg - $previousWeekAvg, 1) : null;
+
+
+
+
+            $currentYearAvg = DB::table('feedback')
+                ->whereYear('created_at', $currentYear)
+                ->avg('rating');
+
+            $previousYearAvg = DB::table('feedback')
+                ->whereYear('created_at', $previousYear)
+                ->avg('rating');
+
+            $yearlyChange = $previousYearAvg ? round($currentYearAvg - $previousYearAvg, 1) : null;
             $audits = DB::table('audits')
                 ->leftJoin('users', function ($join) {
                     $join->on('audits.user_id', '=', 'users.id')
@@ -119,12 +185,28 @@ class DashboardController extends Controller
                 ->orderBy('audits.created_at', 'desc')
                 ->get();
 
-                $returnCount = DB::table('returns')
+            $returnCount = DB::table('returns')
                 ->where('status', 'pending')
                 ->count();
-                // dd($returnCount);
+            // dd($returnCount);
 
-            return view('dashboard', compact('topItems', 'stockSummary', 'stockKiloSummary', 'pendingCount', 'totalProducts', 'averageRating', 'audits', 'lowStockItem', 'returnCount'));
+            return view('dashboard', compact(
+                'topItems',
+                'stockSummary',
+                'stockKiloSummary',
+                'pendingCount',
+                'totalProducts',
+                'averageRating',
+                'audits',
+                'lowStockItem',
+                'returnCount',
+                'ratingChange',
+                'weeklyChange',
+                'yearlyChange',
+                'yearlyAverage',
+                'monthlyAverage',
+                'weeklyAverage'
+            ));
         } else {
             // For other roles, return the view with an empty topItems
             return view('dashboard', ['topItems' => collect([]), 'stockSummary' => collect([]), 'stockKiloSummary' => collect([]), 'pendingCount' => collect([]), 'totalProducts' => collect([])]);

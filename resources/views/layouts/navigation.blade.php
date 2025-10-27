@@ -62,10 +62,45 @@
         <div
             class="hidden lg:flex border border-gray-200 py-2 px-3 rounded-md text-gray-600 items-center gap-2 cursor-pointer">
             <x-lucide-log-out class="h-4 w-4 shrink-0" />
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="text-sm">Sign Out</button>
-            </form>
+
+            <button type="button" class="text-sm" onclick="logoutModal.showModal()">Sign Out</button>
+            <dialog id="logoutModal" class="modal" x-data="{ loading: false }">
+                <div class="modal-box bg-zinc-50">
+                    <h3 class="text-lg font-bold text-zinc-800">Sign Out</h3>
+                    <p class="text-zinc-600">Do you really want to sign out?</p>
+                    <div class="flex justify-end mt-5">
+
+                        <div class="flex gap-3">
+                            <button type="button" onclick="logoutModal.close()"
+                                class="text-gray-400 py-2 px-4 text-sm hover:bg-gray-100 rounded-lg transition ease-in-out duration-300">Cancel</button>
+
+
+                            <form method="POST" action="{{ route('logout') }}" x-on:submit="loading = true">
+                                @csrf
+                                <button type="submit" :disabled="loading"
+                                    class="text-sm py-2 px-4 bg-red-500 rounded-lg text-white hover:bg-red-600  transition ease-in-out duration-300">
+
+                                    <span class="flex items-center gap-2">
+                                        <span x-show="!loading">Sign Out</span>
+
+                                        <span x-show="loading" class="flex items-center gap-2" x-cloak>
+                                            <x-lucide-loader class="w-4 h-4 animate-spin" />
+                                        </span>
+                                    </span>
+                                </button>
+
+                            </form>
+                        </div>
+
+                    </div>
+
+
+
+
+                </div>
+
+
+            </dialog>
 
         </div>
 
@@ -139,7 +174,8 @@
         </ul>
     </div>
     <div class="border-t border-gray-200 px-5 py-4">
-        <form method="POST" action="{{ route('logout') }}" class="flex items-center gap-2 text-gray-600 justify-end">
+        <form method="POST" action="{{ route('logout') }}"
+            class="flex items-center gap-2 text-gray-600 justify-end">
             @csrf
             <x-lucide-log-out class="h-4 w-4 shrink-0" />
             <button type="submit" class="text-sm">Sign Out</button>

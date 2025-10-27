@@ -11,7 +11,7 @@
                             <p class="text-gray-700 font-semibold text-sm">Total Inventory</p>
                             <p class="text-zinc-500 font-semibold text-xs">Head/Pack</p>
                         </div>
-                        <x-lucide-sigma class="h-5 w-5 shrink-0 text-gray-500" />
+                        <x-lucide-box class="h-5 w-5 shrink-0 text-gray-500" />
                     </div>
                     <div>
                         <p class="text-3xl font-bold text-gray-800">
@@ -33,7 +33,7 @@
                             <p class="text-zinc-500 font-semibold text-xs">Kilogram</p>
                         </div>
 
-                        <x-lucide-package class="h-5 w-5 shrink-0 text-gray-500" />
+                        <x-lucide-scale class="h-5 w-5 shrink-0 text-gray-500" />
                     </div>
                     <div>
                         <p class="text-3xl font-bold text-gray-800">  {{ number_format($inventory_kilo) ?? '24,500' }}</p>
@@ -78,7 +78,7 @@
                             <p class="text-gray-700 font-semibold text-sm">Total QTY Issued</p>
                             <p class="text-zinc-500 font-semibold text-xs">Kilogram</p>
                         </div>
-                        <x-lucide-users class="h-5 w-5 shrink-0 text-gray-500" />
+                        <x-lucide-scale class="h-5 w-5 shrink-0 text-gray-500" />
                     </div>
                     <div>
                         <p class="text-3xl font-bold text-gray-800">  {{ number_format($qty_kilo) ?? '24,500' }}</p>
@@ -96,7 +96,7 @@
                             <p class="text-gray-700 font-semibold text-sm">Total Available Balance</p>
                             <p class="text-zinc-500 font-semibold text-xs">Head/Pack</p>
                         </div>
-                        <x-lucide-users class="h-5 w-5 shrink-0 text-gray-500" />
+                        <x-lucide-box class="h-5 w-5 shrink-0 text-gray-500" />
                     </div>
                     <div>
                         <p class="text-3xl font-bold text-gray-800">  {{ number_format($balance_head) ?? '24,500' }}</p>
@@ -114,7 +114,7 @@
                             <p class="text-gray-700 font-semibold text-sm">Total Available Balance</p>
                             <p class="text-zinc-500 font-semibold text-xs">Kilogram</p>
                         </div>
-                        <x-lucide-users class="h-5 w-5 shrink-0 text-gray-500" />
+                        <x-lucide-scale class="h-5 w-5 shrink-0 text-gray-500" />
                     </div>
                     <div>
                         <p class="text-3xl font-bold text-gray-800">  {{ number_format($balance_kilo) ?? '24,500' }}</p>

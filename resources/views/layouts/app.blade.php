@@ -45,6 +45,7 @@
 </head>
 <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 <script type="module" src="https://unpkg.com/cally"></script>
+<link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
 
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100">
@@ -59,6 +60,7 @@
     </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gridjs/dist/gridjs.umd.js"></script>
 <script>
     function userForm() {
         return {

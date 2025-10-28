@@ -4,6 +4,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeliveryOperationsController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\GenerateReportController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ItemMasterController;
 use App\Http\Controllers\JFPCController;
@@ -170,3 +171,8 @@ Route::get('/export-outgoing', [WarehouseController::class, 'exportOutgoing'])->
 //Import
 Route::get('/import', [ImportController::class, 'showForm'])->name('import.form');
 Route::post('/import', [ImportController::class, 'import'])->name('import');
+
+
+Route::get('/generated', [GenerateReportController::class, 'index']);
+Route::get('/generate-report', [GenerateReportController::class, 'generate'])->name('reports.generate');
+

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+
 class GenerateReportController extends Controller
 {
     public function index()
@@ -14,34 +16,36 @@ class GenerateReportController extends Controller
     }
     public function generate()
     {
+
+
         $totalProducts = DB::table('pcsi_incoming')
             ->count() + DB::table('jfpc_incoming')
-                ->count() + DB::table('incoming')
-                ->count();
+            ->count() + DB::table('incoming')
+            ->count();
 
         $lowStockItem = DB::table('pcsi_incoming')
             ->where('balance_head', '<=', 10)
             ->count()
             +
             DB::table('jfpc_incoming')
-                ->where('balance_head', '<=', 10)
-                ->count()
+            ->where('balance_head', '<=', 10)
+            ->count()
             +
             DB::table('incoming')
-                ->where('balance_head', '<=', 10)
-                ->count();
+            ->where('balance_head', '<=', 10)
+            ->count();
 
         $pendingCount = DB::table('pcsi_outgoing')
             ->where('approval_status', 'pending')
             ->count()
             +
             DB::table('jfpc_outgoing')
-                ->where('approval_status', 'pending')
-                ->count()
+            ->where('approval_status', 'pending')
+            ->count()
             +
             DB::table('outgoing')
-                ->where('approval_status', 'pending')
-                ->count();
+            ->where('approval_status', 'pending')
+            ->count();
         $warehouseStats = DB::table(function ($query) {
             // 🏭 For incoming (has warehouse_id)
             $query->select(
@@ -140,28 +144,31 @@ class GenerateReportController extends Controller
             'metrics' => $metrics,
             'logistics' => $logistics,
         ];
-        // $data = [
-        //     'generated_date' => now()->format('F d, Y'),
-        //     'generated_by' => 'Kasandra Bumagat',
-        //     'report_title' => 'Summary Report',
-        //     'metrics' => [
-        //         ['All Warehouse: Total Products', 222],
-        //         ['Low Stock Items', 123],
-        //         ['Pending Orders', 514],
-        //         ['Reject and Returns', 1],
-        //         ['PCSI Warehouse: Total Inventory (Head/Pack)', 35141],
-        //         ['PCSI Warehouse: Total Inventory (Kilogram)', 33305],
-        //         ['PCSI Warehouse: Total QTY Issued (Head/Pack)', 35141],
-        //         ['PCSI Warehouse: Total QTY Issued (Kilogram)', 33305],
-        //         ['PCSI Warehouse: Total Available Balance (Head/Pack)', 35141],
-        //         ['PCSI Warehouse: Total Available Balance (Kilogram)', 33305],
-        //         ['PCSI Warehouse: Total Available Stock', 555],
-        //         ['PCSI Warehouse: Total Expiring Soon', 0],
-        //     ]
-        // ];
 
         $pdf = PDF::loadView('reports.summary', $data)->setPaper('a4', 'portrait');
 
-        return $pdf->download('summary_report.pdf');
+        // 2️⃣ Define the file name and path
+        $fileName = 'summary_report_' . now()->format('Ymd_His') . '.pdf';
+        $filePath = 'reports/' . $fileName;
+
+        // $disk = Storage::disk('google');
+        // dd($disk);
+        Storage::disk('google')->put($filePath, $pdf->output());
+        // dd($result);
+
+       
+
+
+        DB::table('report_histories')->insert([
+            'report_name' => 'Summary Report',
+            'type' => 'PDF',
+            'warehouse' => 'All Warehouse',
+            'file_url' => Storage::disk('google')->url($filePath),
+            'file_size' => round(strlen($pdf->output()) / 1024 / 1024, 2) . ' MB',
+            'generated_by' => Auth::user()->name,
+            'generated_at' => now(),
+        ]);
+        return redirect()->back()->with('success', 'Summary Report generated and uploaded to Google Drive successfully!');
+
     }
 }

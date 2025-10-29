@@ -176,3 +176,4 @@ Route::post('/import', [ImportController::class, 'import'])->name('import');
 Route::get('/generated', [GenerateReportController::class, 'index']);
 Route::get('/generate-report', [GenerateReportController::class, 'generate'])->name('reports.generate');
 
+

@@ -59,6 +59,22 @@ return [
             'throw' => false,
             'report' => false,
         ],
+        'google' => [
+            'driver' => 'google',
+            'clientId' => env('GOOGLE_DRIVE_CLIENT_ID'),
+            'clientSecret' => env('GOOGLE_DRIVE_CLIENT_SECRET'),
+            'refreshToken' => env('GOOGLE_DRIVE_REFRESH_TOKEN'),
+            // 'accessToken' => env('GOOGLE_DRIVE_ACCESS_TOKEN'),
+            // 'service_account_credentials_json' => storage_path('app/google-drive/service-account.json'),
+            'folder' => env('GOOGLE_DRIVE_FOLDER'),
+            'folderId' => env('GOOGLE_DRIVE_FOLDER_ID'),
+        ],
+        'dropbox' => [
+            'driver' => 'dropbox',
+            'key' => env('DROPBOX_APP_KEY'),
+            'secret' => env('DROPBOX_APP_SECRET'),
+            'authorization_token' => env('DROPBOX_AUTH_TOKEN'),
+        ],
 
     ],
 

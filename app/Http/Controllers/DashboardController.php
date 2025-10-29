@@ -104,6 +104,10 @@ class DashboardController extends Controller
                     ->where('approval_status', 'pending')
                     ->count();
 
+            $reportsHistory = DB::table('report_histories')
+                ->orderBy('generated_at', 'desc')
+                ->get();
+
 
             $totalProducts = DB::table('pcsi_incoming')
                 ->count() + DB::table('jfpc_incoming')
@@ -205,7 +209,8 @@ class DashboardController extends Controller
                 'yearlyChange',
                 'yearlyAverage',
                 'monthlyAverage',
-                'weeklyAverage'
+                'weeklyAverage',
+                'reportsHistory',
             ));
         } else {
             // For other roles, return the view with an empty topItems

@@ -31,9 +31,10 @@ class UserController extends Controller
         // dd($audit);
 
         $users = DB::table('users')->get();
+        $usersRole = DB::table('users')->where('role', 'pending')->get();
 
         $auditJson = $audit->toJson();
-        return view('user', compact('audit', 'users'));
+        return view('user', compact('audit', 'users', 'usersRole'));
     }
 
 
@@ -115,5 +116,18 @@ class UserController extends Controller
 
         return redirect()->route('users')
             ->with('success', 'User updated successfully!');
+    }
+    public function updateRole(Request $request, $id)
+    {
+        $request->validate([
+            'role' => 'required|in:admin,customer,logistics_coordinator,inventory_manager'
+        ]);
+        DB::table('users')
+            ->where('id', $id)
+            ->update([
+                'role' => $request->role,
+                'updated_at' => now() // optional, keep timestamps updated
+            ]);
+        return redirect()->back()->with('success', 'User role assigned successfully!');
     }
 }

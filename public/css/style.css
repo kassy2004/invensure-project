@@ -3,7 +3,13 @@
     font-family: 'Inter', sans-serif;
 }
 
-
+.ag-cell {
+  overflow: visible !important;
+}
+.ag-row {
+  overflow: visible !important;
+  z-index: 1; /* ensures dropdown can be above other rows */
+}
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;

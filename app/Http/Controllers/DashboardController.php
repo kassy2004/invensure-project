@@ -13,7 +13,10 @@ class DashboardController extends Controller
         if (!auth()->check()) {
             return redirect('/');
         }
-
+        $user = auth()->user();
+        if ($user->role === 'pending') {
+            return redirect()->route('pending-approval');
+        }
 
         $topItems = collect([]);
         $categories = ['Dressed Chicken', 'Choice Cut', 'Fillet', 'By Product', 'Value Added Product'];

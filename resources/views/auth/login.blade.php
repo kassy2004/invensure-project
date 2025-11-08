@@ -4,8 +4,8 @@
             <x-logo textClass="gradient-text" />
 
         </div>
-        <h1 class="text-2xl font-bold text-orange-500">Welcome Back</h1>
-        <p class="text-sm text-gray-600 mt-2">Sign in to access your Invensure dashboard</p>
+        <h1 class="text-2xl font-bold text-orange-500">Welcome</h1>
+        <p class="text-sm text-gray-600 mt-2">Sign in to access Invensure dashboard</p>
     </div>
     <a href="{{ url('/auth/google') }}"
         class="flex items-center border border-gray-300 hover:border-gray-400 py-2 rounded-md justify-center gap-2">

@@ -177,3 +177,8 @@ Route::get('/generated', [GenerateReportController::class, 'index']);
 Route::get('/generate-report', [GenerateReportController::class, 'generate'])->name('reports.generate');
 
 
+Route::get('/pending-approval', function () {
+    return view('auth.pending');
+})->name('pending-approval');
+
+Route::post('/users/{id}/update-role', [UserController::class, 'updateRole'])->name('users.updateRole');

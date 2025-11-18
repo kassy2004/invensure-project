@@ -109,7 +109,7 @@ class DashboardController extends Controller
 
             $reportsHistory = DB::table('report_histories')
                 ->orderBy('generated_at', 'desc')
-                ->get();
+                ->paginate(10);
 
 
             $totalProducts = DB::table('pcsi_incoming')

@@ -5,7 +5,7 @@
 
     </div>
     <div class="flex gap-4">
-        <div class="dropdown dropdown-end border-r px-4">
+        <div class="dropdown dropdown-end">
             <button type="button" id="notifBell"
                 class="btn btn-ghost btn-circle hover:border-orange-300 hover:bg-transparent shadow-none transition duration-300 ease-in-out ">
                 <div class="indicator">
@@ -59,11 +59,35 @@
                 </div>
             </div>
         </div>
-        <div
-            class="hidden lg:flex border border-gray-200 py-2 px-3 rounded-md text-gray-600 items-center gap-2 cursor-pointer">
-            <x-lucide-log-out class="h-4 w-4 shrink-0" />
+        <div class="dropdown dropdown-end mr-5">
+            <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+                <div class="w-10 rounded-full overflow-hidden">
+                    @if (session('google_avatar'))
+                        <div class="w-10 rounded-full">
+                            <img alt="User Avatar" src="{{ session('google_avatar') }}" class="object-cover"/>
+                        </div>
+                    @else
+                        <div
+                            class="w-10 h-10 flex items-center justify-center rounded-full bg-orange-400 text-white font-normal">
+                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                        </div>
+                    @endif
 
-            <button type="button" class="text-sm" onclick="logoutModal.showModal()">Sign Out</button>
+                </div>
+            </div>
+            <ul tabindex="-1" class="menu menu-sm dropdown-content bg-white rounded-box z-1 mt-3 w-52 p-2 shadow">
+                <li class=" text-gray-500 rounded-md ">
+                    <a class="pointer-events-none cursor-default">{{ auth()->user()->name }}</a>
+                </li>
+                <hr class="my-2">
+                <li class="hover:bg-gray-200 text-gray-700 rounded-md ">
+                    <a onclick="logoutModal.showModal()" class="hidden lg:flex gap-2">
+                        <x-lucide-log-out class="h-4 w-4 shrink-0" />
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
             <dialog id="logoutModal" class="modal" x-data="{ loading: false }">
                 <div class="modal-box bg-zinc-50">
                     <h3 class="text-lg font-bold text-zinc-800">Sign Out</h3>
@@ -90,6 +114,7 @@
                                 </button>
 
                             </form>
+
                         </div>
 
                     </div>
@@ -102,7 +127,6 @@
 
             </dialog>
 
-        </div>
 
 
         <div class="flex top-4 right-4 z-50 lg:hidden">

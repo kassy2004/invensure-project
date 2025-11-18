@@ -182,3 +182,10 @@ Route::get('/pending-approval', function () {
 })->name('pending-approval');
 
 Route::post('/users/{id}/update-role', [UserController::class, 'updateRole'])->name('users.updateRole');
+
+
+Route::get('/reports-json', function () {
+    return DB::table('report_histories')
+        ->orderBy('generated_at', 'desc')
+        ->paginate(10); // 5 rows per page
+});

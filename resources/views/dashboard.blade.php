@@ -58,12 +58,12 @@
                                 <div x-show="tab === 'dashboardOverview'" class="w-full">
                                     @include('components.dashboard.overview')
                                 </div>
-                                <template x-if="tab === 'analytics'">
+                                <div x-show="tab === 'analytics'" class="w-full">
                                     @include('components.dashboard.analytics')
-                                </template>
-                                <template x-if="tab === 'reports'">
+                                </div>
+                                <div x-show="tab === 'reports'" class="w-full">
                                     @include('components.dashboard.reports')
-                                </template>
+                                </div>
 
                             </div>
                         </div>

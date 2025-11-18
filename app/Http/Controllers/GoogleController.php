@@ -17,6 +17,9 @@ class GoogleController extends Controller
 
             $user = User::where('email', $googleUser->getEmail())->first();
 
+            session(['google_avatar' => $googleUser->getAvatar()]);
+
+            
             if (!$user) {
                 // return redirect('/login')->withErrors([
                 //     'email' => 'Your Google account is not registered in our system.',

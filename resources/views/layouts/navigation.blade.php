@@ -64,7 +64,7 @@
                 <div class="w-10 rounded-full overflow-hidden">
                     @if (session('google_avatar'))
                         <div class="w-10 rounded-full">
-                            <img alt="User Avatar" src="{{ session('google_avatar') }}" class="object-cover"/>
+                            <img alt="User Avatar" src="{{ session('google_avatar') }}" class="object-cover" />
                         </div>
                     @else
                         <div
@@ -76,8 +76,22 @@
                 </div>
             </div>
             <ul tabindex="-1" class="menu menu-sm dropdown-content bg-white rounded-box z-1 mt-3 w-52 p-2 shadow">
-                <li class=" text-gray-500 rounded-md ">
-                    <a class="pointer-events-none cursor-default">{{ auth()->user()->name }}</a>
+                <li class=" text-gray-500 rounded-md pointer-events-none cursor-default">
+                    <div class="flex gap-2 items-center">
+
+                        @if (session('google_avatar'))
+                            <div class="w-8 rounded-full">
+                                <img alt="User Avatar" src="{{ session('google_avatar') }}" class="object-cover" />
+                            </div>
+                        @else
+                            <div
+                                class="w-8 h-8 flex items-center justify-center rounded-full bg-orange-400 text-white font-normal">
+                                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                            </div>
+                        @endif
+                        <a class="pointer-events-none cursor-default">{{ auth()->user()->name }}</a>
+                    </div>
+
                 </li>
                 <hr class="my-2">
                 <li class="hover:bg-gray-200 text-gray-700 rounded-md ">
@@ -88,44 +102,44 @@
                 </li>
             </ul>
         </div>
-            <dialog id="logoutModal" class="modal" x-data="{ loading: false }">
-                <div class="modal-box bg-zinc-50">
-                    <h3 class="text-lg font-bold text-zinc-800">Sign Out</h3>
-                    <p class="text-zinc-600">Do you really want to sign out?</p>
-                    <div class="flex justify-end mt-5">
+        <dialog id="logoutModal" class="modal" x-data="{ loading: false }">
+            <div class="modal-box bg-zinc-50">
+                <h3 class="text-lg font-bold text-zinc-800">Sign Out</h3>
+                <p class="text-zinc-600">Do you really want to sign out?</p>
+                <div class="flex justify-end mt-5">
 
-                        <div class="flex gap-3">
-                            <button type="button" onclick="logoutModal.close()"
-                                class="text-gray-400 py-2 px-4 text-sm hover:bg-gray-100 rounded-lg transition ease-in-out duration-300">Cancel</button>
+                    <div class="flex gap-3">
+                        <button type="button" onclick="logoutModal.close()"
+                            class="text-gray-400 py-2 px-4 text-sm hover:bg-gray-100 rounded-lg transition ease-in-out duration-300">Cancel</button>
 
 
-                            <form method="POST" action="{{ route('logout') }}" x-on:submit="loading = true">
-                                @csrf
-                                <button type="submit" :disabled="loading"
-                                    class="text-sm py-2 px-4 bg-red-500 rounded-lg text-white hover:bg-red-600  transition ease-in-out duration-300">
+                        <form method="POST" action="{{ route('logout') }}" x-on:submit="loading = true">
+                            @csrf
+                            <button type="submit" :disabled="loading"
+                                class="text-sm py-2 px-4 bg-red-500 rounded-lg text-white hover:bg-red-600  transition ease-in-out duration-300">
 
-                                    <span class="flex items-center gap-2">
-                                        <span x-show="!loading">Sign Out</span>
+                                <span class="flex items-center gap-2">
+                                    <span x-show="!loading">Sign Out</span>
 
-                                        <span x-show="loading" class="flex items-center gap-2" x-cloak>
-                                            <x-lucide-loader class="w-4 h-4 animate-spin" />
-                                        </span>
+                                    <span x-show="loading" class="flex items-center gap-2" x-cloak>
+                                        <x-lucide-loader class="w-4 h-4 animate-spin" />
                                     </span>
-                                </button>
+                                </span>
+                            </button>
 
-                            </form>
-
-                        </div>
+                        </form>
 
                     </div>
-
-
-
 
                 </div>
 
 
-            </dialog>
+
+
+            </div>
+
+
+        </dialog>
 
 
 

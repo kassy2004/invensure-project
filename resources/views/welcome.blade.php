@@ -335,11 +335,11 @@
                             class="px-10 py-3.5 overflow-hidden group bg-gradient-to-r from-orange-500 to-orange-600 relative hover:from-orange-400 hover:to-orange-600 text-white transition-all ease-out duration-300 rounded-xl" data-aos="zoom-in" data-aos-duration="1000">
                             <span
                                 class="absolute right-0 w-10 h-full top-0 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 -skew-x-12 group-hover:-translate-x-36 ease"></span>
-                            <div class="flex gap-4 items-center">
+                            <a class="flex gap-4 items-center" href={{ route('login') }}>
 
                                 <span class="relative text-lg font-semibold">Get Started Today</span>
                                 <x-lucide-move-right class="h-6 w-6" />
-                            </div>
+                            </a>
 
                         </button>
 

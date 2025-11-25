@@ -12,6 +12,7 @@ use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\PODController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReturnItemController;
+use App\Http\Controllers\SalesController;
 use App\Http\Controllers\SignaturesController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GoogleController;
@@ -46,10 +47,11 @@ require __DIR__ . '/auth.php';
 
 
 
-
-Route::get('/sales', function () {
-    return view('sales');
-})->middleware(['auth', 'verified'])->name('sales');
+Route::get('/sales', [SalesController::class, 'index'])->middleware(['auth', 'verified'])->name('sales');
+Route::post('/sales-store', [SalesController::class, 'store'])->name('sales.store');
+// Route::get('/sales', function () {
+//     return view('sales');
+// })->middleware(['auth', 'verified'])->name('sales');
 
 Route::get('/delivery', function () {
     return view('delivery');

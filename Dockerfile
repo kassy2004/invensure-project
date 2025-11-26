@@ -4,7 +4,6 @@
 FROM node:18 AS frontend
 
 WORKDIR /app
-
 COPY package.json package-lock.json ./
 RUN npm install
 
@@ -13,39 +12,46 @@ RUN npm run build
 
 
 # -----------------------
-# Stage 2: Build Laravel + PHP
+# Stage 2: Build PHP App
 # -----------------------
+FROM php:8.2-fpm AS backend
 
-FROM richarvey/nginx-php-fpm:3.1.6
+# Install system packages
+RUN apt-get update && apt-get install -y \
+    nginx \
+    supervisor \
+    zip unzip git curl \
+    libpq-dev libzip-dev \
+    libfreetype6-dev libjpeg62-turbo-dev libpng-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-configure zip \
+    && docker-php-ext-install gd zip pdo pdo_mysql pdo_pgsql \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /var/www/html
 
+# Copy app from backend
 COPY . .
 
-
-# Copy Vite build
+# Copy Vite build from frontend stage
 COPY --from=frontend /app/public/build ./public/build
 
-# Nginx config
-COPY conf/nginx/nginx-site.conf /etc/nginx/sites-enabled/default.conf
+# Install composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+RUN composer install --optimize-autoloader --no-dev
 
-# Make PHP-FPM listen on TCP for Nginx
-RUN sed -i 's|listen = /var/run/php-fpm.sock|listen = 127.0.0.1:9000|' /usr/local/etc/php-fpm.d/www.conf
 
-# Image config
-ENV SKIP_COMPOSER 1
-ENV WEBROOT /var/www/html/public
-ENV PHP_ERRORS_STDERR 1
-ENV RUN_SCRIPTS 1
-ENV REAL_IP_HEADER 1
+# Fix permissions
+RUN chown -R www-data:www-data storage bootstrap/cache
 
-# Laravel config
-ENV APP_ENV production
-ENV APP_DEBUG false
-ENV LOG_CHANNEL stderr
-ENV COMPOSER_ALLOW_SUPERUSER 1
 
-# Allow composer to run as root
-ENV COMPOSER_ALLOW_SUPERUSER 1
+# -----------------------
+# Configure NGINX
+# -----------------------
+COPY nginx.conf /etc/nginx/nginx.conf
 
-CMD ["/start.sh"]
+# Expose http port
+EXPOSE 80
+
+# Start both PHP-FPM and Nginx via Supervisor
+CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

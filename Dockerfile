@@ -39,12 +39,15 @@ COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 RUN composer --version \
  && composer install --no-dev --optimize-autoloader --no-scripts
 
- # Fix permissions
-RUN chown -R www-data:www-data storage bootstrap/cache
+
 
 
 # Copy the rest of the app
 COPY . .
+
+RUN mkdir -p storage bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache
+
 
 ENV PHP_MEMORY_LIMIT=512M
 # Run Laravel package discovery now that source files exist

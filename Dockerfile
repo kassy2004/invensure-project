@@ -20,7 +20,9 @@ FROM php:8.2-fpm AS backend
 RUN apt-get update && apt-get install -y \
     zip unzip git curl nginx \
     libpq-dev \
-    && docker-php-ext-install pdo pdo_mysql pdo_pgsql
+    libfreetype6-dev libjpeg62-turbo-dev libpng-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd pdo pdo_mysql pdo_pgsql
 
 WORKDIR /var/www/html
 

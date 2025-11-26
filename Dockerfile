@@ -35,9 +35,8 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 
 
 # Install composer dependencies
-COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
-RUN composer --version \
- && composer install --no-dev --optimize-autoloader 
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+RUN composer install --no-dev --optimize-autoloader 
 
 # Copy the rest of the app
 COPY . .

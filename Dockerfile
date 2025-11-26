@@ -1,3 +1,19 @@
+#
+# Stage 1: Frontend build
+#
+FROM node:20 AS frontend
+
+WORKDIR /app
+
+COPY package*.json ./
+COPY vite.config.js .
+COPY postcss.config.js .
+COPY tailwind.config.js .
+COPY resources ./resources
+
+RUN npm install \
+ && npm run build
+
 # -----------------------
 # Stage 2: PHP + Laravel
 # -----------------------

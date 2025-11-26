@@ -1,3 +1,7 @@
+# -----------------------
+# Stage 1: Build Vite assets
+# -----------------------
+FROM node:18 AS frontend
 
 WORKDIR /app
 

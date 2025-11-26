@@ -17,26 +17,17 @@ RUN npm install \
 # -----------------------
 # Stage 2: PHP + Laravel
 # -----------------------
-FROM wyveo/nginx-php-fpm:php82
+FROM richarvey/nginx-php-fpm:latest
 
 WORKDIR /var/www/html
 
 # Copy composer files first
 COPY composer.json composer.lock ./
 
-# Refresh apt repo keys (Sury PHP & official Nginx) for Debian bullseye
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl gnupg2 ca-certificates \
-    && curl -fsSL https://packages.sury.org/php/apt.gpg | gpg --dearmor -o /usr/share/keyrings/sury-php.gpg \
-    && echo "deb [signed-by=/usr/share/keyrings/sury-php.gpg] https://packages.sury.org/php/ bullseye main" > /etc/apt/sources.list.d/sury-php.list \
-    && curl -fsSL https://nginx.org/keys/nginx_signing.key | gpg --dearmor -o /usr/share/keyrings/nginx.gpg \
-    && echo "deb [signed-by=/usr/share/keyrings/nginx.gpg] http://nginx.org/packages/mainline/debian bullseye nginx" > /etc/apt/sources.list.d/nginx.list
-
 # Install PHP extensions here (PHP stage only)
-RUN apt-get update && apt-get install -y \
-    zip unzip libzip-dev libonig-dev \
-    && docker-php-ext-install pdo pdo_mysql mbstring zip \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache \
+    zip unzip libzip-dev oniguruma-dev \
+    && docker-php-ext-install pdo pdo_mysql mbstring zip
 
 # Set composer memory & allow superuser
 ENV COMPOSER_MEMORY_LIMIT=-1

@@ -18,12 +18,15 @@ FROM php:8.2-fpm AS backend
 
 # Install system packages
 RUN apt-get update && apt-get install -y \
-    zip unzip git curl nginx \
+    nginx \
+    supervisor \
+    zip unzip git curl \
     libpq-dev libzip-dev \
     libfreetype6-dev libjpeg62-turbo-dev libpng-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-configure zip \
-    && docker-php-ext-install gd zip pdo pdo_mysql pdo_pgsql
+    && docker-php-ext-install gd zip pdo pdo_mysql pdo_pgsql \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /var/www/html
 
@@ -50,10 +53,5 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # Expose http port
 EXPOSE 80
 
-# Render will run artisan on startup — NOT during build
-CMD ["sh", "-c", "php artisan key:generate --force \
-    && php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache \
-    && service nginx start \
-    && php-fpm"]
+# Start both PHP-FPM and Nginx via Supervisor
+CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

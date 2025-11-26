@@ -37,6 +37,9 @@ COPY --from=frontend /app/public/build ./public/build
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 RUN composer install --optimize-autoloader --no-dev
 
+COPY .env.example .env
+RUN php artisan key:generate --force
+
 RUN php artisan config:cache
 RUN php artisan route:cache
 RUN php artisan view:cache

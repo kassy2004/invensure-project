@@ -19,6 +19,7 @@ FROM php:8.2-fpm AS backend
 # Install system packages
 RUN apt-get update && apt-get install -y \
     zip unzip git curl nginx \
+    libpq-dev \
     && docker-php-ext-install pdo pdo_mysql pdo_pgsql
 
 WORKDIR /var/www/html

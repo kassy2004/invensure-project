@@ -17,7 +17,7 @@ RUN npm install \
 # -----------------------
 # Stage 2: PHP + Laravel
 # -----------------------
-FROM richarvey/nginx-php-fpm:php82
+FROM wyveo/nginx-php-fpm:php82
 
 WORKDIR /var/www/html
 

@@ -37,12 +37,10 @@ COPY --from=frontend /app/public/build ./public/build
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 RUN composer install --optimize-autoloader --no-dev
 
-COPY .env.example .env
-RUN php artisan key:generate --force
 
-RUN php artisan config:cache
-RUN php artisan route:cache
-RUN php artisan view:cache
+# Fix permissions
+RUN chown -R www-data:www-data storage bootstrap/cache
+
 
 # -----------------------
 # Configure NGINX
@@ -52,4 +50,10 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # Expose http port
 EXPOSE 80
 
-CMD service nginx start && php-fpm
+# Render will run artisan on startup — NOT during build
+CMD ["sh", "-c", "php artisan key:generate --force \
+    && php artisan config:cache \
+    && php artisan route:cache \
+    && php artisan view:cache \
+    && service nginx start \
+    && php-fpm"]

@@ -19,10 +19,11 @@ FROM php:8.2-fpm AS backend
 # Install system packages
 RUN apt-get update && apt-get install -y \
     zip unzip git curl nginx \
-    libpq-dev \
+    libpq-dev libzip-dev \
     libfreetype6-dev libjpeg62-turbo-dev libpng-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql pdo_pgsql
+    && docker-php-ext-configure zip \
+    && docker-php-ext-install gd zip pdo pdo_mysql pdo_pgsql
 
 WORKDIR /var/www/html
 

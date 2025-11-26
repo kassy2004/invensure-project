@@ -25,10 +25,9 @@ WORKDIR /var/www/html
 COPY composer.json composer.lock ./
 
 # Install PHP extensions here (PHP stage only)
-RUN apt-get update && apt-get install -y \
-    zip unzip libzip-dev libonig-dev \
-    && docker-php-ext-install pdo pdo_mysql mbstring zip \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache \
+    zip unzip libzip-dev oniguruma-dev \
+    && docker-php-ext-install pdo pdo_mysql mbstring zip
 
 # Set composer memory & allow superuser
 ENV COMPOSER_MEMORY_LIMIT=-1
